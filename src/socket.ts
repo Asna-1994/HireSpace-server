@@ -268,7 +268,7 @@ socket.on('getUnreadCount', async ({ userId }: { userId: string }) => {
         await chatUseCase.sendMessage(data);
         io.to(data.roomId).emit('message', data);
         
-        // Also emit updated unread count to receiver
+   
         const unreadCounts = await chatRepository.getUnreadMessagesCount(data.receiverId.toString());
         const countsByRoomId = unreadCounts.reduce<{ [roomId: string]: number }>((acc, { roomId, count }) => {
           acc[roomId] = count;
