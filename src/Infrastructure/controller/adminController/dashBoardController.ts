@@ -9,16 +9,16 @@ export class DashboardController {
 
   async getDashboardStats(req: Request, res: Response, next : NextFunction) :Promise<void>{
     try {
-      // Get date filters from query parameters
+  
       const { startDate, endDate } = req.query;
       
-      // Validate date parameters if they exist
+   
       if (startDate || endDate) {
         if (!startDate || !endDate) {
      throw new CustomError(STATUS_CODES.BAD_REQUEST, "Provide both dates")
         }
 
-        // Validate date format
+      
         const start = new Date(startDate as string);
         const end = new Date(endDate as string);
 
@@ -26,13 +26,13 @@ export class DashboardController {
       throw new CustomError(STATUS_CODES.BAD_REQUEST,'Invalid date format. Please use YYYY-MM-DD format')
         }
 
-        // Check if start date is before end date
+      
         if (start > end) {
         throw new CustomError(STATUS_CODES.BAD_REQUEST,"'Start date must be before or equal to end date'")
          
         }
 
-        // Pass the date range to the use case
+        
         const stats = await this.dashboardUseCase.execute({
           startDate: startDate as string,
           endDate: endDate as string

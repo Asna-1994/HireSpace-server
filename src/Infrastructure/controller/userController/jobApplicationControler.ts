@@ -65,5 +65,29 @@ export class UserJobApplicationController {
     }
 }
 
+async getHomeStatsForUser(req: Request, res: Response, next: NextFunction) {
+  try {
+      const { userId } = req.params;
+  
 
+      if (!userId) {
+          throw new CustomError(STATUS_CODES.BAD_REQUEST, "Please provide necessary parameters");
+      }
+
+      const { totalJobPosts, totalJobApplications } = await this.userJobApplicationUseCase.getHomeStatics( userId );
+
+      res.status(STATUS_CODES.SUCCESS).json({
+          success: true,
+          message: MESSAGES.DATA_FETCHED,
+       data :{
+        totalJobApplications,
+        totalJobPosts
+       }
+       
+      });
+  } catch (error) {
+      next(error);
+      console.log(error);
+  }
+}
 }

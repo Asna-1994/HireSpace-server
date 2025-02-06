@@ -9,7 +9,7 @@ import { UserRepositoryImpl } from '../../../Domain/repository/implementation/us
 
 const connectionRequestUseCase = new ConnectionRequestUseCase(new ConnectionRequestImpl(), new UserRepositoryImpl());
 
-// Controller to create a connection request
+//  create a connection request
 export async function createConnectionRequest(req: Request, res: Response, next : NextFunction): Promise<void> {
   try {
     const { fromUser, toUser } = req.body;
@@ -27,7 +27,7 @@ next(error)
 }
 
 
-//controller to get conection request for user
+// get conection request for user
 export async function getAllConnectionRequestsForUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
  
@@ -78,7 +78,7 @@ export async function getAllConnectionRequestsSentByUser(req: Request, res: Resp
       next(error);
     }
   }
-// Controller to get a connection request by ID
+// get a connection request by ID
 export async function getConnectionRequestById(req: Request, res: Response,next : NextFunction): Promise<void> {
   try {
     const { id } = req.params;
@@ -154,7 +154,7 @@ export async function getAllConnectionsByUserId(req: Request, res: Response, nex
   }
 
 
-// Controller to accept a connection request
+//  accept a connection request
 export async function acceptConnectionRequest(req: Request, res: Response,next : NextFunction): Promise<void> {
   try {
     const { id } = req.params;
@@ -171,7 +171,7 @@ export async function acceptConnectionRequest(req: Request, res: Response,next :
   }
 }
 
-// Controller to reject a connection request
+// reject a connection request
 export async function rejectConnectionRequest(req: Request, res: Response, next : NextFunction): Promise<void> {
   try {
     const { id } = req.params;
@@ -188,7 +188,7 @@ export async function rejectConnectionRequest(req: Request, res: Response, next 
   }
 }
 
-// Controller to delete a connection request
+//delete a connection request
 export async function deleteConnectionRequest(req: Request, res: Response,next : NextFunction): Promise<void> {
   try {
     const { id } = req.params;

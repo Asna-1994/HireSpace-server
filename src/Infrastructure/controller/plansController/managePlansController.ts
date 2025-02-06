@@ -16,11 +16,11 @@ export class PlanController {
       let result;
       let message;
       if (planId) {
-        // Editing: Update the existing plan
+       
         result = await managePlanUseCase.updatePlan(planId as string, planData);
         message = 'Plan updated successfully';
       } else {
-        // Creating: Add a new plan
+       
         result = await managePlanUseCase.createPlan(planData);
         message = 'Plan created successfully';
       }
@@ -45,10 +45,10 @@ export class PlanController {
       const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
       const searchTerm = (req.query.search as string) || "";
   
-      // Call the use case to fetch plans
+   
       const { plans, total } = await managePlanUseCase.getAllPlan(userType, page, limit, searchTerm);
   
-      // Prepare the response data
+ 
       const responseData: {
         plans: typeof plans;
         total?: number;
@@ -57,14 +57,14 @@ export class PlanController {
         totalPages? : number
       } = { plans };
   
-      // Include pagination details only if pagination parameters are provided
+   
       if (page && limit) {
         responseData.total = total || plans.length;
         responseData.currentPage = page;
         responseData.totalPages = Math.ceil(responseData.total/ limit) || 1
       }
   
-      // Send response
+ 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: MESSAGES.DATA_FETCHED,

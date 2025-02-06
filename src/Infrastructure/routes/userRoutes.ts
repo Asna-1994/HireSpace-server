@@ -75,7 +75,7 @@ const manageJobSeekerProfileController = new ManageJobSeekerProfileController(ma
 const userJobPostUseCase = new UserJobPostUseCase(jobPostRepository, userRepository, spamRepository)
 const userJobPostController = new UserJobPostController(userJobPostUseCase)
 
-const userJobApplicationUseCase = new UserJobApplicationUseCase(jobApplicationRepository, jobSeekerProfileRepository, userRepository)
+const userJobApplicationUseCase = new UserJobApplicationUseCase(jobApplicationRepository, jobSeekerProfileRepository, userRepository,jobPostRepository)
 const userJobApplicationController = new UserJobApplicationController(userJobApplicationUseCase)
 
 
@@ -121,4 +121,5 @@ router.post('/report-spam',checkIfAUthenticated,(req: Request, res: Response, ne
 //job applications
 router.post('/apply-for-job/:userId/:jobPostId/:companyId',checkIfAUthenticated,(req: Request, res: Response, next: NextFunction) => userJobApplicationController.applyForJob(req, res, next))
 router.get('/all-job-applications/:userId',checkIfAUthenticated,(req: Request, res: Response, next: NextFunction) => userJobApplicationController.getAllJobApplicationForUser(req, res, next))
+router.get('/:userId/statics',checkIfAUthenticated,(req: Request, res: Response, next: NextFunction) => userJobApplicationController.getHomeStatsForUser(req, res, next))
 export default router;

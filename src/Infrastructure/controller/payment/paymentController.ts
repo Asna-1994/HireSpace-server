@@ -19,11 +19,6 @@ export const PaymentController =  {
 
 
     try {
-
-
-
-
-
       const{ paymentIntent, clientSecret}= await createPaymentIntentUseCase.execute({
         userId : userId as string,
         planId: planId as string,

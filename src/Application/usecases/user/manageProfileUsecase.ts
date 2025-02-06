@@ -1,13 +1,16 @@
+import { JobApplicationRepository } from './../../../Domain/repository/repo/jobApplicationRepository';
 import { UserRepository } from '../../../Domain/repository/repo/userRepository';
 import { JobSeekerProfileRepository } from "../../../Domain/repository/repo/JobSeekerProfileRepo";
 import { CustomError } from "../../../shared/error/customError";
 import { STATUS_CODES } from "../../../shared/constants/statusCodes";
 import mongoose from 'mongoose';
 import { MESSAGES } from '../../../shared/constants/messages';
+import { JobApplicationRepositoryImpl } from '../../../Domain/repository/implementation/jobApplicationRepoImpl';
 
 export class ManageProfileUseCase {
   constructor(private jobSeekerProfileRepository: JobSeekerProfileRepository,
-    private userRepository: UserRepository
+    private userRepository: UserRepository,
+
   ) {}
 
   async addEducation(userData: {
@@ -535,4 +538,7 @@ async getAllExperience( userId: string) {
             throw new CustomError(STATUS_CODES.INTERNAL_SERVER_ERROR,"Error in adding")   
         }
           }  
+
+
+    
 }

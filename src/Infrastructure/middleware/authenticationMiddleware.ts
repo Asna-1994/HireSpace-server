@@ -40,8 +40,15 @@ export const checkIfAUthenticated = async(req: Request, res: Response, next: Nex
       }
     }
     next(); 
-  } catch (error) {
-    next(error);  
+  } catch (error :any) {
+    if (error.name === "TokenExpiredError") {
+      next(
+        new CustomError(
+     STATUS_CODES.UNAUTHORIZED,"Token expired, please login again")
+      );
+    } else {
+      next(error);
+    }
   }
 };
 

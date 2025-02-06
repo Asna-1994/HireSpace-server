@@ -6,29 +6,40 @@ import { Message } from './Domain/entities/Message';
 import { CustomError } from './shared/error/customError';
 import { generateRoomId } from './shared/utils/generateRoomId';
 import http from 'http';
-import { ConnectionRequestUseCase } from './Application/usecases/connectionReqeust/connectionRequestUseCase';
-import { UserRepositoryImpl } from './Domain/repository/implementation/userRepositoryImpl';
+
+
 
 interface VideoCallSignal {
   roomId: string;
-  userId: string;
-  targetUserId: string;
+  callerId: string;
+  receiverId: string;
   type: 'offer' | 'answer' | 'ice-candidate';
   data: any;
+  userId?: string; 
 }
 
-interface CallInitiation {
+interface UserSocketMap {
+  [userId: string]: string;
+}
+
+interface VideoCallState {
   roomId: string;
   callerId: string;
-  callerName: string;
   receiverId: string;
+  status: 'ringing' | 'accepted' | 'rejected' | 'ended';
+  timestamp: number;
 }
 
-interface CallResponse {
-  roomId: string;
-  accepterId: string;
-  rejecterId  :string
-}
+const activeVideoCalls = new Map<string, VideoCallState>();
+
+
+
+const userSocketMap: UserSocketMap = {};
+
+const CALL_TIMEOUT = 30000; // 30 seconds timeout for call acceptance
+
+
+
 
 
 function debounce<T extends (...args: any[]) => void>(func: T, delay: number): (...args: Parameters<T>) => void {
@@ -51,89 +62,123 @@ export const initializeSocket = (server: http.Server): Server => {
   });
 
   const chatRepository = new ChatRepositoryImpl();
-  const userRepository = new UserRepositoryImpl();
   const chatUseCase = new ChatUseCase(chatRepository);
   const connectionRequestRepo= new ConnectionRequestImpl()
-  const connectionUseCase = new ConnectionRequestUseCase(connectionRequestRepo, userRepository)
 
-  const activeCallRooms = new Map<string, Set<string>>();
+
 
 
   io.on('connection', (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
 
 
+socket.on('registerUser', (userId) => {
+  userSocketMap[userId] = socket.id;
+  console.log(`User ${userId} connected with socket ID ${socket.id}`);
+});
+
+// When a user joins a room
 socket.on('join_room', ({ roomId, userId }) => {
   if (!roomId || !userId) {
     console.error('Missing roomId or userId in join_room event');
     return;
   }
   socket.join(roomId);
-  socket.join(userId); // For direct messages
+  socket.join(userId); // Also join a personal room for notifications
   console.log(`User ${userId} joined room ${roomId}`);
-  socket.broadcast.to(roomId).emit('user_joined',{ roomId, userId})
-  // Emit confirmation
-  // socket.emit('room_joined', { roomId, userId });
+  // Notify other users in the room (if desired)
+  socket.broadcast.to(roomId).emit('user_joined', { roomId, userId });
 });
 
-// Handle video call initiation
+// Forward ICE candidates between peers (if using WebRTC directly)
+socket.on('ice-candidate', ({ receiverId, candidate, senderId }) => {
+  console.log('Received ICE candidate:', { candidate, senderId, receiverId });
+  const receiverSocketId = userSocketMap[receiverId];
+  if (receiverSocketId) {
+    io.to(receiverSocketId).emit('ice-candidate', {
+      senderId,
+      candidate,
+      type: 'ice-candidate'
+    });
+  }
+});
 
 
-// Handle call acceptance
-socket.on('initiateVideoCall', (data: CallInitiation) => {
+socket.on('initiateVideoCall', (data) => {
   console.log('Call initiation received:', data);
-  const { roomId, callerId, callerName, receiverId } = data;
-  
-  // Emit to specific receiver
-  io.to(receiverId).emit('incomingCall', {
-    roomId,
-    callerId,
-    callerName
-  });
+  const { roomId, callerId, callerName, receiverId, receiverName } = data;
+  const receiverSocketId = userSocketMap[receiverId];
+  if (receiverSocketId) {
+    // Notify the receiver about an incoming call
+    io.to(receiverSocketId).emit('incomingCall', { roomId, callerId, callerName });
+  } else {
+    console.log(`Receiver ${receiverId} is not online`);
+  }
 });
 
+// Forward video signal data (offer, answer, ICE candidates)
 socket.on('videoSignal', (data) => {
   console.log('Forwarding video signal:', {
     type: data.type,
-    from: data.userId,
-    to: data.targetUserId
+    callerId: data.callerId,
+    receiverId: data.receiverId
   });
-  
-  // Emit to specific user
-  io.to(data.targetUserId).emit('videoSignal', {
-    type: data.type,
-    data: data.data,
-    userId: data.userId,
-    roomId: data.roomId
-  });
+  const receiverSocketId = userSocketMap[data.receiverId];
+  if (receiverSocketId) {
+    switch (data.type) {
+      case 'offer':
+      case 'answer':
+        io.to(receiverSocketId).emit('videoSignal', {
+          type: data.type,
+          data: data.data,
+          callerId: data.callerId,
+          receiverId: data.receiverId,
+          roomId: data.roomId,
+          userId: data.userId
+        });
+        break;
+      case 'ice-candidate':
+        io.to(receiverSocketId).emit('ice-candidate', {
+          candidate: data.data,
+          senderId: data.callerId
+        });
+        break;
+      default:
+        console.log(`Unknown video signal type: ${data.type}`);
+    }
+  } else {
+    console.log(`Receiver ${data.receiverId} socket not found`);
+  }
 });
 
-socket.on('acceptCall', (data) => {
-  console.log('Call accepted:', data);
-  io.to(data.targetUserId).emit('callAccepted', {
-    accepterId: data.accepterId,
-    roomId: data.roomId
-  });
+// When the receiver accepts the call
+socket.on('acceptCall', ({ callerId, receiverId, answer }) => {
+  console.log('Call accepted:', { callerId, receiverId });
+  const callerSocketId = userSocketMap[callerId];
+  if (callerSocketId) {
+    io.to(callerSocketId).emit('callAccepted', { receiverId, answer });
+  }
 });
 
-socket.on('rejectCall', (data) => {
-  console.log('Call rejected:', data);
-  io.to(data.targetUserId).emit('callRejected', {
-    rejecterId: data.rejecterId,
-    roomId: data.roomId
-  });
+// When the receiver rejects the call
+socket.on('rejectCall', ({ callerId, receiverId }) => {
+  console.log('Call rejected by receiver', receiverId);
+  const callerSocketId = userSocketMap[callerId];
+  if (callerSocketId) {
+    io.to(callerSocketId).emit('callRejected', { receiverId });
+  }
 });
 
+// Optionally, update call status (e.g., ringing, busy)
+socket.on('callStatus', (data) => {
+  console.log('Call status update:', data);
+  io.to(data.targetUserId).emit('callStatus', { status: data.status });
+});
 
-
-
-
-socket.on('endCall', (data) => {
-  console.log('Call ended:', data);
-  io.to(data.targetUserId).emit('callEnded', {
-    userId: data.userId,
-    roomId: data.roomId
-  });
+// When a call ends
+socket.on('endCall', ({ roomId, callerId, receiverId }) => {
+  console.log('Call ended:', { roomId, callerId, receiverId });
+  io.to(roomId).emit('callEnded', { roomId, callerId, receiverId });
 });
 
     //chats
@@ -244,13 +289,24 @@ socket.on('getUnreadCount', async ({ userId }: { userId: string }) => {
       }
     }, 500);
 
+
     socket.on('typing', (data: { userId: string; roomId: string }) => {
       debouncedTypingNotification(data);
     });
 
     socket.on('disconnect', () => {
       console.log(`User disconnected: ${socket.id}`);
+      socket.broadcast.emit('disconnected')
+      for (const userId in userSocketMap) {
+        if (userSocketMap[userId] === socket.id) {
+          delete userSocketMap[userId];
+          console.log(`User ${userId} disconnected`);
+          break;
+        }
+      }
     });
+
+
   });
 
   return io;

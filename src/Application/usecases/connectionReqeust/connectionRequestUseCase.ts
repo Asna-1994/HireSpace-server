@@ -166,7 +166,7 @@ async recommendationForUsers(userId: string,page: number, limit: number): Promis
   
   
 
-  // Accept a connection request
+  
   async acceptConnectionRequest(id: string): Promise<ConnectionRequest> {
     const updatedRequest = await this.connectionRequestRepo.updateStatus(id, 'accepted');
 
@@ -180,12 +180,12 @@ async recommendationForUsers(userId: string,page: number, limit: number): Promis
     return updatedRequest;
   }
 
-  // Reject a connection request
+  
   async rejectConnectionRequest(id: string): Promise<ConnectionRequest> {
     return this.connectionRequestRepo.updateStatus(id, 'rejected');
   }
 
-  // Delete a connection request
+
   async deleteConnectionRequest(id: string): Promise<boolean> {
     return this.connectionRequestRepo.delete(id);
   }

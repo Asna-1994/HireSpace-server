@@ -86,9 +86,9 @@ export class GetAllUsersUseCase {
       searchTerm?: string;
   
     }) {
-      const offset = (page - 1) * limit; // Calculate the offset based on page and limit
+      const offset = (page - 1) * limit; 
     
-      // Build the filter for querying spam reports
+     
       const filter: any = {
         ...(searchTerm && {
           $or: [

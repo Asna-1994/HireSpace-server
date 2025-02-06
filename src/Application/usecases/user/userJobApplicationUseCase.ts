@@ -1,17 +1,18 @@
+import { JobPostRepository } from "./../../../Domain/repository/repo/jobPostRepository";
 import { UserRepository } from "./../../../Domain/repository/repo/userRepository";
 import { JobSeekerProfileRepository } from "../../../Domain/repository/repo/JobSeekerProfileRepo";
 import { JobApplicationRepository } from "../../../Domain/repository/repo/jobApplicationRepository";
 import { CustomError } from "../../../shared/error/customError";
 import { STATUS_CODES } from "../../../shared/constants/statusCodes";
 import { JobApplication } from "../../../Domain/entities/JobApplication";
-import mongoose, { mongo } from "mongoose";
 import { MESSAGES } from "../../../shared/constants/messages";
 
 export class UserJobApplicationUseCase {
   constructor(
     private jobApplicationRepository: JobApplicationRepository,
     private jobSeekerProfileRepository: JobSeekerProfileRepository,
-    private userRepository: UserRepository
+    private userRepository: UserRepository,
+    private jobPostRepository: JobPostRepository
   ) {}
 
   async createJobApplication(
@@ -147,6 +148,37 @@ export class UserJobApplicationUseCase {
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
         "Error while getting applications"
+      );
+    }
+  }
+
+  //get home statics
+  async getHomeStatics(userId: string) {
+    try {
+      const user = await this.userRepository.findById(userId);
+      if (!user) {
+        throw new CustomError(
+          STATUS_CODES.NOT_FOUND,
+          "No profile found for this user"
+        );
+      }
+
+      const totalJobApplications =
+        await this.jobApplicationRepository.countTotal({ userId: userId });
+      const totalJobPosts = await this.jobPostRepository.countTotal({
+        isDeleted: false,
+        status: "Active",
+      });
+
+      return { totalJobPosts, totalJobApplications };
+    } catch (err) {
+      console.log(err);
+      if (err instanceof CustomError) {
+        throw err;
+      }
+      throw new CustomError(
+        STATUS_CODES.INTERNAL_SERVER_ERROR,
+        "Error in getting details for home"
       );
     }
   }

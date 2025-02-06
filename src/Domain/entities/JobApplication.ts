@@ -40,15 +40,6 @@ export class JobApplication {
     this.updatedAt = data.updatedAt || new Date();
   }
 
-  // updateStatus(newStatus: "pending" | "reviewed" | "accepted" | "rejected"): void {
-  //   this.status = newStatus;
-  //   this.updatedDate = new Date();
-  // }
-
-  // markDeleted(): void {
-  //   this.isDeleted = true;
-  //   this.updatedDate = new Date();
-  // }
 
 
 }
