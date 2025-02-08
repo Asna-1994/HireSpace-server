@@ -55,7 +55,7 @@ function debounce<T extends (...args: any[]) => void>(func: T, delay: number): (
 export const initializeSocket = (server: http.Server): Server => {
   const io = new Server(server, {
     cors: {
-      origin: 'http://localhost:5173', 
+      origin: process.env.FRONT_END_URL, 
       credentials: true,
     },
     transports: ['websocket'],
