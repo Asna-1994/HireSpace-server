@@ -10,7 +10,7 @@ export class LoginController {
   async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
-      const { token, user, jobSeekerProfile } = await this.loginUseCase.execute({ email, password });
+      const { token, user} = await this.loginUseCase.execute({ email, password });
 
 
       res.cookie('authToken', token, {
@@ -26,7 +26,7 @@ export class LoginController {
         data: {
           user,
           token,
-          jobSeekerProfile
+      
         },
       });
     } catch (error) {

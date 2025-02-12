@@ -66,14 +66,13 @@ export class GoogleSignInUseCase {
     }
 
 
-     const jobSeekerProfile =  await this.jobSeekerProfileRepository.create({ userId:new mongoose.Types.ObjectId( existingUser._id)});
-
     const token = generateToken({ id: existingUser._id, email: existingUser.email,role : existingUser.userRole, entity : 'user' });
+   
 
     return {
       user: existingUser,
       token,
-      jobSeekerProfile
+ 
     };
   }
 }

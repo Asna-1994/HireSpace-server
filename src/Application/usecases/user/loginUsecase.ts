@@ -44,11 +44,11 @@ export class LoginUseCase {
       );
   }
    
-  const jobSeekerProfile = await this.jobSeekerProfileRepository.findOne({userId : existingUser._id})
+ 
 
     const token =  generateToken({id : existingUser._id , email :  existingUser.email, role : existingUser.userRole, entity : 'user'})
 
-    return { token, user: existingUser,jobSeekerProfile };
+    return { token, user: existingUser };
   }
 
 }

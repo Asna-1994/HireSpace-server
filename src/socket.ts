@@ -184,13 +184,15 @@ socket.on('endCall', ({ roomId, callerId, receiverId }) => {
     //chats
     socket.on('getRecentChats', async ({ userId }: { userId: string }) => {
       try {
-        const recentChats = await chatUseCase.getRecentChats(userId);
-        socket.emit('recentChats', { chats: recentChats });
+      console.log('Fetching recent chats for user:', userId);
+      const recentChats = await chatUseCase.getRecentChats(userId);
+      console.log('Found recent chats:', recentChats);
+      socket.emit('recentChats', { chats: recentChats });
       } catch (error) {
         handleSocketError(socket, error);
       }
     });
-
+  
 
     socket.on('joinChat', async ({ senderId, receiverId }: { senderId: string; receiverId: string }) => {
       if (!senderId || !receiverId) {
