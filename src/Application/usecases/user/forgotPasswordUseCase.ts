@@ -12,14 +12,14 @@ export class ForgotPasswordUseCase {
     if (!existingUser) {
       throw new CustomError(
         400,
-        "No User registered with this email, Please signup first"
+        "No User registered with this email, Please signup first",
       );
     }
 
     if (existingUser.isBlocked) {
       throw new CustomError(
         400,
-        "This user has been blocked. Please contact Admin"
+        "This user has been blocked. Please contact Admin",
       );
     }
 

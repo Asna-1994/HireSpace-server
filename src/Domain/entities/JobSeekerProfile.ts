@@ -3,7 +3,6 @@ import { CustomError } from "../../shared/error/customError";
 import { STATUS_CODES } from "../../shared/constants/statusCodes";
 import { imageObject } from "./Company";
 
-
 export interface EducationObject {
   educationName: string;
   yearOfPassing: string;
@@ -16,7 +15,7 @@ export interface EducationObject {
 
 export interface ExperienceObject {
   company: string;
-  designation:string;
+  designation: string;
   yearCompleted: string;
   dateFrom: string;
   dateTo: string;
@@ -27,7 +26,7 @@ export interface ExperienceObject {
 }
 
 export interface Certificates {
-    certificateTitle: string;
+  certificateTitle: string;
   description?: string;
   certificateUrl?: string;
   issuer: string;
@@ -37,14 +36,13 @@ export interface Certificates {
   _id: mongoose.Types.ObjectId;
 }
 
-
-export interface Skills { 
-softSkills? : [];
-hardSkills? : [];
-technicalSkills?:[];
-createAt?: Date;
-updatedAt?: Date;
-_id?: mongoose.Types.ObjectId;
+export interface Skills {
+  softSkills?: [];
+  hardSkills?: [];
+  technicalSkills?: [];
+  createAt?: Date;
+  updatedAt?: Date;
+  _id?: mongoose.Types.ObjectId;
 }
 
 export class JobSeekerProfile {
@@ -53,8 +51,8 @@ export class JobSeekerProfile {
   education?: EducationObject[];
   workExperience?: ExperienceObject[];
   certificates?: Certificates[];
-  skills? : Skills;
-  resume? : imageObject;
+  skills?: Skills;
+  resume?: imageObject;
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -71,15 +69,17 @@ export class JobSeekerProfile {
   }
 }
 
+export const normalizeJobSeekerProfile = (data: any): JobSeekerProfile => {
+  // console.log('Received company data:', data);
+  if (!data || !data._id) {
+    throw new CustomError(
+      STATUS_CODES.BAD_REQUEST,
+      "Invalid data or missing _id",
+    );
+  }
 
-  export const normalizeJobSeekerProfile = (data: any): JobSeekerProfile => {
-    // console.log('Received company data:', data);  
-    if (!data || !data._id) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST,'Invalid data or missing _id');
-    }
-  
-    return {
-      ...data,
-      _id: data._id.toString(), 
-    };
+  return {
+    ...data,
+    _id: data._id.toString(),
   };
+};

@@ -5,5 +5,5 @@ export interface TempUserRepository {
   findByEmail(email: string): Promise<TempUser | null>;
   deleteByEmail(email: string): Promise<void>;
   // save(email : string, otp:string, otpExpiry : Date): Promise<TempUser | null>;
- updateOne(tempUser: TempUser): Promise<TempUser>;
+  updateOne(tempUser: TempUser): Promise<TempUser>;
 }

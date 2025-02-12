@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
-import { CustomError } from '../../shared/error/customError';
+import { Request, Response, NextFunction } from "express";
+import { CustomError } from "../../shared/error/customError";
 
 export const errorMiddleware = (
   err: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Response => {
   console.error(err);
 
@@ -19,7 +19,7 @@ export const errorMiddleware = (
 
   return res.status(500).json({
     success: false,
-    message: 'Internal Server Error',
+    message: "Internal Server Error",
     statusCode: 500,
   });
 };

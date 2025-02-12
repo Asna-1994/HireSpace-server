@@ -1,4 +1,3 @@
-
 import { Request, Response, NextFunction } from "express";
 import { FileUploadUseCase } from "../../../Application/usecases/shared/fileUploadUsecase";
 import { STATUS_CODES } from "../../../shared/constants/statusCodes";
@@ -10,27 +9,38 @@ import { CustomError } from "../../../shared/error/customError";
 export class UploadDocumentController {
   constructor(
     private fileUploadUseCase: FileUploadUseCase,
-    private companyRepository: CompanyRepository
+    private companyRepository: CompanyRepository,
   ) {}
 
-  async uploadDocument(req: Request, res: Response, next : NextFunction): Promise<void> {
+  async uploadDocument(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       if (!req.file) {
         res
           .status(STATUS_CODES.BAD_REQUEST)
-          .json({ success: false, message: MESSAGES.NO_UPLOAD});
+          .json({ success: false, message: MESSAGES.NO_UPLOAD });
         return;
       }
-      const  {documentNumber} = req.body
-      if(!documentNumber){
-        throw new CustomError(STATUS_CODES.BAD_REQUEST,"Missing document number field")
+      const { documentNumber } = req.body;
+      if (!documentNumber) {
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Missing document number field",
+        );
       }
 
-      const allowedMimeTypes = ["application/pdf","application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+      const allowedMimeTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ];
       if (!allowedMimeTypes.includes(req.file.mimetype)) {
-        res.status(STATUS_CODES.BAD_REQUEST).json({ success: false,
-          message: MESSAGES.INVALID_FILE_TYPE,
-        });
+        res
+          .status(STATUS_CODES.BAD_REQUEST)
+          .json({ success: false, message: MESSAGES.INVALID_FILE_TYPE });
         return;
       }
 
@@ -42,31 +52,34 @@ export class UploadDocumentController {
         return;
       }
 
-    const updatedCompany = await handleFileUploadAndUpdate(
+      const updatedCompany = await handleFileUploadAndUpdate(
         this.fileUploadUseCase,
         this.companyRepository,
         req.file.path,
         companyId,
         "verification_document",
         "verificationDocument",
-        documentNumber
+        documentNumber,
       );
 
       res.status(STATUS_CODES.SUCCESS).json({
-        success : true,
+        success: true,
         message: MESSAGES.SUCCESSFULLY_UPLOADED,
-       data : {
-       company :  updatedCompany
-       }
+        data: {
+          company: updatedCompany,
+        },
       });
     } catch (error) {
       console.error("Error in uploadProfilePicture:", error);
-     next(error)
+      next(error);
     }
   }
 
-
-  async deleteDocument(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async deleteDocument(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const companyId = req.params.companyId;
       if (!companyId) {
@@ -77,7 +90,7 @@ export class UploadDocumentController {
       }
 
       const company = await this.companyRepository.findById(companyId);
-      if (!company || !company.verificationDocument ) {
+      if (!company || !company.verificationDocument) {
         res
           .status(STATUS_CODES.NOT_FOUND)
           .json({ success: false, message: MESSAGES.COMPANY_NOT_FOUND });
@@ -88,17 +101,15 @@ export class UploadDocumentController {
       if (!publicId) {
         res
           .status(STATUS_CODES.BAD_REQUEST)
-          .json({ success: false, message: "No logo to delete"});
+          .json({ success: false, message: "No logo to delete" });
         return;
       }
 
- 
       await this.fileUploadUseCase.deleteFile(publicId);
 
-   
       company.verificationDocument = {
-        url : '',
-        publicId : ''
+        url: "",
+        publicId: "",
       };
       const updatedCompany = await this.companyRepository.update(company);
 

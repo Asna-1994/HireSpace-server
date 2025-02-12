@@ -15,13 +15,13 @@ export class BlockOrUnblockCompanyController {
       if (!companyId || !action) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Missing required query parameters:companyId, or action"
+          "Missing required query parameters:companyId, or action",
         );
       }
 
       const updatedUSer = await this.blockOrUnblockUseCase.execute(
         companyId as string,
-        action as string
+        action as string,
       );
 
       res.status(STATUS_CODES.SUCCESS).json({
@@ -41,13 +41,12 @@ export class BlockOrUnblockCompanyController {
       if (!companyId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Missing required query parameters:companyId"
+          "Missing required query parameters:companyId",
         );
       }
 
-      const updatedCompany = await this.blockOrUnblockUseCase.verifyCompany(
-        companyId
-      );
+      const updatedCompany =
+        await this.blockOrUnblockUseCase.verifyCompany(companyId);
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: "Company verified",

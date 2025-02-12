@@ -1,32 +1,33 @@
 import mongoose from "mongoose";
-import { SalaryRange, Location} from "../../Infrastructure/models/JobPostModel";
+import {
+  SalaryRange,
+  Location,
+} from "../../Infrastructure/models/JobPostModel";
 import { CustomError } from "../../shared/error/customError";
 import { STATUS_CODES } from "../../shared/constants/statusCodes";
 
-
-
 export class JobPost {
-  companyId: mongoose.Types.ObjectId; 
-  jobTitle: string; 
-    _id: string | mongoose.Types.ObjectId;
+  companyId: mongoose.Types.ObjectId;
+  jobTitle: string;
+  _id: string | mongoose.Types.ObjectId;
   description: string;
-  skillsRequired: string[]; 
-  responsibilities: string[]; 
-  salaryRange: SalaryRange; 
+  skillsRequired: string[];
+  responsibilities: string[];
+  salaryRange: SalaryRange;
   location: Location;
-  jobType: string; 
-  workMode : string;
-  isDeleted : boolean;
-  experienceLevel: string; 
-  educationRequired: string; 
-  postedBy: mongoose.Types.ObjectId; 
-  applicationDeadline: Date; 
+  jobType: string;
+  workMode: string;
+  isDeleted: boolean;
+  experienceLevel: string;
+  educationRequired: string;
+  postedBy: mongoose.Types.ObjectId;
+  applicationDeadline: Date;
   employmentStartDate: Date;
-  numberOfVacancies: number; 
-  benefits: string[]; 
+  numberOfVacancies: number;
+  benefits: string[];
   createdAt: Date;
   updatedAt: Date;
-  status: string; 
+  status: string;
 
   constructor(data: Partial<JobPost>) {
     this.companyId = new mongoose.Types.ObjectId(data.companyId);
@@ -65,14 +66,19 @@ export class JobPost {
       throw new Error("Job title and description are required.");
     }
     if (this.salaryRange.min > this.salaryRange.max) {
-      throw new Error("Invalid salary range: minimum cannot be greater than maximum.");
+      throw new Error(
+        "Invalid salary range: minimum cannot be greater than maximum.",
+      );
     }
   }
 }
 
 export const normalizeJobPost = (data: any): JobPost => {
   if (!data || !data.companyId || !data.postedBy) {
-    throw new CustomError(STATUS_CODES.BAD_REQUEST,"Invalid data: missing required fields.");
+    throw new CustomError(
+      STATUS_CODES.BAD_REQUEST,
+      "Invalid data: missing required fields.",
+    );
   }
 
   return {

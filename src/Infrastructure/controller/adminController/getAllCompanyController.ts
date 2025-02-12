@@ -3,7 +3,6 @@ import { STATUS_CODES } from "../../../shared/constants/statusCodes";
 import { MESSAGES } from "../../../shared/constants/messages";
 import { GetAllCompaniesUseCase } from "../../../Application/usecases/admin/getAllCompaniesUsecase";
 
-
 export class GetAllCompanyController {
   constructor(private getAllCompaniesUseCase: GetAllCompaniesUseCase) {}
 
@@ -13,17 +12,21 @@ export class GetAllCompanyController {
       const limit = parseInt(req.query.limit as string) || 8;
       const searchTerm = (req.query.search as string) || "";
 
-      const {companies, total} = await this.getAllCompaniesUseCase.execute({ page, limit, searchTerm });
+      const { companies, total } = await this.getAllCompaniesUseCase.execute({
+        page,
+        limit,
+        searchTerm,
+      });
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: MESSAGES.DATA_FETCHED,
-        data:{
-            companies,
-            total,
-            currentPage : page,
-          totalPages : Math.ceil(total/limit)
-        }
+        data: {
+          companies,
+          total,
+          currentPage: page,
+          totalPages: Math.ceil(total / limit),
+        },
       });
     } catch (error) {
       next(error);

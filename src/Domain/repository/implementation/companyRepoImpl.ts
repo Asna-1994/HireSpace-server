@@ -13,7 +13,7 @@ export class CompanyRepositoryImpl implements CompanyRepository {
 
   async countTotal(dateQuery: any = {}): Promise<number> {
     return await CompanyModel.countDocuments(dateQuery);
-}
+  }
 
   async findByEmail(email: string): Promise<Company | null> {
     const company = await CompanyModel.findOne({ email }).lean().exec();
@@ -29,7 +29,7 @@ export class CompanyRepositoryImpl implements CompanyRepository {
     const updatedCompany = await CompanyModel.findByIdAndUpdate(
       company._id,
       company,
-      { new: true }
+      { new: true },
     )
       .lean()
       .exec();
@@ -44,7 +44,8 @@ export class CompanyRepositoryImpl implements CompanyRepository {
   }
   async findCompaniesWithPagination(
     offset: number,
-    limit: number,filter : object
+    limit: number,
+    filter: object,
   ): Promise<Company[]> {
     const companies = await CompanyModel.find(filter)
       .skip(offset)
@@ -54,30 +55,40 @@ export class CompanyRepositoryImpl implements CompanyRepository {
     return companies.map(normalizeCompany);
   }
 
-  async findCompanies(offset: number, limit: number, filter: object): Promise<{ companies: Company[], total: number }> {
+  async findCompanies(
+    offset: number,
+    limit: number,
+    filter: object,
+  ): Promise<{ companies: Company[]; total: number }> {
     const [companies, total] = await Promise.all([
       CompanyModel.find(filter).skip(offset).limit(limit).lean().exec(),
       CompanyModel.countDocuments(filter),
     ]);
-  
+
     return { companies: companies.map(normalizeCompany), total };
-
   }
-
 
   async findById(companyId: string): Promise<Company | null> {
     const company = await CompanyModel.findById(companyId).lean().exec();
-    return normalizeCompany(company )
+    return normalizeCompany(company);
   }
 
-    async blockOrUnblock(companyId : string, action : string) : Promise<Company>{
-        let blockedCompany
-        if(action==='block'){
-            blockedCompany = await CompanyModel.findByIdAndUpdate(companyId , {isBlocked : true}, {new : true})
-        }else{
-             blockedCompany = await CompanyModel.findByIdAndUpdate(companyId , {isBlocked : false}, {new : true})
-        }
-     
-      return normalizeCompany(blockedCompany);
+  async blockOrUnblock(companyId: string, action: string): Promise<Company> {
+    let blockedCompany;
+    if (action === "block") {
+      blockedCompany = await CompanyModel.findByIdAndUpdate(
+        companyId,
+        { isBlocked: true },
+        { new: true },
+      );
+    } else {
+      blockedCompany = await CompanyModel.findByIdAndUpdate(
+        companyId,
+        { isBlocked: false },
+        { new: true },
+      );
     }
+
+    return normalizeCompany(blockedCompany);
+  }
 }

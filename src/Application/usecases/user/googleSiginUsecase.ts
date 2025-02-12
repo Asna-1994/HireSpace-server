@@ -1,21 +1,23 @@
-import { JobSeekerProfileRepository } from './../../../Domain/repository/repo/JobSeekerProfileRepo';
-import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { JobSeekerProfileRepository } from "./../../../Domain/repository/repo/JobSeekerProfileRepo";
+import { UserRepository } from "../../../Domain/repository/repo/userRepository";
 import { CustomError } from "../../../shared/error/customError";
 import { generateToken } from "../../../shared/utils/tokenUtils";
 import { OAuth2Client } from "google-auth-library";
-import { STATUS_CODES } from '../../../shared/constants/statusCodes';
-import { User } from '../../../Domain/entities/User';
-import mongoose from 'mongoose';
+import { STATUS_CODES } from "../../../shared/constants/statusCodes";
+import { User } from "../../../Domain/entities/User";
+import mongoose from "mongoose";
 
 export class GoogleSignInUseCase {
   private oauthClient: OAuth2Client;
 
-  constructor(private userRepository: UserRepository,private jobSeekerProfileRepository:JobSeekerProfileRepository) {
+  constructor(
+    private userRepository: UserRepository,
+    private jobSeekerProfileRepository: JobSeekerProfileRepository,
+  ) {
     this.oauthClient = new OAuth2Client(process.env.oauth_client_id);
   }
 
   async execute(credential: string) {
-    
     const ticket = await this.oauthClient.verifyIdToken({
       idToken: credential,
       audience: process.env.oauth_client_id,
@@ -26,19 +28,20 @@ export class GoogleSignInUseCase {
       throw new CustomError(STATUS_CODES.BAD_REQUEST, "Invalid Google Token");
     }
 
-
     const { sub: googleId, name, email, picture: profilePicture } = payload;
 
     if (!email) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST, "Email is required for Google authentication");
+      throw new CustomError(
+        STATUS_CODES.BAD_REQUEST,
+        "Email is required for Google authentication",
+      );
     }
 
-    const userName: string = name ?? email.split('@')[0]
+    const userName: string = name ?? email.split("@")[0];
 
     let existingUser = await this.userRepository.findByGoogleId(googleId);
 
     if (!existingUser) {
-  
       existingUser = await this.userRepository.findByEmail(email);
 
       if (existingUser) {
@@ -46,33 +49,34 @@ export class GoogleSignInUseCase {
         // existingUser.profilePhoto?.url = profilePicture;
         await this.userRepository.update(existingUser);
       } else {
-      
         const newUserData: Partial<User> = {
-            googleId,
-            userName : userName,
-            email,
-            // profilePhoto: profilePicture,
-            entity: 'user',
-            isBlocked: false,
-            isPremium: false,
-            isVerified: false,
-            isDeleted: false,
-            isFresher: true,
-            isSpam: false,
-          };
-  
-        existingUser = await this.userRepository.create(newUserData)
+          googleId,
+          userName: userName,
+          email,
+          // profilePhoto: profilePicture,
+          entity: "user",
+          isBlocked: false,
+          isPremium: false,
+          isVerified: false,
+          isDeleted: false,
+          isFresher: true,
+          isSpam: false,
+        };
+
+        existingUser = await this.userRepository.create(newUserData);
       }
     }
 
-
-    const token = generateToken({ id: existingUser._id, email: existingUser.email,role : existingUser.userRole, entity : 'user' });
-   
+    const token = generateToken({
+      id: existingUser._id,
+      email: existingUser.email,
+      role: existingUser.userRole,
+      entity: "user",
+    });
 
     return {
       user: existingUser,
       token,
- 
     };
   }
 }

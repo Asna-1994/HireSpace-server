@@ -1,6 +1,4 @@
-
-import { Document, Schema, model } from 'mongoose';
-
+import { Document, Schema, model } from "mongoose";
 
 export interface TempUserDocument extends Document {
   userName: string;
@@ -16,7 +14,6 @@ export interface TempUserDocument extends Document {
   validateEmail: () => void;
 }
 
-
 const tempUserSchema = new Schema<TempUserDocument>({
   userName: { type: String, required: true },
   email: { type: String, required: true },
@@ -29,5 +26,7 @@ const tempUserSchema = new Schema<TempUserDocument>({
   otpExpiry: { type: Date, required: true },
 });
 
-
-export const TempUserModel = model<TempUserDocument>('TempUserModel', tempUserSchema);
+export const TempUserModel = model<TempUserDocument>(
+  "TempUserModel",
+  tempUserSchema,
+);

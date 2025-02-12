@@ -7,29 +7,38 @@ import { STATUS_CODES } from "../../shared/constants/statusCodes";
 
 dotenv.config();
 
-
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-
 const upload = multer({
-  dest: "uploads/", 
+  dest: "uploads/",
   limits: {
-    fileSize: 5 * 1024 * 1024, 
+    fileSize: 5 * 1024 * 1024,
   },
   fileFilter: (req, file, cb) => {
-    const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg","application/pdf","application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+    const allowedMimeTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
     if (allowedMimeTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new CustomError(STATUS_CODES.BAD_REQUEST,"Invalid file type. Only JPEG, PNG are allowed."));
+      cb(
+        new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Invalid file type. Only JPEG, PNG are allowed.",
+        ),
+      );
     }
   },
 });
-
 
 const uploadToCloudinary = async (filePath: string, folder: string) => {
   const result = await cloudinary.uploader.upload(filePath, {

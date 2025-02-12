@@ -1,4 +1,4 @@
-import { JobSeekerProfile } from './../../../Domain/entities/JobSeekerProfile';
+import { JobSeekerProfile } from "./../../../Domain/entities/JobSeekerProfile";
 
 import { Request, Response, NextFunction } from "express";
 import { STATUS_CODES } from "../../../shared/constants/statusCodes";
@@ -12,80 +12,90 @@ export class ManageJobSeekerProfileController {
   async addEducation(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
-        const {
-          educationName,
-          yearOfPassing,
-          markOrGrade,
-          schoolOrCollege,
-          subject,
-          universityOrBoard,
-        } = req.body;
-        const { userId } = req.params;
-        const  educationId  = typeof req.query.educationId === 'string' ? req.query.educationId : undefined;
-    
-        if (
-          !educationName ||
-          !yearOfPassing ||
-          !markOrGrade ||
-          !schoolOrCollege ||
-          !subject ||
-          !universityOrBoard
-        ) {
-          throw new CustomError(STATUS_CODES.BAD_REQUEST, "Please fill complete details");
-        }
-        if (!userId) {
-          throw new CustomError(STATUS_CODES.BAD_REQUEST, "No User Id provided");
-        }
-    
-        const userData = {
-          educationName ,
-          yearOfPassing,
-          markOrGrade,
-          schoolOrCollege,
-          subject,
-          universityOrBoard,
-          userId,
-          educationId,
-        };
-    
-        const updatedProfile = await this.manageProfileUseCase.addEducation(userData);
-    
-  
-        res.status(STATUS_CODES.SUCCESS).json({
-          success: true,
-          message: "Education added successfully",
-          data: {
-           updatedProfile, 
-          },
-        });
-      } catch (error) {
-        console.error("Error in adding education:", error);
-        next(error);
+      const {
+        educationName,
+        yearOfPassing,
+        markOrGrade,
+        schoolOrCollege,
+        subject,
+        universityOrBoard,
+      } = req.body;
+      const { userId } = req.params;
+      const educationId =
+        typeof req.query.educationId === "string"
+          ? req.query.educationId
+          : undefined;
+
+      if (
+        !educationName ||
+        !yearOfPassing ||
+        !markOrGrade ||
+        !schoolOrCollege ||
+        !subject ||
+        !universityOrBoard
+      ) {
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Please fill complete details",
+        );
       }
+      if (!userId) {
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, "No User Id provided");
+      }
+
+      const userData = {
+        educationName,
+        yearOfPassing,
+        markOrGrade,
+        schoolOrCollege,
+        subject,
+        universityOrBoard,
+        userId,
+        educationId,
+      };
+
+      const updatedProfile =
+        await this.manageProfileUseCase.addEducation(userData);
+
+      res.status(STATUS_CODES.SUCCESS).json({
+        success: true,
+        message: "Education added successfully",
+        data: {
+          updatedProfile,
+        },
+      });
+    } catch (error) {
+      console.error("Error in adding education:", error);
+      next(error);
+    }
   }
 
-
-
-
   //get all education
-  async getAllEducation( req: Request, res: Response, next: NextFunction ): Promise<void> {
+  async getAllEducation(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-   
       const { userId } = req.params;
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "Please Provide the userId" );
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Please Provide the userId",
+        );
       }
 
-      const allEducation = await this.manageProfileUseCase.getAllEducation(userId);
-      console.log(allEducation)
+      const allEducation =
+        await this.manageProfileUseCase.getAllEducation(userId);
+      console.log(allEducation);
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: MESSAGES.DATA_FETCHED,
         data: {
-          educations : allEducation,
+          educations: allEducation,
         },
       });
     } catch (error) {
@@ -95,21 +105,31 @@ export class ManageJobSeekerProfileController {
   }
 
   //delete education
-  async deleteEducation( req: Request, res: Response, next: NextFunction ): Promise<void> {
+  async deleteEducation(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-   
-      const { userId , educationId} = req.params;
+      const { userId, educationId } = req.params;
       if (!userId || !educationId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "Please Provide the required parameters" );
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Please Provide the required parameters",
+        );
       }
 
-      const updatedEducation = await this.manageProfileUseCase.deleteEducationById(userId, educationId);
-   
+      const updatedEducation =
+        await this.manageProfileUseCase.deleteEducationById(
+          userId,
+          educationId,
+        );
+
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: MESSAGES.UPDATED,
         data: {
-          educations : updatedEducation,
+          educations: updatedEducation,
         },
       });
     } catch (error) {
@@ -118,76 +138,96 @@ export class ManageJobSeekerProfileController {
     }
   }
 
-
-
   //add work experience
 
-  async addWorkExperience(req: Request, res: Response,next: NextFunction): Promise<void> {
+  async addWorkExperience(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-        const {company,designation,yearCompleted,dateFrom,dateTo,skillsGained} = req.body;
-        const { userId } = req.params;
-        const  experienceId  = typeof req.query.experienceId === 'string' ? req.query.experienceId : undefined;
-    
-        if (
-          !company||
-          !yearCompleted ||
-          !dateFrom||
-          !dateTo ||
-          !designation ||
-          !skillsGained
-        ) {
-          throw new CustomError(STATUS_CODES.BAD_REQUEST, "Please fill complete details");
-        }
-        if (!userId) {
-          throw new CustomError(STATUS_CODES.BAD_REQUEST, "No User Id provided");
-        }
-    
-        const experienceData = {
-          company ,
-          designation,
-          yearCompleted,
-         dateFrom,
-          dateTo,
-          skillsGained,
-          experienceId,
-          userId,
-     
-        };
-    
-        const updatedExperience = await this.manageProfileUseCase.addExperience(experienceData);
-    
-      
-        res.status(STATUS_CODES.SUCCESS).json({
-          success: true,
-          message: "Experience added successfully",
-          data: {
-            experience: updatedExperience, // Use the correct field name here
-          },
-        });
-      } catch (error) {
-        console.error("Error in adding experience:", error);
-        next(error);
-      }
-  }
+      const {
+        company,
+        designation,
+        yearCompleted,
+        dateFrom,
+        dateTo,
+        skillsGained,
+      } = req.body;
+      const { userId } = req.params;
+      const experienceId =
+        typeof req.query.experienceId === "string"
+          ? req.query.experienceId
+          : undefined;
 
+      if (
+        !company ||
+        !yearCompleted ||
+        !dateFrom ||
+        !dateTo ||
+        !designation ||
+        !skillsGained
+      ) {
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Please fill complete details",
+        );
+      }
+      if (!userId) {
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, "No User Id provided");
+      }
+
+      const experienceData = {
+        company,
+        designation,
+        yearCompleted,
+        dateFrom,
+        dateTo,
+        skillsGained,
+        experienceId,
+        userId,
+      };
+
+      const updatedExperience =
+        await this.manageProfileUseCase.addExperience(experienceData);
+
+      res.status(STATUS_CODES.SUCCESS).json({
+        success: true,
+        message: "Experience added successfully",
+        data: {
+          experience: updatedExperience, // Use the correct field name here
+        },
+      });
+    } catch (error) {
+      console.error("Error in adding experience:", error);
+      next(error);
+    }
+  }
 
   //get all experience
 
-  async getAllExperience( req: Request, res: Response, next: NextFunction ): Promise<void> {
+  async getAllExperience(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-   
       const { userId } = req.params;
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "Please Provide the userId" );
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Please Provide the userId",
+        );
       }
 
-      const allExperience = await this.manageProfileUseCase.getAllExperience(userId);
+      const allExperience =
+        await this.manageProfileUseCase.getAllExperience(userId);
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: MESSAGES.DATA_FETCHED,
         data: {
-            experience : allExperience,
+          experience: allExperience,
         },
       });
     } catch (error) {
@@ -197,21 +237,31 @@ export class ManageJobSeekerProfileController {
   }
 
   //delete experience
-  async deleteExperience( req: Request, res: Response, next: NextFunction ): Promise<void> {
+  async deleteExperience(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-   
-      const { userId , experienceId} = req.params;
+      const { userId, experienceId } = req.params;
       if (!userId || !experienceId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "Please Provide the required parameters" );
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Please Provide the required parameters",
+        );
       }
 
-      const updatedExperience = await this.manageProfileUseCase.deleteExperienceById(userId, experienceId);
-   
+      const updatedExperience =
+        await this.manageProfileUseCase.deleteExperienceById(
+          userId,
+          experienceId,
+        );
+
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: MESSAGES.UPDATED,
         data: {
-          experience : updatedExperience,
+          experience: updatedExperience,
         },
       });
     } catch (error) {
@@ -220,52 +270,57 @@ export class ManageJobSeekerProfileController {
     }
   }
 
-
-
   //add skills
-  
-  async addSkills(req: Request, res: Response,next: NextFunction): Promise<void> {
+
+  async addSkills(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-        const {hardSkills, softSkills, technicalSkills} = req.body;
-        const { userId } = req.params;
-      
-        if (!userId) {
-          throw new CustomError(STATUS_CODES.BAD_REQUEST, "No User Id provided");
-        }
-    
-        const skillsData = {
+      const { hardSkills, softSkills, technicalSkills } = req.body;
+      const { userId } = req.params;
+
+      if (!userId) {
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, "No User Id provided");
+      }
+
+      const skillsData = {
         hardSkills,
         softSkills,
-        technicalSkills ,
-        userId
-        }
-         
-    
-    
-        const updatedSkills = await this.manageProfileUseCase.addOrUpdateSkills(skillsData);
-    
-      
-        res.status(STATUS_CODES.SUCCESS).json({
-          success: true,
-          message: "Experience added successfully",
-          data: {
-            skills : updatedSkills 
-          },
-        });
-      } catch (error) {
-        console.error("Error in adding experience:", error);
-        next(error);
-      }
+        technicalSkills,
+        userId,
+      };
+
+      const updatedSkills =
+        await this.manageProfileUseCase.addOrUpdateSkills(skillsData);
+
+      res.status(STATUS_CODES.SUCCESS).json({
+        success: true,
+        message: "Experience added successfully",
+        data: {
+          skills: updatedSkills,
+        },
+      });
+    } catch (error) {
+      console.error("Error in adding experience:", error);
+      next(error);
+    }
   }
 
-
-//get all skills
-  async getAllSkills( req: Request, res: Response, next: NextFunction ): Promise<void> {
+  //get all skills
+  async getAllSkills(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-   
       const { userId } = req.params;
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "Please Provide the userId" );
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Please Provide the userId",
+        );
       }
 
       const allSkills = await this.manageProfileUseCase.getAllSkills(userId);
@@ -274,7 +329,7 @@ export class ManageJobSeekerProfileController {
         success: true,
         message: MESSAGES.DATA_FETCHED,
         data: {
-            skills : allSkills,
+          skills: allSkills,
         },
       });
     } catch (error) {
@@ -283,25 +338,32 @@ export class ManageJobSeekerProfileController {
     }
   }
 
-
-
   //delete skill
-  async deleteSkill( req: Request, res: Response, next: NextFunction ): Promise<void> {
+  async deleteSkill(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-   
       const { userId } = req.params;
-      const {skillName } = req.body;
+      const { skillName } = req.body;
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "Please Provide the required parameters" );
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Please Provide the required parameters",
+        );
       }
 
-      const updatedSkills = await this.manageProfileUseCase.deleteSkill(userId, skillName);
-   
+      const updatedSkills = await this.manageProfileUseCase.deleteSkill(
+        userId,
+        skillName,
+      );
+
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: MESSAGES.UPDATED,
         data: {
-          skills : updatedSkills,
+          skills: updatedSkills,
         },
       });
     } catch (error) {
@@ -310,68 +372,85 @@ export class ManageJobSeekerProfileController {
     }
   }
 
-
   //add certificates
-  async addOrEditCertificates(req: Request, res: Response,next: NextFunction): Promise<void> {
+  async addOrEditCertificates(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-        const {certificateTitle,description,issuer,issuedDate, certificateUrl} = req.body;
-        const { userId } = req.params;
-        const  certificateId  = typeof req.query.certificateId === 'string' ? req.query.certificateId : undefined;
-    
-        if (
-          !certificateTitle||
-          !issuer ||
-          !issuedDate
-        ) {
-          throw new CustomError(STATUS_CODES.BAD_REQUEST, "Please fill Necessary fields");
-        }
-        if (!userId) {
-          throw new CustomError(STATUS_CODES.BAD_REQUEST, "No User Id provided");
-        }
-    
-        const certificateData = {
-          certificateTitle ,
-          description,
-          issuer,
-         issuedDate,
-         certificateUrl,
-          certificateId,
-          userId,
-     
-        };
-    
-        const updatedCertificate = await this.manageProfileUseCase.addCertificates(certificateData);
-    
-      
-        res.status(STATUS_CODES.SUCCESS).json({
-          success: true,
-          message: "certificate added successfully",
-          data: {
-            certificate: updatedCertificate, 
-          },
-        });
-      } catch (error) {
-        console.error("Error in adding certificate:", error);
-        next(error);
+      const {
+        certificateTitle,
+        description,
+        issuer,
+        issuedDate,
+        certificateUrl,
+      } = req.body;
+      const { userId } = req.params;
+      const certificateId =
+        typeof req.query.certificateId === "string"
+          ? req.query.certificateId
+          : undefined;
+
+      if (!certificateTitle || !issuer || !issuedDate) {
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Please fill Necessary fields",
+        );
       }
+      if (!userId) {
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, "No User Id provided");
+      }
+
+      const certificateData = {
+        certificateTitle,
+        description,
+        issuer,
+        issuedDate,
+        certificateUrl,
+        certificateId,
+        userId,
+      };
+
+      const updatedCertificate =
+        await this.manageProfileUseCase.addCertificates(certificateData);
+
+      res.status(STATUS_CODES.SUCCESS).json({
+        success: true,
+        message: "certificate added successfully",
+        data: {
+          certificate: updatedCertificate,
+        },
+      });
+    } catch (error) {
+      console.error("Error in adding certificate:", error);
+      next(error);
+    }
   }
 
   //get certificates
-  async getAllCertificates( req: Request, res: Response, next: NextFunction ): Promise<void> {
+  async getAllCertificates(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-   
       const { userId } = req.params;
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "Please Provide the userId" );
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Please Provide the userId",
+        );
       }
 
-      const allCertificates = await this.manageProfileUseCase.getAllCertificates(userId);
+      const allCertificates =
+        await this.manageProfileUseCase.getAllCertificates(userId);
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: MESSAGES.DATA_FETCHED,
         data: {
-            certificates : allCertificates,
+          certificates: allCertificates,
         },
       });
     } catch (error) {
@@ -381,21 +460,31 @@ export class ManageJobSeekerProfileController {
   }
 
   //delete certificates
-  async deleteCertificate( req: Request, res: Response, next: NextFunction ): Promise<void> {
+  async deleteCertificate(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-   
-      const { userId , certificateId} = req.params;
+      const { userId, certificateId } = req.params;
       if (!userId || !certificateId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "Please Provide the required parameters" );
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Please Provide the required parameters",
+        );
       }
 
-      const updatedCertificate = await this.manageProfileUseCase.deleteCertificateById(userId, certificateId);
-   
+      const updatedCertificate =
+        await this.manageProfileUseCase.deleteCertificateById(
+          userId,
+          certificateId,
+        );
+
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: MESSAGES.UPDATED,
         data: {
-          certificates : updatedCertificate,
+          certificates: updatedCertificate,
         },
       });
     } catch (error) {
@@ -405,21 +494,28 @@ export class ManageJobSeekerProfileController {
   }
 
   //get job seeker profile
-  async getJobSeekerProfile( req: Request, res: Response, next: NextFunction ): Promise<void> {
+  async getJobSeekerProfile(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-   
       const { userId } = req.params;
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "Please Provide the userId" );
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Please Provide the userId",
+        );
       }
 
-      const JobSeekerProfile = await this.manageProfileUseCase.getJobSeekerProfile(userId);
+      const JobSeekerProfile =
+        await this.manageProfileUseCase.getJobSeekerProfile(userId);
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: MESSAGES.DATA_FETCHED,
         data: {
-            profile : JobSeekerProfile,
+          profile: JobSeekerProfile,
         },
       });
     } catch (error) {
@@ -428,43 +524,54 @@ export class ManageJobSeekerProfileController {
     }
   }
 
-
-  async saveJob(req: Request, res: Response, next: NextFunction ): Promise<void> {
-
-    try{
-const { userId , jobPostId} = req.params
-if(!userId ||!jobPostId){
-  throw new CustomError(STATUS_CODES.BAD_REQUEST,"Provide necessary parameters")
-}
-const updatedUser = await this.manageProfileUseCase.saveJobs(userId, jobPostId)
-res.status(STATUS_CODES.SUCCESS).json({
-  success: true,
-  message: MESSAGES.UPDATED,
-user : updatedUser
-});
-    }
-    catch(err){
-
-    }
+  async saveJob(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { userId, jobPostId } = req.params;
+      if (!userId || !jobPostId) {
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Provide necessary parameters",
+        );
+      }
+      const updatedUser = await this.manageProfileUseCase.saveJobs(
+        userId,
+        jobPostId,
+      );
+      res.status(STATUS_CODES.SUCCESS).json({
+        success: true,
+        message: MESSAGES.UPDATED,
+        user: updatedUser,
+      });
+    } catch (err) {}
   }
 
-  async addTagline(req: Request, res: Response, next: NextFunction ): Promise<void> {
-
-    try{
-const { userId } = req.params
-const {tagline} = req.body
-if(!userId ){
-  throw new CustomError(STATUS_CODES.BAD_REQUEST,"Provide necessary parameters")
-}
-const updatedUser = await this.manageProfileUseCase.addTagLine(userId, tagline)
-res.status(STATUS_CODES.SUCCESS).json({
-  success: true,
-  message: MESSAGES.UPDATED,
-user : updatedUser
-});
-    }
-    catch(err){
-
-    }
+  async addTagline(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { userId } = req.params;
+      const { tagline } = req.body;
+      if (!userId) {
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Provide necessary parameters",
+        );
+      }
+      const updatedUser = await this.manageProfileUseCase.addTagLine(
+        userId,
+        tagline,
+      );
+      res.status(STATUS_CODES.SUCCESS).json({
+        success: true,
+        message: MESSAGES.UPDATED,
+        user: updatedUser,
+      });
+    } catch (err) {}
   }
 }

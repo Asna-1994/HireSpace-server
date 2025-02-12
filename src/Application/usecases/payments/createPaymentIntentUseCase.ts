@@ -8,7 +8,7 @@ import { STATUS_CODES } from "../../../shared/constants/statusCodes";
 export class CreatePaymentIntentUseCase {
   constructor(
     private paymentRepo: PaymentRepository,
-    private subscriptionRepo: SubscriptionRepo
+    private subscriptionRepo: SubscriptionRepo,
   ) {}
 
   async execute({
@@ -22,34 +22,32 @@ export class CreatePaymentIntentUseCase {
     planPrice: number;
     planDuration: number;
   }) {
-
-
-
-
     const filter = {
-        userId,
-        isActive: true,
-        endDate: { $gte: new Date() }, 
-      };
+      userId,
+      isActive: true,
+      endDate: { $gte: new Date() },
+    };
 
-      console.log(filter)
+    console.log(filter);
     const activeSubscription = await this.subscriptionRepo.findOne(filter);
 
     if (activeSubscription) {
-      throw new CustomError(STATUS_CODES.CONFLICT,"User already has an active subscription for this plan");
+      throw new CustomError(
+        STATUS_CODES.CONFLICT,
+        "User already has an active subscription for this plan",
+      );
     }
 
-
     const paymentIntent = await stripe.paymentIntents.create({
-        amount: planPrice * 100, 
-        currency: "inr",
-    //   amount: planPrice * 100, 
-    //   currency: "usd",
-    metadata: {
-    userId: userId,
-    planId: planId,
-    planDuration: planDuration,
-  },
+      amount: planPrice * 100,
+      currency: "inr",
+      //   amount: planPrice * 100,
+      //   currency: "usd",
+      metadata: {
+        userId: userId,
+        planId: planId,
+        planDuration: planDuration,
+      },
     });
 
     // console.log('created intent',paymentIntent)
@@ -64,11 +62,11 @@ export class CreatePaymentIntentUseCase {
     });
 
     await stripe.paymentIntents.update(paymentIntent.id, {
-        metadata: {
-          ...paymentIntent.metadata,
-          paymentId: paymentDocument._id.toString(),
-        },
-      });
+      metadata: {
+        ...paymentIntent.metadata,
+        paymentId: paymentDocument._id.toString(),
+      },
+    });
 
     return {
       paymentIntent,

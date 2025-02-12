@@ -3,7 +3,6 @@ import { STATUS_CODES } from "../../../shared/constants/statusCodes";
 import { MESSAGES } from "../../../shared/constants/messages";
 import { ResendOtpUseCase } from "../../../Application/usecases/company/resendOtpUsecase";
 
-
 export class ResendOtpController {
   constructor(private resendOtpUseCase: ResendOtpUseCase) {}
 

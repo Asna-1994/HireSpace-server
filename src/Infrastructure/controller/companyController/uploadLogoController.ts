@@ -9,13 +9,17 @@ import { handleFileUploadAndUpdate } from "../../../Application/service/company/
 export class UploadLogoController {
   constructor(
     private fileUploadUseCase: FileUploadUseCase,
-    private companyRepository: CompanyRepository
+    private companyRepository: CompanyRepository,
   ) {}
 
-  async uploadLogo(req: Request, res: Response, next : NextFunction): Promise<void> {
+  async uploadLogo(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-        console.log(req.file)
-        console.log(req.body)
+      console.log(req.file);
+      console.log(req.body);
       if (!req.file) {
         res
           .status(STATUS_CODES.BAD_REQUEST)
@@ -24,9 +28,9 @@ export class UploadLogoController {
       }
       const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
       if (!allowedMimeTypes.includes(req.file.mimetype)) {
-        res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, 
-             message: MESSAGES.INVALID_FILE_TYPE_PDF,
-        });
+        res
+          .status(STATUS_CODES.BAD_REQUEST)
+          .json({ success: false, message: MESSAGES.INVALID_FILE_TYPE_PDF });
         return;
       }
 
@@ -44,23 +48,25 @@ export class UploadLogoController {
         req.file.path,
         companyId,
         "company_logo",
-        "companyLogo"
+        "companyLogo",
       );
       res.status(STATUS_CODES.SUCCESS).json({
-        success : true,
+        success: true,
         message: MESSAGES.SUCCESSFULLY_UPLOADED,
-        data : {company :updatedCompany}
+        data: { company: updatedCompany },
       });
     } catch (error) {
       console.error("Error in uploadProfilePicture:", error);
-     next(error)
+      next(error);
     }
   }
 
-
-
   //deleting logo
-  async deleteLogo(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async deleteLogo(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const companyId = req.params.companyId;
       if (!companyId) {
@@ -82,17 +88,15 @@ export class UploadLogoController {
       if (!publicId) {
         res
           .status(STATUS_CODES.BAD_REQUEST)
-          .json({ success: false, message: "No logo to delete"});
+          .json({ success: false, message: "No logo to delete" });
         return;
       }
 
-
       await this.fileUploadUseCase.deleteFile(publicId);
 
-     
       company.companyLogo = {
-        url : '',
-        publicId : ''
+        url: "",
+        publicId: "",
       };
       const updatedCompany = await this.companyRepository.update(company);
 

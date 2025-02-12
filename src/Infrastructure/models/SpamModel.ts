@@ -12,7 +12,11 @@ export interface SpamDocument extends Document {
 
 const spamSchema: Schema = new Schema<SpamDocument>(
   {
-    reportedByUser: { type: Schema.Types.ObjectId, ref: "UserModel", required: true },
+    reportedByUser: {
+      type: Schema.Types.ObjectId,
+      ref: "UserModel",
+      required: true,
+    },
     companyId: {
       type: Schema.Types.ObjectId,
       ref: "CompanyModel",
@@ -22,7 +26,7 @@ const spamSchema: Schema = new Schema<SpamDocument>(
     description: { type: String, required: true },
     isDeleted: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const SpamModel = model<SpamDocument>("SpamModel", spamSchema);

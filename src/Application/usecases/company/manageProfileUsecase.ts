@@ -1,4 +1,3 @@
-
 import { CustomError } from "../../../shared/error/customError";
 import { CompanyRepository } from "../../../Domain/repository/repo/companyRepository";
 import { STATUS_CODES } from "../../../shared/constants/statusCodes";
@@ -8,10 +7,8 @@ import mongoose from "mongoose";
 
 export class ManageProfileUseCase {
   constructor(
-
-    private CompanyRepository : CompanyRepository,
-    private companyProfileRepository : CompanyProfileRepository,
-  
+    private CompanyRepository: CompanyRepository,
+    private companyProfileRepository: CompanyProfileRepository,
   ) {}
 
   async editBasicDetails(companyData: {
@@ -21,87 +18,95 @@ export class ManageProfileUseCase {
     address?: string;
     industry?: string;
     companyId: string;
-    
   }) {
-    console.log(companyData)
-    const {  companyName, establishedDate,  phone, address, industry, companyId} = companyData;
+    console.log(companyData);
+    const {
+      companyName,
+      establishedDate,
+      phone,
+      address,
+      industry,
+      companyId,
+    } = companyData;
 
-    const existingCompany = await this.CompanyRepository.findById(companyId)
+    const existingCompany = await this.CompanyRepository.findById(companyId);
     if (!existingCompany) {
       throw new CustomError(STATUS_CODES.NOT_FOUND, MESSAGES.COMPANY_NOT_FOUND);
     }
-    if(companyName){
-        existingCompany.companyName = companyName
+    if (companyName) {
+      existingCompany.companyName = companyName;
     }
-    if(phone){
-        existingCompany.phone = phone
+    if (phone) {
+      existingCompany.phone = phone;
     }
-    if(industry){
-        existingCompany.industry = industry
+    if (industry) {
+      existingCompany.industry = industry;
     }
-    if(establishedDate){
-        existingCompany.establishedDate = establishedDate
+    if (establishedDate) {
+      existingCompany.establishedDate = establishedDate;
     }
-    if(address){
-
-        existingCompany.address = address
+    if (address) {
+      existingCompany.address = address;
     }
-    const updatedCompany = await this.CompanyRepository.update(existingCompany)
+    const updatedCompany = await this.CompanyRepository.update(existingCompany);
     // console.log('updated company',updatedCompany)
-    return updatedCompany
-     
+    return updatedCompany;
   }
-
 
   //get company profile
-  async getCompanyProfile( companyId: string) {
-
-    const companyProfile  = await this.companyProfileRepository.findOne(companyId)
-    return companyProfile   
+  async getCompanyProfile(companyId: string) {
+    const companyProfile =
+      await this.companyProfileRepository.findOne(companyId);
+    return companyProfile;
   }
 
+  // edit company Profile
+  async editCompanyProfile(companyData: {
+    founder?: string;
+    ceo?: string;
+    description?: string;
+    aboutUs?: string;
+    socialLinks: Record<string, string>; // Social links are now an object.
+    mission?: string;
+    vision?: string;
+    companyId: string;
+    website: string;
+  }) {
+    console.log(companyData);
+    const {
+      founder,
+      ceo,
+      description,
+      aboutUs,
+      socialLinks,
+      mission,
+      vision,
+      companyId,
+      website,
+    } = companyData;
 
- // edit company Profile
- async editCompanyProfile(companyData: {
-  founder?: string;
-  ceo?: string;
-  description?: string;
-  aboutUs?: string;
-  socialLinks: Record<string, string>;  // Social links are now an object.
-  mission?: string;
-  vision?: string;
-  companyId: string;
-  website : string;
-}) {
-  console.log(companyData)
-  const { founder, ceo, description, aboutUs, socialLinks, mission, vision, companyId, website } = companyData;
+    let companyProfile = await this.companyProfileRepository.findOne(companyId);
 
+    const companyIdObject = new mongoose.Types.ObjectId(companyId);
 
-  let companyProfile = await this.companyProfileRepository.findOne(companyId);
-
-  const companyIdObject = new mongoose.Types.ObjectId(companyId)
-
-  if (!companyProfile) {
-      companyProfile = await this.companyProfileRepository.create({...companyData, companyId : companyIdObject})
-  } else {
-
-       companyProfile.founder = founder;
+    if (!companyProfile) {
+      companyProfile = await this.companyProfileRepository.create({
+        ...companyData,
+        companyId: companyIdObject,
+      });
+    } else {
+      companyProfile.founder = founder;
       companyProfile.ceo = ceo;
-       companyProfile.description = description;
-   companyProfile.socialLinks = socialLinks;
-     companyProfile.mission = mission;
-    companyProfile.vision = vision;
-    companyProfile.website = website
+      companyProfile.description = description;
+      companyProfile.socialLinks = socialLinks;
+      companyProfile.mission = mission;
+      companyProfile.vision = vision;
+      companyProfile.website = website;
+    }
+
+    const savedCompanyProfile =
+      await this.companyProfileRepository.update(companyProfile);
+
+    return savedCompanyProfile;
   }
-
-
-  const savedCompanyProfile = await this.companyProfileRepository.update(companyProfile); 
-
-  return savedCompanyProfile;
-}
-
-  
-
-
-
 }

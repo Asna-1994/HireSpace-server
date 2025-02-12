@@ -28,7 +28,7 @@ export class FileUploadUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "File upload failed"
+        "File upload failed",
       );
     }
   }
@@ -43,7 +43,7 @@ export class FileUploadUseCase {
         console.error("Error deleting file from Cloudinary:", result);
         throw new CustomError(
           STATUS_CODES.INTERNAL_SERVER_ERROR,
-          "Failed to delete file"
+          "Failed to delete file",
         );
       }
     } catch (error) {
@@ -53,7 +53,7 @@ export class FileUploadUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error deleting file from Cloudinary"
+        "Error deleting file from Cloudinary",
       );
     }
   }

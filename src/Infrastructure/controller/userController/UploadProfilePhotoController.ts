@@ -11,16 +11,16 @@ export class UploadProfilePhotoController {
   constructor(
     private fileUploadUseCase: FileUploadUseCase,
     private userRepository: UserRepository,
-    private jobSeekerProfileRepository: JobSeekerProfileRepository
+    private jobSeekerProfileRepository: JobSeekerProfileRepository,
   ) {}
 
   async uploadProfilePicture(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
-        console.log(req.file)
+      console.log(req.file);
       if (!req.file) {
         res
           .status(STATUS_CODES.BAD_REQUEST)
@@ -28,7 +28,6 @@ export class UploadProfilePhotoController {
         return;
       }
 
-      
       const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
       if (!allowedMimeTypes.includes(req.file.mimetype)) {
         res
@@ -53,11 +52,10 @@ export class UploadProfilePhotoController {
         return;
       }
 
-
       const folder = "profile_pictures";
       const result = await this.fileUploadUseCase.execute(
         req.file.path,
-        folder
+        folder,
       );
 
       user.profilePhoto = {
@@ -68,7 +66,7 @@ export class UploadProfilePhotoController {
       const updatedUser = await this.userRepository.update(user);
 
       res.status(STATUS_CODES.SUCCESS).json({
-        success : true,
+        success: true,
         message: MESSAGES.SUCCESSFULLY_UPLOADED,
         data: { user: updatedUser },
       });
@@ -79,7 +77,11 @@ export class UploadProfilePhotoController {
   }
 
   //upload resume
-  async uploadResume( req: Request,res: Response, next: NextFunction ): Promise<void> {
+  async uploadResume(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       if (!req.file) {
         res.status(STATUS_CODES.BAD_REQUEST).json({
@@ -89,7 +91,11 @@ export class UploadProfilePhotoController {
         return;
       }
 
-      const allowedMimeTypes = ["application/pdf","application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+      const allowedMimeTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ];
       if (!allowedMimeTypes.includes(req.file.mimetype)) {
         res.status(STATUS_CODES.BAD_REQUEST).json({
           success: false,
@@ -110,9 +116,11 @@ export class UploadProfilePhotoController {
       const folder = "resumes";
       const result = await this.fileUploadUseCase.execute(
         req.file.path,
-        folder
+        folder,
       );
-      let jobSeekerProfile = await this.jobSeekerProfileRepository.findOne({userId : userId});
+      let jobSeekerProfile = await this.jobSeekerProfileRepository.findOne({
+        userId: userId,
+      });
       if (!jobSeekerProfile) {
         const newProfile = {
           userId: new mongoose.Types.ObjectId(userId),
@@ -121,14 +129,16 @@ export class UploadProfilePhotoController {
             publicId: result.publicId,
           },
         };
-        jobSeekerProfile = await this.jobSeekerProfileRepository.create(newProfile);
+        jobSeekerProfile =
+          await this.jobSeekerProfileRepository.create(newProfile);
       } else {
         jobSeekerProfile.resume = {
           url: result.url,
           publicId: result.publicId,
         };
 
-        jobSeekerProfile = await this.jobSeekerProfileRepository.update(jobSeekerProfile);
+        jobSeekerProfile =
+          await this.jobSeekerProfileRepository.update(jobSeekerProfile);
       }
 
       res.status(STATUS_CODES.SUCCESS).json({
@@ -145,7 +155,7 @@ export class UploadProfilePhotoController {
   async getResume(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { userId } = req.params;
@@ -154,11 +164,13 @@ export class UploadProfilePhotoController {
         throw new CustomError(STATUS_CODES.BAD_REQUEST, "No used Id");
       }
 
-      let jobSeekerProfile = await this.jobSeekerProfileRepository.findOne({userId : userId});
+      const jobSeekerProfile = await this.jobSeekerProfileRepository.findOne({
+        userId: userId,
+      });
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user"
+          "No profile found for this user",
         );
       }
 
@@ -176,7 +188,7 @@ export class UploadProfilePhotoController {
   async deleteResume(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { userId } = req.params;
@@ -185,15 +197,20 @@ export class UploadProfilePhotoController {
         throw new CustomError(STATUS_CODES.BAD_REQUEST, "No used Id");
       }
 
-      let jobSeekerProfile = await this.jobSeekerProfileRepository.findOne({userId : userId});
+      const jobSeekerProfile = await this.jobSeekerProfileRepository.findOne({
+        userId: userId,
+      });
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user"
+          "No profile found for this user",
         );
       }
       if (!jobSeekerProfile.resume) {
-        throw new CustomError( STATUS_CODES.NOT_FOUND,"No resume found for this user");
+        throw new CustomError(
+          STATUS_CODES.NOT_FOUND,
+          "No resume found for this user",
+        );
       }
       const { publicId } = jobSeekerProfile.resume;
       if (!publicId) {
@@ -206,7 +223,8 @@ export class UploadProfilePhotoController {
       await this.fileUploadUseCase.deleteFile(publicId);
       jobSeekerProfile.resume = { url: "", publicId: "" };
 
-      const updatedProfile = await this.jobSeekerProfileRepository.update(jobSeekerProfile);
+      const updatedProfile =
+        await this.jobSeekerProfileRepository.update(jobSeekerProfile);
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
@@ -219,85 +237,85 @@ export class UploadProfilePhotoController {
     }
   }
 
-  
-//delete profile image
+  //delete profile image
 
-async deleteProfilePicture(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  try {
-    const { userId } = req.params;
-
-    if (!userId) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST, "No user ID provided");
-    }
-
-    let user = await this.userRepository.findById(userId);
-    if (!user) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, MESSAGES.USER_NOT_FOUND);
-    }
-
-    if (!user.profilePhoto || !user.profilePhoto.publicId) {
-      res.status(STATUS_CODES.BAD_REQUEST).json({
-        success: false,
-        message: "No profile picture to delete",
-      });
-      return;
-    }
-
-    const { publicId } = user.profilePhoto;
-    await this.fileUploadUseCase.deleteFile(publicId); 
-
-    user.profilePhoto = { url: "", publicId: "" };
-
-    const updatedUser = await this.userRepository.update(user);
-
-    res.status(STATUS_CODES.SUCCESS).json({
-      success: true,
-      message: "Profile picture deleted successfully",
-      data:{ user : updatedUser},
-    });
-  } catch (error) {
-    console.error("Error in deleting profile picture:", error);
-    next(error); 
-  }
-}
-
-
-
-//edit basic details
-
-  async editBasicDetails(req: Request,res: Response,next: NextFunction): Promise<void> {
+  async deleteProfilePicture(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { userId } = req.params;
-      const {userName ,  phone , address, dateOfBirth} = req.body
+
+      if (!userId) {
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, "No user ID provided");
+      }
+
+      const user = await this.userRepository.findById(userId);
+      if (!user) {
+        throw new CustomError(STATUS_CODES.NOT_FOUND, MESSAGES.USER_NOT_FOUND);
+      }
+
+      if (!user.profilePhoto || !user.profilePhoto.publicId) {
+        res.status(STATUS_CODES.BAD_REQUEST).json({
+          success: false,
+          message: "No profile picture to delete",
+        });
+        return;
+      }
+
+      const { publicId } = user.profilePhoto;
+      await this.fileUploadUseCase.deleteFile(publicId);
+
+      user.profilePhoto = { url: "", publicId: "" };
+
+      const updatedUser = await this.userRepository.update(user);
+
+      res.status(STATUS_CODES.SUCCESS).json({
+        success: true,
+        message: "Profile picture deleted successfully",
+        data: { user: updatedUser },
+      });
+    } catch (error) {
+      console.error("Error in deleting profile picture:", error);
+      next(error);
+    }
+  }
+
+  //edit basic details
+
+  async editBasicDetails(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { userId } = req.params;
+      const { userName, phone, address, dateOfBirth } = req.body;
       if (!userId) {
         throw new CustomError(STATUS_CODES.BAD_REQUEST, "No used Id");
       }
 
-      let user = await this.userRepository.findById(userId)
+      const user = await this.userRepository.findById(userId);
       if (!user) {
-        throw new CustomError(STATUS_CODES.NOT_FOUND,MESSAGES.NOT_FOUND);
+        throw new CustomError(STATUS_CODES.NOT_FOUND, MESSAGES.NOT_FOUND);
       }
- 
-user.userName = userName;
-user.address = address;
-user.phone = phone;
-user.dateOfBirth = dateOfBirth;
+
+      user.userName = userName;
+      user.address = address;
+      user.phone = phone;
+      user.dateOfBirth = dateOfBirth;
 
       const updatedUser = await this.userRepository.update(user);
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: "Successfully Updated",
-        data: { user : updatedUser },
+        data: { user: updatedUser },
       });
     } catch (error) {
       console.error("Error in updating user", error);
       next(error);
     }
-}
-
+  }
 }

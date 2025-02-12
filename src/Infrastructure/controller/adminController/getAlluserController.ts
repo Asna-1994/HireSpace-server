@@ -3,7 +3,6 @@ import { STATUS_CODES } from "../../../shared/constants/statusCodes";
 import { MESSAGES } from "../../../shared/constants/messages";
 import { GetAllUsersUseCase } from "../../../Application/usecases/admin/getAllUsersUsecase";
 
-
 export class GetAllUsersController {
   constructor(private getAllUsersUseCase: GetAllUsersUseCase) {}
 
@@ -14,30 +13,32 @@ export class GetAllUsersController {
       const searchTerm = (req.query.search as string) || "";
       const userRole = (req.query.role as string) || "";
 
-      const{ users, total }= await this.getAllUsersUseCase.execute({ page, limit, searchTerm, userRole });
+      const { users, total } = await this.getAllUsersUseCase.execute({
+        page,
+        limit,
+        searchTerm,
+        userRole,
+      });
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: MESSAGES.DATA_FETCHED,
-        data:{
+        data: {
           users,
           total,
           currentPage: page,
           totalPages: Math.ceil(total / limit),
-        }
+        },
       });
     } catch (error) {
       next(error);
     }
   }
 
-
-
   async getPremiumUsers(req: Request, res: Response, next: NextFunction) {
     try {
       const { page = 1, limit = 10, search = "", userRole = "" } = req.query;
 
-    
       const { users, total } = await this.getAllUsersUseCase.getPremiumUsers({
         page: Number(page),
         limit: Number(limit),
@@ -56,37 +57,33 @@ export class GetAllUsersController {
         },
       });
     } catch (error) {
-      next(error); 
+      next(error);
     }
   }
-
-
-
 
   async getSpamReports(req: Request, res: Response, next: NextFunction) {
     try {
       const { page = 1, limit = 10, search = "" } = req.query;
 
-    
-      const {  spams, total, totalPages, currentPage, } = await this.getAllUsersUseCase.getAllSpamReports({
-        page: Number(page),
-        limit: Number(limit),
-        searchTerm: String(search),
-      });
+      const { spams, total, totalPages, currentPage } =
+        await this.getAllUsersUseCase.getAllSpamReports({
+          page: Number(page),
+          limit: Number(limit),
+          searchTerm: String(search),
+        });
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: MESSAGES.DATA_FETCHED,
         data: {
-          rawSpams :spams,
+          rawSpams: spams,
           total,
           totalPages,
           currentPage,
         },
       });
     } catch (error) {
-      next(error); 
+      next(error);
     }
   }
-
 }

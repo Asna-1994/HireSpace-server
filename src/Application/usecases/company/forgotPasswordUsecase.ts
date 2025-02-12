@@ -11,21 +11,24 @@ export class ForgotPasswordUseCase {
 
     const existingCompany = await this.companyRepository.findByEmail(email);
     if (!existingCompany) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, "No company registered with this email, Please signup first"
+      throw new CustomError(
+        STATUS_CODES.NOT_FOUND,
+        "No company registered with this email, Please signup first",
       );
     }
 
     if (existingCompany.isBlocked) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "This company has been blocked. Please contact Admin"
+        "This company has been blocked. Please contact Admin",
       );
     }
 
     const hashedNewPassword = await hashPassword(newPassword);
 
     existingCompany.password = hashedNewPassword;
-    const updatedExistingCompany = await this.companyRepository.update(existingCompany);
+    const updatedExistingCompany =
+      await this.companyRepository.update(existingCompany);
 
     return updatedExistingCompany;
   }

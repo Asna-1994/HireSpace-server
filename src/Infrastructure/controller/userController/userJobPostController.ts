@@ -1,63 +1,69 @@
-
-import { Request, Response, NextFunction } from 'express';
-import { STATUS_CODES } from '../../../shared/constants/statusCodes';
-import { MESSAGES } from '../../../shared/constants/messages';
-import { CustomError } from '../../../shared/error/customError';
-import { UserJobPostUseCase } from '../../../Application/usecases/user/userJobPostUseCase';
-
-
+import { Request, Response, NextFunction } from "express";
+import { STATUS_CODES } from "../../../shared/constants/statusCodes";
+import { MESSAGES } from "../../../shared/constants/messages";
+import { CustomError } from "../../../shared/error/customError";
+import { UserJobPostUseCase } from "../../../Application/usecases/user/userJobPostUseCase";
 
 export class UserJobPostController {
-  constructor(private userJobPostUseCase:UserJobPostUseCase) {}
-
-  
+  constructor(private userJobPostUseCase: UserJobPostUseCase) {}
 
   async getAllJobPostForUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { page = 1, limit = 10,  search = '', tagLine = '' } = req.query;
+      const { page = 1, limit = 10, search = "", tagLine = "" } = req.query;
       const allJobPost = await this.userJobPostUseCase.getAllJobPostForUser({
-        page: Number(page) || 1, 
+        page: Number(page) || 1,
         limit: Number(limit) || 10,
         searchTerm: search as string,
         tagLine: tagLine as string,
-      })
+      });
       res.status(STATUS_CODES.SUCCESS).json({
-        success : true,
+        success: true,
         message: MESSAGES.DATA_FETCHED,
-      allJobPost,
+        allJobPost,
       });
     } catch (error) {
       next(error);
-      console.log(error)
+      console.log(error);
     }
   }
 
   async getSavedJobPosts(req: Request, res: Response, next: NextFunction) {
     try {
-const {userId} = req.params
-const {  search = ''} = req.query;
+      const { userId } = req.params;
+      const { search = "" } = req.query;
 
-const page = Number( req.query.page) || 1
-const limit = Number(req.query.limit) || 10
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
 
-      const allSavedJobs = await this.userJobPostUseCase.getSavedJobPost(userId,  page, limit)
+      const allSavedJobs = await this.userJobPostUseCase.getSavedJobPost(
+        userId,
+        page,
+        limit,
+      );
       res.status(STATUS_CODES.SUCCESS).json({
-        success : true,
+        success: true,
         message: MESSAGES.DATA_FETCHED,
-        allSavedJobs
+        allSavedJobs,
       });
     } catch (error) {
       next(error);
-      console.log(error)
+      console.log(error);
     }
   }
 
-  async reportSpam(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async reportSpam(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { userId, companyId, reason, description } = req.body;
 
       if (!userId || !companyId || !reason || !description) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST , "Missing required fields")
+        throw new CustomError(
+          STATUS_CODES.BAD_REQUEST,
+          "Missing required fields",
+        );
       }
 
       const spamReport = await this.userJobPostUseCase.reportSpam({
@@ -76,5 +82,4 @@ const limit = Number(req.query.limit) || 10
       next(error);
     }
   }
-
 }

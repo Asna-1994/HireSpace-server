@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface CompanyProfileDocument extends Document {
   companyId: mongoose.Types.ObjectId;
@@ -23,7 +23,7 @@ const companyProfileSchema = new Schema<CompanyProfileDocument>(
   {
     companyId: {
       type: Schema.Types.ObjectId,
-      ref: 'CompanyModel',
+      ref: "CompanyModel",
       required: true,
       index: true,
     },
@@ -41,7 +41,10 @@ const companyProfileSchema = new Schema<CompanyProfileDocument>(
       linkedin: { type: String },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export const CompanyProfileModel = mongoose.model<CompanyProfileDocument>('CompanyProfileModel', companyProfileSchema);
+export const CompanyProfileModel = mongoose.model<CompanyProfileDocument>(
+  "CompanyProfileModel",
+  companyProfileSchema,
+);

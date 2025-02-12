@@ -20,19 +20,17 @@ export class TempUserRepositoryImpl implements TempUserRepository {
     await TempUserModel.deleteMany({ email }).exec();
   }
 
-  
-  
-    async updateOne(user: TempUser): Promise<TempUser> {
-      const updatedUser = await TempUserModel.findOneAndUpdate(
-        { email: user.email },
-        user, 
-        { new: true } 
-      ).lean().exec();
-      if (!updatedUser) {
-        throw new CustomError(STATUS_CODES.NOT_FOUND,'User not found');
-      }
-      return updatedUser 
+  async updateOne(user: TempUser): Promise<TempUser> {
+    const updatedUser = await TempUserModel.findOneAndUpdate(
+      { email: user.email },
+      user,
+      { new: true },
+    )
+      .lean()
+      .exec();
+    if (!updatedUser) {
+      throw new CustomError(STATUS_CODES.NOT_FOUND, "User not found");
     }
-  
-
+    return updatedUser;
+  }
 }
