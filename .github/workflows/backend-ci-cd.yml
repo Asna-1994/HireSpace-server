@@ -1,22 +1,14 @@
-
 name: Backend CI/CD
 
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'backend/**'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'backend/**'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
 
     steps:
     - uses: actions/checkout@v3
@@ -26,13 +18,31 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: './backend/package-lock.json'
+        cache-dependency-path: 'package-lock.json'
 
     - name: Install dependencies
-      run: npm ci
+      run: |
+        npm install
+        echo "Node version: $(node -v)"
+        echo "NPM version: $(npm -v)"
 
     - name: Build TypeScript
-      run: npm run build
+      run: |
+        npm run build
+        echo "Build completed"
+        ls -la dist/
+
+    - name: Verify GCP credentials
+      run: |
+        echo "Checking if GCP credentials are set..."
+        if [ -z "${{ secrets.GCP_PROJECT_ID }}" ]; then
+          echo "GCP_PROJECT_ID is not set"
+          exit 1
+        fi
+        if [ -z "${{ secrets.GCP_SA_KEY }}" ]; then
+          echo "GCP_SA_KEY is not set"
+          exit 1
+        fi
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
@@ -40,8 +50,14 @@ jobs:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
 
+    - name: Verify GCP Configuration
+      run: |
+        gcloud config list
+        gcloud projects list
+
     - name: Deploy to App Engine
       run: |
+        echo "Starting deployment to App Engine..."
         gcloud app deploy app.yaml --quiet
       env:
         GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
