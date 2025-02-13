@@ -40,6 +40,7 @@ export class ChatRepositoryImpl implements ChatRepository {
     return messages.map(normalizeMessage);
   }
 
+  //get chats
   async getRecentChats(userId: string): Promise<any[]> {
     console.log(`Fetching recent chats for user ${userId}`);
 
