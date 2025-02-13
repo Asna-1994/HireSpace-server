@@ -27,7 +27,7 @@ export class Plans {
 }
 
 export const normalizePlans = (data: any): Plans => {
-  //   console.log('Received plan data:', data);
+
   if (!data || !data._id) {
     throw new CustomError(
       STATUS_CODES.BAD_REQUEST,
