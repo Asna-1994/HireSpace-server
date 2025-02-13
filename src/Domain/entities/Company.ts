@@ -35,7 +35,7 @@ export class Company {
   members: Member[];
   createdAt: Date;
   updatedAt: Date;
-  // admins :  mongoose.Types.ObjectId[];
+  
 
   constructor(data: Partial<Company>) {
     this._id = data._id || new mongoose.Types.ObjectId().toString();
