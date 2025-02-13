@@ -68,7 +68,7 @@ export const initializeSocket = (server: http.Server): Server => {
       console.log(`User ${userId} connected with socket ID ${socket.id}`);
     });
 
-    // When a user joins a room
+
     socket.on('join_room', ({ roomId, userId }) => {
       if (!roomId || !userId) {
         console.error('Missing roomId or userId in join_room event');
