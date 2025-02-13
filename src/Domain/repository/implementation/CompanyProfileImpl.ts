@@ -15,7 +15,7 @@ export class CompanyProfileImpl implements CompanyProfileRepository {
 
     return companyProfile ? normalizeCompanyProfile(companyProfile) : null;
   }
-
+//update profile
   async update(companyProfile: CompanyProfile): Promise<CompanyProfile> {
     const updatedProfile = await CompanyProfileModel.findByIdAndUpdate(
       companyProfile._id,
