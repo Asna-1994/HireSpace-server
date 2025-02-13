@@ -17,32 +17,40 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18'
+        # Remove cache-dependency-path to let it find package-lock.json automatically
         cache: 'npm'
-        cache-dependency-path: 'package-lock.json'
+
+    - name: List directory contents
+      run: |
+        echo "Current directory contents:"
+        ls -la
+        echo "Checking for package-lock.json:"
+        find . -name "package-lock.json"
 
     - name: Install dependencies
       run: |
-        npm install
+        if [ ! -f "package.json" ]; then
+          echo "Error: package.json not found!"
+          exit 1
+        fi
+        echo "Installing dependencies..."
+        npm ci || npm install
         echo "Node version: $(node -v)"
         echo "NPM version: $(npm -v)"
+        echo "Installed packages:"
+        npm list --depth=0
 
     - name: Build TypeScript
       run: |
+        echo "Checking for typescript config..."
+        if [ ! -f "tsconfig.json" ]; then
+          echo "Error: tsconfig.json not found!"
+          exit 1
+        fi
+        echo "Building typescript..."
         npm run build
         echo "Build completed"
         ls -la dist/
-
-    - name: Verify GCP credentials
-      run: |
-        echo "Checking if GCP credentials are set..."
-        if [ -z "${{ secrets.GCP_PROJECT_ID }}" ]; then
-          echo "GCP_PROJECT_ID is not set"
-          exit 1
-        fi
-        if [ -z "${{ secrets.GCP_SA_KEY }}" ]; then
-          echo "GCP_SA_KEY is not set"
-          exit 1
-        fi
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
@@ -57,6 +65,10 @@ jobs:
 
     - name: Deploy to App Engine
       run: |
+        if [ ! -f "app.yaml" ]; then
+          echo "Error: app.yaml not found!"
+          exit 1
+        fi
         echo "Starting deployment to App Engine..."
         gcloud app deploy app.yaml --quiet
       env:
