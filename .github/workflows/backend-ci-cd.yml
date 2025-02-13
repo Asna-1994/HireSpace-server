@@ -123,6 +123,11 @@ jobs:
       with:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
+    
+    - name: Decode and Write GCP Key
+      run: |
+       echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > gcp-key.json
+
 
     - name: Authenticate with Google Cloud
       run: |
