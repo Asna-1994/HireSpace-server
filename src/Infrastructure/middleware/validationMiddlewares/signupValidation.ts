@@ -1,123 +1,123 @@
-import { check, validationResult } from "express-validator";
-import { NextFunction, Request, Response } from "express";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
+import { check, validationResult } from 'express-validator';
+import { NextFunction, Request, Response } from 'express';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 
 export const userSignupValidationRules = [
-  check("userName")
+  check('userName')
     .isString()
-    .withMessage("Username must be a string")
+    .withMessage('Username must be a string')
     .isLength({ min: 3 })
-    .withMessage("Username must be at least 3 characters long"),
+    .withMessage('Username must be at least 3 characters long'),
 
-  check("email").isEmail().withMessage("Please provide a valid email address"),
+  check('email').isEmail().withMessage('Please provide a valid email address'),
 
-  check("phone")
+  check('phone')
     .isLength({ min: 10, max: 10 })
-    .withMessage("Phone number must be 10 digits")
+    .withMessage('Phone number must be 10 digits')
     .matches(/^(?!0)(?!([0-9])\1{9})\d{10}$/)
     .withMessage(
-      "Phone number must not start with 0 or consist of all the same digit",
+      'Phone number must not start with 0 or consist of all the same digit'
     ),
 
-  check("password")
+  check('password')
     .isLength({ min: 8 })
-    .withMessage("Password must be at least 8 characters")
+    .withMessage('Password must be at least 8 characters')
     .matches(/[a-z]/)
-    .withMessage("Password must contain at least one lowercase letter")
+    .withMessage('Password must contain at least one lowercase letter')
     .matches(/[A-Z]/)
-    .withMessage("Password must contain at least one uppercase letter")
+    .withMessage('Password must contain at least one uppercase letter')
     .matches(/[0-9]/)
-    .withMessage("Password must contain at least one number")
+    .withMessage('Password must contain at least one number')
     .matches(/[\W_]/)
-    .withMessage("Password must contain at least one special character"),
+    .withMessage('Password must contain at least one special character'),
 
-  check("dateOfBirth")
+  check('dateOfBirth')
     .isISO8601()
-    .withMessage("Date of Birth must be a valid ISO8601 date"),
+    .withMessage('Date of Birth must be a valid ISO8601 date'),
 
-  check("address").isString().withMessage("Address must be string"),
+  check('address').isString().withMessage('Address must be string'),
 ];
 
 export const companySignupValidationRules = [
-  check("companyName")
+  check('companyName')
     .isString()
-    .withMessage("Company name must be a string")
+    .withMessage('Company name must be a string')
     .isLength({ min: 3 })
-    .withMessage("Company name must be at least 3 characters long"),
+    .withMessage('Company name must be at least 3 characters long'),
 
-  check("email").isEmail().withMessage("Please provide a valid email address"),
-  check("companyAdminEmail")
+  check('email').isEmail().withMessage('Please provide a valid email address'),
+  check('companyAdminEmail')
     .isEmail()
-    .withMessage("Please provide a valid email for admin"),
+    .withMessage('Please provide a valid email for admin'),
 
-  check("phone")
+  check('phone')
     .isLength({ min: 10, max: 10 })
-    .withMessage("Phone number must be 10 digits")
+    .withMessage('Phone number must be 10 digits')
     .matches(/^(?!0)(?!([0-9])\1{9})\d{10}$/)
     .withMessage(
-      "Phone number must not start with 0 or consist of all the same digit",
+      'Phone number must not start with 0 or consist of all the same digit'
     ),
 
-  check("password")
+  check('password')
     .isLength({ min: 8 })
-    .withMessage("Password must be at least 8 characters")
+    .withMessage('Password must be at least 8 characters')
     .matches(/[a-z]/)
-    .withMessage("Password must contain at least one lowercase letter")
+    .withMessage('Password must contain at least one lowercase letter')
     .matches(/[A-Z]/)
-    .withMessage("Password must contain at least one uppercase letter")
+    .withMessage('Password must contain at least one uppercase letter')
     .matches(/[0-9]/)
-    .withMessage("Password must contain at least one number")
+    .withMessage('Password must contain at least one number')
     .matches(/[\W_]/)
-    .withMessage("Password must contain at least one special character"),
+    .withMessage('Password must contain at least one special character'),
 
-  check("establishedDate")
+  check('establishedDate')
     .isISO8601()
-    .withMessage("Date of Birth must be a valid ISO8601 date"),
+    .withMessage('Date of Birth must be a valid ISO8601 date'),
 
-  check("address").isString().withMessage("Address must be string"),
-  check("industry")
+  check('address').isString().withMessage('Address must be string'),
+  check('industry')
     .isString()
-    .withMessage("Industry must be a string")
+    .withMessage('Industry must be a string')
     .isLength({ min: 2 })
-    .withMessage("Industry must be at least 2 characters long"),
+    .withMessage('Industry must be at least 2 characters long'),
 ];
 
 export const companyEditValidationRules = [
-  check("companyName")
+  check('companyName')
     .optional()
     .isString()
-    .withMessage("Company name must be a string")
+    .withMessage('Company name must be a string')
     .isLength({ min: 3 })
-    .withMessage("Company name must be at least 3 characters long"),
+    .withMessage('Company name must be at least 3 characters long'),
 
-  check("phone")
+  check('phone')
     .optional()
     .isLength({ min: 10, max: 10 })
-    .withMessage("Phone number must be 10 digits")
+    .withMessage('Phone number must be 10 digits')
     .matches(/^(?!0)(?!([0-9])\1{9})\d{10}$/)
     .withMessage(
-      "Phone number must not start with 0 or consist of all the same digit",
+      'Phone number must not start with 0 or consist of all the same digit'
     ),
 
-  check("establishedDate")
+  check('establishedDate')
     .optional()
     .isISO8601()
-    .withMessage("Date of Birth must be a valid ISO8601 date"),
+    .withMessage('Date of Birth must be a valid ISO8601 date'),
 
-  check("address").optional().isString().withMessage("Address must be string"),
+  check('address').optional().isString().withMessage('Address must be string'),
 
-  check("industry")
+  check('industry')
     .optional()
     .isString()
-    .withMessage("Industry must be a string")
+    .withMessage('Industry must be a string')
     .isLength({ min: 2 })
-    .withMessage("Industry must be at least 2 characters long"),
+    .withMessage('Industry must be at least 2 characters long'),
 ];
 
 export const validateRequest = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): void => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

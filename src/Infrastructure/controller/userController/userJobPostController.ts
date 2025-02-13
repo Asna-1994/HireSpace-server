@@ -1,15 +1,15 @@
-import { Request, Response, NextFunction } from "express";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { CustomError } from "../../../shared/error/customError";
-import { UserJobPostUseCase } from "../../../Application/usecases/user/userJobPostUseCase";
+import { Request, Response, NextFunction } from 'express';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { CustomError } from '../../../shared/error/customError';
+import { UserJobPostUseCase } from '../../../Application/usecases/user/userJobPostUseCase';
 
 export class UserJobPostController {
   constructor(private userJobPostUseCase: UserJobPostUseCase) {}
 
   async getAllJobPostForUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { page = 1, limit = 10, search = "", tagLine = "" } = req.query;
+      const { page = 1, limit = 10, search = '', tagLine = '' } = req.query;
       const allJobPost = await this.userJobPostUseCase.getAllJobPostForUser({
         page: Number(page) || 1,
         limit: Number(limit) || 10,
@@ -30,7 +30,7 @@ export class UserJobPostController {
   async getSavedJobPosts(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
-      const { search = "" } = req.query;
+      const { search = '' } = req.query;
 
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 10;
@@ -38,7 +38,7 @@ export class UserJobPostController {
       const allSavedJobs = await this.userJobPostUseCase.getSavedJobPost(
         userId,
         page,
-        limit,
+        limit
       );
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
@@ -54,7 +54,7 @@ export class UserJobPostController {
   async reportSpam(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId, companyId, reason, description } = req.body;
@@ -62,7 +62,7 @@ export class UserJobPostController {
       if (!userId || !companyId || !reason || !description) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Missing required fields",
+          'Missing required fields'
         );
       }
 
@@ -75,7 +75,7 @@ export class UserJobPostController {
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
-        message: "Reported Spam",
+        message: 'Reported Spam',
         spamReport,
       });
     } catch (error) {

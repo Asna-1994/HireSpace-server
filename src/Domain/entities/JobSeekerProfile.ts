@@ -1,7 +1,7 @@
-import mongoose, { ObjectId } from "mongoose";
-import { CustomError } from "../../shared/error/customError";
-import { STATUS_CODES } from "../../shared/constants/statusCodes";
-import { imageObject } from "./Company";
+import mongoose, { ObjectId } from 'mongoose';
+import { CustomError } from '../../shared/error/customError';
+import { STATUS_CODES } from '../../shared/constants/statusCodes';
+import { imageObject } from './Company';
 
 export interface EducationObject {
   educationName: string;
@@ -74,7 +74,7 @@ export const normalizeJobSeekerProfile = (data: any): JobSeekerProfile => {
   if (!data || !data._id) {
     throw new CustomError(
       STATUS_CODES.BAD_REQUEST,
-      "Invalid data or missing _id",
+      'Invalid data or missing _id'
     );
   }
 

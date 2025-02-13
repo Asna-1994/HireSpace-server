@@ -1,16 +1,16 @@
-import { JobApplicationRepository } from "./../../../Domain/repository/repo/jobApplicationRepository";
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { JobSeekerProfileRepository } from "../../../Domain/repository/repo/JobSeekerProfileRepo";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import mongoose from "mongoose";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { JobApplicationRepositoryImpl } from "../../../Domain/repository/implementation/jobApplicationRepoImpl";
+import { JobApplicationRepository } from './../../../Domain/repository/repo/jobApplicationRepository';
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { JobSeekerProfileRepository } from '../../../Domain/repository/repo/JobSeekerProfileRepo';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import mongoose from 'mongoose';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { JobApplicationRepositoryImpl } from '../../../Domain/repository/implementation/jobApplicationRepoImpl';
 
 export class ManageProfileUseCase {
   constructor(
     private jobSeekerProfileRepository: JobSeekerProfileRepository,
-    private userRepository: UserRepository,
+    private userRepository: UserRepository
   ) {}
 
   async addEducation(userData: {
@@ -47,22 +47,22 @@ export class ManageProfileUseCase {
 
     if (educationId) {
       updatedProfile = await this.jobSeekerProfileRepository.findOneAndUpdate(
-        { userId, "education._id": educationId },
-        { $set: { "education.$": { ...education, _id: educationId } } },
-        { new: true },
+        { userId, 'education._id': educationId },
+        { $set: { 'education.$': { ...education, _id: educationId } } },
+        { new: true }
       );
     } else {
       updatedProfile = await this.jobSeekerProfileRepository.findOneAndUpdate(
         { userId },
         { $push: { education: education } },
-        { upsert: true, new: true, setDefaultsOnInsert: true },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
       );
     }
 
     if (!updatedProfile) {
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        educationId ? "Failed to update education" : "Failed to add education",
+        educationId ? 'Failed to update education' : 'Failed to add education'
       );
     }
 
@@ -77,7 +77,7 @@ export class ManageProfileUseCase {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
       console.log(jobSeekerProfile.education);
@@ -88,7 +88,7 @@ export class ManageProfileUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error in getting all education details",
+        'Error in getting all education details'
       );
     }
   }
@@ -101,20 +101,20 @@ export class ManageProfileUseCase {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
 
       let educationIndex;
       if (jobSeekerProfile.education) {
         educationIndex = jobSeekerProfile?.education.findIndex(
-          (education) => education._id.toString() === educationId,
+          (education) => education._id.toString() === educationId
         );
 
         if (educationIndex === -1) {
           throw new CustomError(
             STATUS_CODES.NOT_FOUND,
-            "Education with ID not found",
+            'Education with ID not found'
           );
         }
 
@@ -130,7 +130,7 @@ export class ManageProfileUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error in deleting education details",
+        'Error in deleting education details'
       );
     }
   }
@@ -171,15 +171,15 @@ export class ManageProfileUseCase {
 
     if (experienceId) {
       updatedProfile = await this.jobSeekerProfileRepository.findOneAndUpdate(
-        { userId, "workExperience._id": experienceId },
-        { $set: { "workExperience.$": { ...experience, _id: experienceId } } },
-        { new: true },
+        { userId, 'workExperience._id': experienceId },
+        { $set: { 'workExperience.$': { ...experience, _id: experienceId } } },
+        { new: true }
       );
     } else {
       updatedProfile = await this.jobSeekerProfileRepository.findOneAndUpdate(
         { userId },
         { $push: { workExperience: experience } },
-        { upsert: true, new: true, setDefaultsOnInsert: true },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
       );
     }
 
@@ -187,8 +187,8 @@ export class ManageProfileUseCase {
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
         experienceId
-          ? "Failed to update experience"
-          : "Failed to add experience",
+          ? 'Failed to update experience'
+          : 'Failed to add experience'
       );
     }
 
@@ -204,7 +204,7 @@ export class ManageProfileUseCase {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
 
@@ -216,7 +216,7 @@ export class ManageProfileUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error in getting all experience details",
+        'Error in getting all experience details'
       );
     }
   }
@@ -230,20 +230,20 @@ export class ManageProfileUseCase {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
 
       let experienceIndex;
       if (jobSeekerProfile.workExperience) {
         experienceIndex = jobSeekerProfile?.workExperience.findIndex(
-          (experience) => experience._id.toString() === experienceId,
+          (experience) => experience._id.toString() === experienceId
         );
 
         if (experienceIndex === -1) {
           throw new CustomError(
             STATUS_CODES.NOT_FOUND,
-            "Education with ID not found",
+            'Education with ID not found'
           );
         }
 
@@ -259,7 +259,7 @@ export class ManageProfileUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error in deleting experience details",
+        'Error in deleting experience details'
       );
     }
   }
@@ -276,26 +276,26 @@ export class ManageProfileUseCase {
     try {
       const updateObject: any = {};
       if (hardSkills?.length) {
-        updateObject["skills.hardSkills"] = { $each: hardSkills };
+        updateObject['skills.hardSkills'] = { $each: hardSkills };
       }
       if (softSkills?.length) {
-        updateObject["skills.softSkills"] = { $each: softSkills };
+        updateObject['skills.softSkills'] = { $each: softSkills };
       }
       if (technicalSkills?.length) {
-        updateObject["skills.technicalSkills"] = { $each: technicalSkills };
+        updateObject['skills.technicalSkills'] = { $each: technicalSkills };
       }
 
       const updatedProfile =
         await this.jobSeekerProfileRepository.findOneAndUpdate(
           { userId },
           { $addToSet: updateObject },
-          { new: true, upsert: true },
+          { new: true, upsert: true }
         );
 
       if (!updatedProfile) {
         throw new CustomError(
           STATUS_CODES.INTERNAL_SERVER_ERROR,
-          "Failed to update or add skills",
+          'Failed to update or add skills'
         );
       }
 
@@ -306,7 +306,7 @@ export class ManageProfileUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "An error occurred while updating or adding skills",
+        'An error occurred while updating or adding skills'
       );
     }
   }
@@ -319,7 +319,7 @@ export class ManageProfileUseCase {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
 
@@ -331,7 +331,7 @@ export class ManageProfileUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error in getting all skill details",
+        'Error in getting all skill details'
       );
     }
   }
@@ -344,21 +344,21 @@ export class ManageProfileUseCase {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
 
       if (jobSeekerProfile.skills) {
-        if (skillName === "softskills" && jobSeekerProfile.skills.softSkills) {
+        if (skillName === 'softskills' && jobSeekerProfile.skills.softSkills) {
           jobSeekerProfile.skills.softSkills = [];
         }
 
-        if (skillName === "hardskills" && jobSeekerProfile.skills.hardSkills) {
+        if (skillName === 'hardskills' && jobSeekerProfile.skills.hardSkills) {
           jobSeekerProfile.skills.hardSkills = [];
         }
 
         if (
-          skillName === "technicalskills" &&
+          skillName === 'technicalskills' &&
           jobSeekerProfile.skills.technicalSkills
         ) {
           jobSeekerProfile.skills.technicalSkills = [];
@@ -376,7 +376,7 @@ export class ManageProfileUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error in deleting skill",
+        'Error in deleting skill'
       );
     }
   }
@@ -414,15 +414,15 @@ export class ManageProfileUseCase {
 
     if (certificateId) {
       updatedProfile = await this.jobSeekerProfileRepository.findOneAndUpdate(
-        { userId, "certificates._id": certificateId },
-        { $set: { "certificates.$": { ...certificate, _id: certificateId } } },
-        { new: true },
+        { userId, 'certificates._id': certificateId },
+        { $set: { 'certificates.$': { ...certificate, _id: certificateId } } },
+        { new: true }
       );
     } else {
       updatedProfile = await this.jobSeekerProfileRepository.findOneAndUpdate(
         { userId },
         { $push: { certificates: certificate } },
-        { upsert: true, new: true, setDefaultsOnInsert: true },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
       );
     }
 
@@ -430,8 +430,8 @@ export class ManageProfileUseCase {
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
         certificateId
-          ? "Failed to update certificate"
-          : "Failed to add certificate",
+          ? 'Failed to update certificate'
+          : 'Failed to add certificate'
       );
     }
 
@@ -447,7 +447,7 @@ export class ManageProfileUseCase {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
 
@@ -459,7 +459,7 @@ export class ManageProfileUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error in getting all certificate details",
+        'Error in getting all certificate details'
       );
     }
   }
@@ -473,20 +473,20 @@ export class ManageProfileUseCase {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
 
       let certificateIndex;
       if (jobSeekerProfile.certificates) {
         certificateIndex = jobSeekerProfile?.certificates.findIndex(
-          (certificate) => certificate._id.toString() === certificateId,
+          (certificate) => certificate._id.toString() === certificateId
         );
 
         if (certificateIndex === -1) {
           throw new CustomError(
             STATUS_CODES.NOT_FOUND,
-            "Certificate with ID not found",
+            'Certificate with ID not found'
           );
         }
 
@@ -501,7 +501,7 @@ export class ManageProfileUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error in deleting experience details",
+        'Error in deleting experience details'
       );
     }
   }
@@ -514,7 +514,7 @@ export class ManageProfileUseCase {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
 
@@ -526,7 +526,7 @@ export class ManageProfileUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error in getting profile",
+        'Error in getting profile'
       );
     }
   }
@@ -544,7 +544,7 @@ export class ManageProfileUseCase {
       if (user.savedJobs.includes(jobPostIdObject)) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Job post already saved",
+          'Job post already saved'
         );
       }
       user.savedJobs.push(jobPostIdObject);
@@ -554,7 +554,7 @@ export class ManageProfileUseCase {
     } catch (err) {
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error in getting all education details",
+        'Error in getting all education details'
       );
       console.log(err);
     }
@@ -567,7 +567,7 @@ export class ManageProfileUseCase {
       if (!user) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
 
@@ -582,7 +582,7 @@ export class ManageProfileUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error in adding",
+        'Error in adding'
       );
     }
   }

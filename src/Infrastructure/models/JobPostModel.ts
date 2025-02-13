@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from 'mongoose';
 
 export interface SalaryRange {
   min: string;
@@ -41,7 +41,7 @@ const JobPostSchema: Schema = new Schema(
   {
     companyId: {
       type: Schema.Types.ObjectId,
-      ref: "CompanyModel",
+      ref: 'CompanyModel',
       required: true,
     },
     jobTitle: { type: String, required: true },
@@ -64,21 +64,21 @@ const JobPostSchema: Schema = new Schema(
     workMode: { type: String, required: true },
     experienceLevel: { type: String, required: true },
     educationRequired: { type: String, required: true },
-    postedBy: { type: Schema.Types.ObjectId, ref: "UserModel", required: true },
+    postedBy: { type: Schema.Types.ObjectId, ref: 'UserModel', required: true },
     applicationDeadline: { type: Date, required: true },
     employmentStartDate: { type: Date },
     numberOfVacancies: { type: Number, required: true },
     benefits: { type: [String] },
     status: {
       type: String,
-      enum: ["Active", "Closed", "Draft"],
-      default: "Active",
+      enum: ['Active', 'Closed', 'Draft'],
+      default: 'Active',
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export const JobPostModel = mongoose.model<JobPostDocument>(
-  "JobPostModel",
-  JobPostSchema,
+  'JobPostModel',
+  JobPostSchema
 );

@@ -1,9 +1,9 @@
 import {
   cloudinary,
   uploadToCloudinary,
-} from "../../../Infrastructure/config/cloudinaryConfig";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { CustomError } from "../../../shared/error/customError";
+} from '../../../Infrastructure/config/cloudinaryConfig';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { CustomError } from '../../../shared/error/customError';
 
 export interface FileUploadResult {
   url: string;
@@ -22,13 +22,13 @@ export class FileUploadUseCase {
         publicId: result.public_id,
       };
     } catch (error) {
-      console.error("Error in FileUploadUseCase:", error);
+      console.error('Error in FileUploadUseCase:', error);
       if (error instanceof CustomError) {
         throw error;
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "File upload failed",
+        'File upload failed'
       );
     }
   }
@@ -37,23 +37,23 @@ export class FileUploadUseCase {
     try {
       const result = await cloudinary.uploader.destroy(publicId);
 
-      if (result.result === "ok") {
-        console.log("File deleted successfully from Cloudinary");
+      if (result.result === 'ok') {
+        console.log('File deleted successfully from Cloudinary');
       } else {
-        console.error("Error deleting file from Cloudinary:", result);
+        console.error('Error deleting file from Cloudinary:', result);
         throw new CustomError(
           STATUS_CODES.INTERNAL_SERVER_ERROR,
-          "Failed to delete file",
+          'Failed to delete file'
         );
       }
     } catch (error) {
-      console.error("Error in deleteFile:", error);
+      console.error('Error in deleteFile:', error);
       if (error instanceof CustomError) {
         throw error;
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error deleting file from Cloudinary",
+        'Error deleting file from Cloudinary'
       );
     }
   }

@@ -1,4 +1,4 @@
-import { CompanyProfile } from "../../entities/CompanyProfile";
+import { CompanyProfile } from '../../entities/CompanyProfile';
 
 export interface CompanyProfileRepository {
   findOne(companyId: string): Promise<CompanyProfile | null>;
@@ -7,6 +7,6 @@ export interface CompanyProfileRepository {
   findOneAndUpdate(
     filter: object,
     update: object,
-    options: object,
+    options: object
   ): Promise<CompanyProfile | null>;
 }

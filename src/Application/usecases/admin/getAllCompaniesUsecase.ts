@@ -1,4 +1,4 @@
-import { CompanyRepository } from "../../../Domain/repository/repo/companyRepository";
+import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
 
 export class GetAllCompaniesUseCase {
   constructor(private companyRepository: CompanyRepository) {}
@@ -6,7 +6,7 @@ export class GetAllCompaniesUseCase {
   async execute({
     page = 1,
     limit = 10,
-    searchTerm = "",
+    searchTerm = '',
   }: {
     page?: number;
     limit?: number;
@@ -16,9 +16,9 @@ export class GetAllCompaniesUseCase {
     const filter = searchTerm
       ? {
           $or: [
-            { companyName: { $regex: searchTerm, $options: "i" } },
-            { email: { $regex: searchTerm, $options: "i" } },
-            { phone: { $regex: searchTerm, $options: "i" } },
+            { companyName: { $regex: searchTerm, $options: 'i' } },
+            { email: { $regex: searchTerm, $options: 'i' } },
+            { phone: { $regex: searchTerm, $options: 'i' } },
           ],
         }
       : {};
@@ -26,7 +26,7 @@ export class GetAllCompaniesUseCase {
     const { companies, total } = await this.companyRepository.findCompanies(
       offset,
       limit,
-      filter,
+      filter
     );
     return { companies, total };
   }

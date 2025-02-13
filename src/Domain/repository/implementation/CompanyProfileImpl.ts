@@ -1,11 +1,11 @@
-import { CompanyProfileModel } from "../../../Infrastructure/models/companyProfileModel";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { CustomError } from "../../../shared/error/customError";
+import { CompanyProfileModel } from '../../../Infrastructure/models/companyProfileModel';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { CustomError } from '../../../shared/error/customError';
 import {
   CompanyProfile,
   normalizeCompanyProfile,
-} from "../../entities/CompanyProfile";
-import { CompanyProfileRepository } from "../repo/companyProfileRepository";
+} from '../../entities/CompanyProfile';
+import { CompanyProfileRepository } from '../repo/companyProfileRepository';
 
 export class CompanyProfileImpl implements CompanyProfileRepository {
   async findOne(companyId: string): Promise<CompanyProfile | null> {
@@ -20,13 +20,13 @@ export class CompanyProfileImpl implements CompanyProfileRepository {
     const updatedProfile = await CompanyProfileModel.findByIdAndUpdate(
       companyProfile._id,
       companyProfile,
-      { new: true },
+      { new: true }
     )
       .lean()
       .exec();
 
     if (!updatedProfile) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, "Profile not found");
+      throw new CustomError(STATUS_CODES.NOT_FOUND, 'Profile not found');
     }
     return normalizeCompanyProfile(updatedProfile);
   }
@@ -34,18 +34,18 @@ export class CompanyProfileImpl implements CompanyProfileRepository {
   async findOneAndUpdate(
     filter: object,
     update: object,
-    options: object,
+    options: object
   ): Promise<CompanyProfile | null> {
     const companyProfile = await CompanyProfileModel.findOneAndUpdate(
       filter,
       update,
-      options,
+      options
     ).lean();
     return companyProfile ? normalizeCompanyProfile(companyProfile) : null;
   }
 
   async create(
-    companyProfile: Partial<CompanyProfile>,
+    companyProfile: Partial<CompanyProfile>
   ): Promise<CompanyProfile> {
     const newCompanyProfile = new CompanyProfileModel(companyProfile);
     const savedProfile = await newCompanyProfile.save();

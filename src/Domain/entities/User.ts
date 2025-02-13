@@ -1,4 +1,4 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose, { ObjectId } from 'mongoose';
 interface imageObject {
   url: string;
   publicId: string;
@@ -11,8 +11,8 @@ export class User {
   address?: string;
   dateOfBirth?: Date;
   tagLine?: string;
-  entity: "company" | "user";
-  userRole?: "jobSeeker" | "companyAdmin" | "companyMember" | "admin";
+  entity: 'company' | 'user';
+  userRole?: 'jobSeeker' | 'companyAdmin' | 'companyMember' | 'admin';
   password?: string;
   _id: string;
   profilePhoto?: imageObject;
@@ -44,13 +44,13 @@ export class User {
     this.tagLine = data.tagLine;
     this.address = data.address;
     this.dateOfBirth = data.dateOfBirth;
-    this.userRole = data.userRole || "jobSeeker";
+    this.userRole = data.userRole || 'jobSeeker';
     this.password = data.password;
-    this.entity = data.entity || "user";
-    this.profilePhoto = data.profilePhoto || { url: "", publicId: "" };
+    this.entity = data.entity || 'user';
+    this.profilePhoto = data.profilePhoto || { url: '', publicId: '' };
     this.googleId = data.googleId;
     this.appPlan = data.appPlan || {
-      planType: "basic",
+      planType: 'basic',
       startDate: null,
       endDate: null,
       subscriptionId: null,
@@ -70,8 +70,8 @@ export class User {
   }
 
   validateEmail(): void {
-    if (!this.email.includes("@")) {
-      throw new Error("Invalid email address");
+    if (!this.email.includes('@')) {
+      throw new Error('Invalid email address');
     }
   }
 

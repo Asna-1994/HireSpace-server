@@ -1,15 +1,15 @@
-import { SubscriptionRepo } from "./../repo/subscriptionRepo";
-import { SubscriptionModel } from "../../../Infrastructure/models/SubscriptionModel";
+import { SubscriptionRepo } from './../repo/subscriptionRepo';
+import { SubscriptionModel } from '../../../Infrastructure/models/SubscriptionModel';
 import {
   normalizeSubscriptions,
   Subscriptions,
-} from "../../entities/Subscription";
-import mongoose from "mongoose";
+} from '../../entities/Subscription';
+import mongoose from 'mongoose';
 
 export class SubscriptionRepoImpl implements SubscriptionRepo {
   async createSubscription(
     subscriptionData: Partial<Subscriptions>,
-    session?: mongoose.ClientSession,
+    session?: mongoose.ClientSession
   ): Promise<Subscriptions> {
     const newSub = await SubscriptionModel.create([{ ...subscriptionData }], {
       session,
@@ -19,12 +19,12 @@ export class SubscriptionRepoImpl implements SubscriptionRepo {
 
   async updateSubscriptionStatus(
     transactionId: string,
-    status: string,
+    status: string
   ): Promise<Subscriptions | null> {
     const updatedSubscription = await SubscriptionModel.findOneAndUpdate(
       { transactionId },
       { paymentStatus: status, isActive: true },
-      { new: true },
+      { new: true }
     );
     return updatedSubscription
       ? normalizeSubscriptions(updatedSubscription)
@@ -37,7 +37,7 @@ export class SubscriptionRepoImpl implements SubscriptionRepo {
   }
 
   async findExpiredSubscriptions(
-    currentDate: Date,
+    currentDate: Date
   ): Promise<Subscriptions[] | []> {
     const subscriptions = await SubscriptionModel.find({
       isActive: true,
@@ -47,11 +47,11 @@ export class SubscriptionRepoImpl implements SubscriptionRepo {
   }
   async updateSubscriptionStatusById(
     subscriptionId: string,
-    isActive: boolean,
+    isActive: boolean
   ): Promise<Subscriptions | null> {
     const updatedSubscription = await SubscriptionModel.findByIdAndUpdate(
       subscriptionId,
-      { isActive },
+      { isActive }
     );
     return updatedSubscription
       ? normalizeSubscriptions(updatedSubscription)

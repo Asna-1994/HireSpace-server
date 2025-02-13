@@ -1,6 +1,6 @@
-import { Company } from "./../../Domain/entities/Company";
-import { JwtPayload } from "jsonwebtoken";
-import { User } from "../../Domain/entities/User";
+import { Company } from './../../Domain/entities/Company';
+import { JwtPayload } from 'jsonwebtoken';
+import { User } from '../../Domain/entities/User';
 
 export interface DecodedToken {
   id: string;

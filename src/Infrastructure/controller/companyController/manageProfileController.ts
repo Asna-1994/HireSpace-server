@@ -1,8 +1,8 @@
-import { STATUS_CODES } from "./../../../shared/constants/statusCodes";
-import { Request, Response, NextFunction } from "express";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { ManageProfileUseCase } from "../../../Application/usecases/company/manageProfileUsecase";
-import { CustomError } from "../../../shared/error/customError";
+import { STATUS_CODES } from './../../../shared/constants/statusCodes';
+import { Request, Response, NextFunction } from 'express';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { ManageProfileUseCase } from '../../../Application/usecases/company/manageProfileUsecase';
+import { CustomError } from '../../../shared/error/customError';
 
 export class ManageProfileController {
   constructor(private manageProfileUseCase: ManageProfileUseCase) {}
@@ -43,7 +43,7 @@ export class ManageProfileController {
       if (!companyId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please provide company Id",
+          'Please provide company Id'
         );
       }
       const companyProfile =

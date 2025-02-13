@@ -1,9 +1,9 @@
-import mongoose, { Document, Schema, model } from "mongoose";
+import mongoose, { Document, Schema, model } from 'mongoose';
 
 export interface PlanDocument extends Document {
   planType: string;
   price: number;
-  userType: "user" | "company";
+  userType: 'user' | 'company';
   durationInDays: number;
   features: string[];
   isDeleted: boolean;
@@ -17,15 +17,15 @@ const planSchema: Schema = new Schema<PlanDocument>(
     price: { type: Number, required: true },
     userType: {
       type: String,
-      enum: ["user", "company"],
-      default: "user",
+      enum: ['user', 'company'],
+      default: 'user',
       required: true,
     },
     durationInDays: { type: Number, required: true },
     features: { type: [String], required: true },
     isDeleted: { type: Boolean, default: false },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-export const PlanModel = model<PlanDocument>("PlanModel", planSchema);
+export const PlanModel = model<PlanDocument>('PlanModel', planSchema);

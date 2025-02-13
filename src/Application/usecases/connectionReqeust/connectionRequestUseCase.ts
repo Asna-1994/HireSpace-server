@@ -1,12 +1,12 @@
-import { JobSeekerProfileRepository } from "../../../Domain/repository/repo/JobSeekerProfileRepo";
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { ConnectionRequestRepository } from "../../../Domain/repository/repo/ConnectionRequestRepo";
-import { ConnectionRequest } from "../../../Domain/entities/UserConnections";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import mongoose, { Mongoose } from "mongoose";
-import { User } from "../../../Domain/entities/User";
-import { MESSAGES } from "../../../shared/constants/messages";
+import { JobSeekerProfileRepository } from '../../../Domain/repository/repo/JobSeekerProfileRepo';
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { ConnectionRequestRepository } from '../../../Domain/repository/repo/ConnectionRequestRepo';
+import { ConnectionRequest } from '../../../Domain/entities/UserConnections';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import mongoose, { Mongoose } from 'mongoose';
+import { User } from '../../../Domain/entities/User';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class ConnectionRequestUseCase {
   private connectionRequestRepo: ConnectionRequestRepository;
@@ -14,7 +14,7 @@ export class ConnectionRequestUseCase {
 
   constructor(
     connectionRequestRepo: ConnectionRequestRepository,
-    userRepository: UserRepository,
+    userRepository: UserRepository
   ) {
     this.connectionRequestRepo = connectionRequestRepo;
     this.userRepository = userRepository;
@@ -22,16 +22,16 @@ export class ConnectionRequestUseCase {
 
   async createConnectionRequest(
     fromUser: string,
-    toUser: string,
+    toUser: string
   ): Promise<ConnectionRequest> {
     const existingRequest = await this.connectionRequestRepo.findOneByUsers(
       fromUser,
-      toUser,
+      toUser
     );
     if (existingRequest) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "Connection request already exists",
+        'Connection request already exists'
       );
     }
     const fromUserObj = new mongoose.Types.ObjectId(fromUser);
@@ -39,13 +39,13 @@ export class ConnectionRequestUseCase {
     const newRequest = await this.connectionRequestRepo.create({
       fromUser: fromUserObj,
       toUser: toUserObj,
-      status: "pending",
+      status: 'pending',
     });
     return newRequest;
   }
 
   async getConnectionRequestById(
-    id: string,
+    id: string
   ): Promise<ConnectionRequest | null> {
     return this.connectionRequestRepo.findOne(id);
   }
@@ -53,20 +53,20 @@ export class ConnectionRequestUseCase {
   async getConnectionRequestForUser(
     userId: string,
     page: number,
-    limit: number,
+    limit: number
   ): Promise<{ pendingRequests: ConnectionRequest[]; totalRequests: number }> {
     try {
       const offset = (page - 1) * limit;
       const filter = {
         toUser: userId,
-        status: "pending",
+        status: 'pending',
       };
 
       const { pendingRequests, totalRequests } =
         await this.connectionRequestRepo.findRequestsWithPagination(
           offset,
           limit,
-          filter,
+          filter
         );
 
       return { pendingRequests, totalRequests };
@@ -76,7 +76,7 @@ export class ConnectionRequestUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while getting requests",
+        'Error while getting requests'
       );
     }
   }
@@ -84,22 +84,22 @@ export class ConnectionRequestUseCase {
   async getConnectionRequestSentByUser(
     userId: string,
     page: number,
-    limit: number,
+    limit: number
   ): Promise<{ pendingRequests: ConnectionRequest[]; totalRequests: number }> {
     try {
       const offset = (page - 1) * limit;
       const filter = {
         fromUser: userId,
-        status: "pending",
+        status: 'pending',
       };
 
       const { pendingRequests, totalRequests } =
         await this.connectionRequestRepo.findRequestsWithPagination(
           offset,
           limit,
-          filter,
+          filter
         );
-      console.log("usecase", pendingRequests);
+      console.log('usecase', pendingRequests);
       return { pendingRequests, totalRequests };
     } catch (err) {
       if (err instanceof CustomError) {
@@ -107,7 +107,7 @@ export class ConnectionRequestUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while getting requests",
+        'Error while getting requests'
       );
     }
   }
@@ -124,7 +124,7 @@ export class ConnectionRequestUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while getting requests count",
+        'Error while getting requests count'
       );
     }
   }
@@ -134,7 +134,7 @@ export class ConnectionRequestUseCase {
     userId: string,
     page: number,
     limit: number,
-    search: string | null,
+    search: string | null
   ): Promise<{ connections: User[]; total: number }> {
     try {
       const offset = (page - 1) * limit;
@@ -142,7 +142,7 @@ export class ConnectionRequestUseCase {
         userId,
         offset,
         limit,
-        search,
+        search
       );
       return { connections, total };
     } catch (err) {
@@ -151,7 +151,7 @@ export class ConnectionRequestUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while getting connections",
+        'Error while getting connections'
       );
     }
   }
@@ -160,7 +160,7 @@ export class ConnectionRequestUseCase {
   async recommendationForUsers(
     userId: string,
     page: number,
-    limit: number,
+    limit: number
   ): Promise<{ users: User[]; total: number }> {
     try {
       const user = await this.userRepository.findById(userId);
@@ -172,18 +172,18 @@ export class ConnectionRequestUseCase {
 
       const filterCriteria: any = {
         _id: { $ne: userId },
-        userRole: "jobSeeker",
+        userRole: 'jobSeeker',
       };
 
       let keywords: string[] = [];
       if (user.tagLine) {
         const userTagline = user.tagLine.toLowerCase();
-        keywords = userTagline.split(" ");
+        keywords = userTagline.split(' ');
       }
 
       if (keywords.length > 0) {
         filterCriteria.tagLine = {
-          $in: keywords.map((keyword) => new RegExp(keyword, "i")),
+          $in: keywords.map((keyword) => new RegExp(keyword, 'i')),
         };
       }
 
@@ -191,7 +191,7 @@ export class ConnectionRequestUseCase {
         const addressParts = user.address.split(/[\s,]+/);
 
         const addressFilter = addressParts.map((part) => {
-          return { address: { $regex: new RegExp(part, "i") } };
+          return { address: { $regex: new RegExp(part, 'i') } };
         });
 
         filterCriteria.$or = addressFilter;
@@ -200,17 +200,17 @@ export class ConnectionRequestUseCase {
       const { users, total } = await this.userRepository.findUsers(
         offset,
         limit,
-        filterCriteria,
+        filterCriteria
       );
       return { users, total };
     } catch (error) {
-      console.error("Error fetching recommended users:", error);
+      console.error('Error fetching recommended users:', error);
       if (error instanceof CustomError) {
         throw error;
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while fetching recommendations",
+        'Error while fetching recommendations'
       );
     }
   }
@@ -218,7 +218,7 @@ export class ConnectionRequestUseCase {
   async acceptConnectionRequest(id: string): Promise<ConnectionRequest> {
     const updatedRequest = await this.connectionRequestRepo.updateStatus(
       id,
-      "accepted",
+      'accepted'
     );
 
     const fromUserString = updatedRequest.fromUser.toString();
@@ -232,7 +232,7 @@ export class ConnectionRequestUseCase {
   }
 
   async rejectConnectionRequest(id: string): Promise<ConnectionRequest> {
-    return this.connectionRequestRepo.updateStatus(id, "rejected");
+    return this.connectionRequestRepo.updateStatus(id, 'rejected');
   }
 
   async deleteConnectionRequest(id: string): Promise<boolean> {
@@ -242,8 +242,8 @@ export class ConnectionRequestUseCase {
   async searchUsers({
     page = 1,
     limit = 10,
-    searchTerm = "",
-    userRole = "",
+    searchTerm = '',
+    userRole = '',
   }: {
     page?: number;
     limit?: number;
@@ -254,9 +254,9 @@ export class ConnectionRequestUseCase {
     const filter: any = {
       ...(searchTerm && {
         $or: [
-          { userName: { $regex: searchTerm, $options: "i" } },
-          { email: { $regex: searchTerm, $options: "i" } },
-          { phone: { $regex: searchTerm, $options: "i" } },
+          { userName: { $regex: searchTerm, $options: 'i' } },
+          { email: { $regex: searchTerm, $options: 'i' } },
+          { phone: { $regex: searchTerm, $options: 'i' } },
         ],
       }),
       ...(userRole && { userRole }),
@@ -265,7 +265,7 @@ export class ConnectionRequestUseCase {
     const allUsers = await this.userRepository.findUsersWithPagination(
       offset,
       limit,
-      filter,
+      filter
     );
     return allUsers;
   }

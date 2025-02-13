@@ -1,8 +1,8 @@
-import { CustomError } from "../../../shared/error/customError";
-import { CompanyRepository } from "../../../Domain/repository/repo/companyRepository";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { sendVerificationStatusMail } from "../../../Infrastructure/email/emailService";
+import { CustomError } from '../../../shared/error/customError';
+import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { sendVerificationStatusMail } from '../../../Infrastructure/email/emailService';
 
 export class BlockOrUnblockCompanyUseCase {
   constructor(private CompanyRepository: CompanyRepository) {}
@@ -10,11 +10,11 @@ export class BlockOrUnblockCompanyUseCase {
   async execute(companyId: string, action: string) {
     const updatedCompany = await this.CompanyRepository.blockOrUnblock(
       companyId,
-      action,
+      action
     );
 
     if (!updatedCompany) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, "Company not found");
+      throw new CustomError(STATUS_CODES.NOT_FOUND, 'Company not found');
     }
     return updatedCompany;
   }
@@ -25,7 +25,7 @@ export class BlockOrUnblockCompanyUseCase {
       if (!company) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          MESSAGES.COMPANY_NOT_FOUND,
+          MESSAGES.COMPANY_NOT_FOUND
         );
       }
       company.isVerified = true;
@@ -33,7 +33,7 @@ export class BlockOrUnblockCompanyUseCase {
       sendVerificationStatusMail(
         company.email,
         company.companyName,
-        "approved",
+        'approved'
       );
       return updatedCompany;
     } catch (err) {
@@ -42,7 +42,7 @@ export class BlockOrUnblockCompanyUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Failed to verify company",
+        'Failed to verify company'
       );
     }
   }

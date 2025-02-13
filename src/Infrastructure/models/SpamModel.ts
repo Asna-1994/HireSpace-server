@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, model } from "mongoose";
+import mongoose, { Document, Schema, model } from 'mongoose';
 
 export interface SpamDocument extends Document {
   reportedByUser: mongoose.Types.ObjectId;
@@ -14,19 +14,19 @@ const spamSchema: Schema = new Schema<SpamDocument>(
   {
     reportedByUser: {
       type: Schema.Types.ObjectId,
-      ref: "UserModel",
+      ref: 'UserModel',
       required: true,
     },
     companyId: {
       type: Schema.Types.ObjectId,
-      ref: "CompanyModel",
+      ref: 'CompanyModel',
       required: true,
     },
     reason: { type: String, required: true },
     description: { type: String, required: true },
     isDeleted: { type: Boolean, default: false },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-export const SpamModel = model<SpamDocument>("SpamModel", spamSchema);
+export const SpamModel = model<SpamDocument>('SpamModel', spamSchema);

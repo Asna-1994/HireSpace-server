@@ -1,35 +1,35 @@
-import { Request, Response, NextFunction } from "express";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { CustomError } from "../../../shared/error/customError";
-import { CompanyJobApplicationUseCase } from "../../../Application/usecases/company/companyJobApplicationUseCase";
-import mongoose from "mongoose";
+import { Request, Response, NextFunction } from 'express';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { CustomError } from '../../../shared/error/customError';
+import { CompanyJobApplicationUseCase } from '../../../Application/usecases/company/companyJobApplicationUseCase';
+import mongoose from 'mongoose';
 
 export class CompanyJobApplicationController {
   constructor(
-    private companyJobApplicationUseCase: CompanyJobApplicationUseCase,
+    private companyJobApplicationUseCase: CompanyJobApplicationUseCase
   ) {}
 
   //get all applications
   async getAllJobApplicationForCompany(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) {
     try {
       const { companyId } = req.params;
       const {
         page = 1,
         limit = 10,
-        status = "",
-        search = "",
+        status = '',
+        search = '',
         jobPostId,
       } = req.query;
 
       if (!companyId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please provide the companyId parameter.",
+          'Please provide the companyId parameter.'
         );
       }
 
@@ -62,7 +62,7 @@ export class CompanyJobApplicationController {
   async updateApplicationStatus(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) {
     try {
       const { applicationId } = req.params;
@@ -71,7 +71,7 @@ export class CompanyJobApplicationController {
       if (!applicationId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please provide necessary parameters",
+          'Please provide necessary parameters'
         );
       }
 
@@ -79,7 +79,7 @@ export class CompanyJobApplicationController {
 
       const application = await this.companyJobApplicationUseCase.updateStatus(
         applicationId,
-        status,
+        status
       );
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,

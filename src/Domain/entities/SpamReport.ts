@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
-import { CustomError } from "../../shared/error/customError";
-import { STATUS_CODES } from "../../shared/constants/statusCodes";
+import mongoose from 'mongoose';
+import { CustomError } from '../../shared/error/customError';
+import { STATUS_CODES } from '../../shared/constants/statusCodes';
 
 export class SpamReport {
   _id: mongoose.Types.ObjectId;
@@ -29,7 +29,7 @@ export const normalizeSpam = (data: any): SpamReport => {
   if (!data || !data._id) {
     throw new CustomError(
       STATUS_CODES.BAD_REQUEST,
-      "Invalid data or missing _id in payment",
+      'Invalid data or missing _id in payment'
     );
   }
 

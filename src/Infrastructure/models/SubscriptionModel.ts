@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, model } from "mongoose";
+import mongoose, { Document, Schema, model } from 'mongoose';
 
 export interface SubscriptionDocument extends Document {
   userId: mongoose.Types.ObjectId;
@@ -6,7 +6,7 @@ export interface SubscriptionDocument extends Document {
   startDate: Date;
   endDate: Date;
   isActive: boolean;
-  paymentStatus: "success" | "pending" | "failed";
+  paymentStatus: 'success' | 'pending' | 'failed';
   transactionId: string;
   paymentId: mongoose.Types.ObjectId;
   createdAt?: Date;
@@ -15,11 +15,11 @@ export interface SubscriptionDocument extends Document {
 
 const subscriptionSchema: Schema = new Schema<SubscriptionDocument>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "UserModel", required: true },
-    planId: { type: Schema.Types.ObjectId, ref: "PlanModel", required: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'UserModel', required: true },
+    planId: { type: Schema.Types.ObjectId, ref: 'PlanModel', required: true },
     paymentId: {
       type: Schema.Types.ObjectId,
-      ref: "PaymentModel",
+      ref: 'PaymentModel',
       required: true,
     },
     startDate: { type: Date, required: true },
@@ -27,15 +27,15 @@ const subscriptionSchema: Schema = new Schema<SubscriptionDocument>(
     isActive: { type: Boolean, default: true }, // Assuming active by default
     paymentStatus: {
       type: String,
-      enum: ["success", "pending", "failed"],
+      enum: ['success', 'pending', 'failed'],
       required: true,
     },
     transactionId: { type: String, required: true },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export const SubscriptionModel = model<SubscriptionDocument>(
-  "SubscriptionModel",
-  subscriptionSchema,
+  'SubscriptionModel',
+  subscriptionSchema
 );

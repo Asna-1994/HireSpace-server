@@ -1,21 +1,21 @@
-import { Request, Response, NextFunction } from "express";
-import { CreatePaymentIntentUseCase } from "../../../Application/usecases/payments/createPaymentIntentUseCase";
-import { HandlePaymentSuccessUseCase } from "../../../Application/usecases/payments/handlePaymentSuccessUseCase";
-import { PaymentRepoImpl } from "../../../Domain/repository/implementation/paymentRepoImp";
-import { PlanRepositoryImpl } from "../../../Domain/repository/implementation/planRepoImpl";
-import { UserRepositoryImpl } from "../../../Domain/repository/implementation/userRepositoryImpl";
-import { SubscriptionRepoImpl } from "../../../Domain/repository/implementation/subscriptionRepoImpl";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
+import { Request, Response, NextFunction } from 'express';
+import { CreatePaymentIntentUseCase } from '../../../Application/usecases/payments/createPaymentIntentUseCase';
+import { HandlePaymentSuccessUseCase } from '../../../Application/usecases/payments/handlePaymentSuccessUseCase';
+import { PaymentRepoImpl } from '../../../Domain/repository/implementation/paymentRepoImp';
+import { PlanRepositoryImpl } from '../../../Domain/repository/implementation/planRepoImpl';
+import { UserRepositoryImpl } from '../../../Domain/repository/implementation/userRepositoryImpl';
+import { SubscriptionRepoImpl } from '../../../Domain/repository/implementation/subscriptionRepoImpl';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 
 const handlePaymentSuccessUseCase = new HandlePaymentSuccessUseCase(
   new PaymentRepoImpl(),
   new SubscriptionRepoImpl(),
   new UserRepositoryImpl(),
-  new PlanRepositoryImpl(),
+  new PlanRepositoryImpl()
 );
 const createPaymentIntentUseCase = new CreatePaymentIntentUseCase(
   new PaymentRepoImpl(),
-  new SubscriptionRepoImpl(),
+  new SubscriptionRepoImpl()
 );
 export const PaymentController = {
   async createPaymentIntent(req: Request, res: Response, next: NextFunction) {
@@ -33,7 +33,7 @@ export const PaymentController = {
 
       res.status(STATUS_CODES.CREATED).json({
         success: true,
-        message: "Payment intent created",
+        message: 'Payment intent created',
         data: {
           paymentIntent,
           clientSecret,
@@ -53,7 +53,7 @@ export const PaymentController = {
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
-        message: "Payment processed and subscription activated",
+        message: 'Payment processed and subscription activated',
         data: { subscription, updatedUser },
       });
     } catch (error) {

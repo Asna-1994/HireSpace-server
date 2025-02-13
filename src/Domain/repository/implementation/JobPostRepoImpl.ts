@@ -1,9 +1,9 @@
-import { JobPost, normalizeJobPost } from "../../entities/JobPostEntity";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { CustomError } from "../../../shared/error/customError";
-import { JobPostModel } from "../../../Infrastructure/models/JobPostModel";
+import { JobPost, normalizeJobPost } from '../../entities/JobPostEntity';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { CustomError } from '../../../shared/error/customError';
+import { JobPostModel } from '../../../Infrastructure/models/JobPostModel';
 
-import { JobPostRepository } from "../repo/jobPostRepository";
+import { JobPostRepository } from '../repo/jobPostRepository';
 
 export class JobPostRepositoryImpl implements JobPostRepository {
   async findOne(companyId: string): Promise<JobPost> {
@@ -14,23 +14,23 @@ export class JobPostRepositoryImpl implements JobPostRepository {
 
   async find(filter: object): Promise<JobPost[]> {
     const jobPosts = await JobPostModel.find(filter)
-      .populate("postedBy", "userName email")
+      .populate('postedBy', 'userName email')
       .populate(
-        "companyId",
-        "companyName email phone address industry companyLogo",
+        'companyId',
+        'companyName email phone address industry companyLogo'
       );
-    console.log("saved posts", jobPosts);
+    console.log('saved posts', jobPosts);
     return jobPosts.map(normalizeJobPost);
   }
 
   async findPostsWithPagination(
     offset: number,
     limit: number,
-    filter: object,
+    filter: object
   ): Promise<JobPost[] | []> {
     try {
       const jobPosts = await JobPostModel.find(filter)
-        .populate("companyId", "companyName email phone address companyLogo")
+        .populate('companyId', 'companyName email phone address companyLogo')
         .skip(offset)
         .limit(limit);
 
@@ -40,7 +40,7 @@ export class JobPostRepositoryImpl implements JobPostRepository {
     } catch (err) {
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "failed to return data  from repository",
+        'failed to return data  from repository'
       );
     }
   }
@@ -55,12 +55,12 @@ export class JobPostRepositoryImpl implements JobPostRepository {
     const updatedPost = await JobPostModel.findByIdAndUpdate(
       jobPost._id,
       jobPost,
-      { new: true },
+      { new: true }
     )
       .lean()
       .exec();
     if (!updatedPost) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, "Post not found");
+      throw new CustomError(STATUS_CODES.NOT_FOUND, 'Post not found');
     }
     return normalizeJobPost(updatedPost);
   }
@@ -68,12 +68,12 @@ export class JobPostRepositoryImpl implements JobPostRepository {
   async findOneAndUpdate(
     filter: object,
     update: object,
-    options: object,
+    options: object
   ): Promise<JobPost | null> {
     const jobPost = await JobPostModel.findOneAndUpdate(
       filter,
       update,
-      options,
+      options
     ).lean();
     return jobPost ? normalizeJobPost(jobPost) : null;
   }
@@ -81,12 +81,12 @@ export class JobPostRepositoryImpl implements JobPostRepository {
   async findByIdAndUpdate(
     jobPostId: string,
     update: object,
-    options: object,
+    options: object
   ): Promise<JobPost | null> {
     const jobPost = await JobPostModel.findByIdAndUpdate(
       jobPostId,
       update,
-      options,
+      options
     ).lean();
     return jobPost ? normalizeJobPost(jobPost) : null;
   }

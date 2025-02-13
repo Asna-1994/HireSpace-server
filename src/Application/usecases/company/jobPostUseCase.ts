@@ -1,19 +1,19 @@
-import { JobPostRepository } from "../../../Domain/repository/repo/jobPostRepository";
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { CompanyRepository } from "../../../Domain/repository/repo/companyRepository";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
+import { JobPostRepository } from '../../../Domain/repository/repo/jobPostRepository';
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
 import {
   SalaryRange,
   Location,
-} from "../../../Infrastructure/models/JobPostModel";
-import mongoose from "mongoose";
+} from '../../../Infrastructure/models/JobPostModel';
+import mongoose from 'mongoose';
 
 export class JobPostUseCase {
   constructor(
     private companyRepository: CompanyRepository,
-    private jobPostRepository: JobPostRepository,
+    private jobPostRepository: JobPostRepository
   ) {}
 
   async createJobPost(
@@ -36,7 +36,7 @@ export class JobPostUseCase {
       status: string;
     },
     userId: string,
-    jobPostId?: string,
+    jobPostId?: string
   ) {
     const company = await this.companyRepository.findById(companyId);
     if (!company) {
@@ -46,13 +46,13 @@ export class JobPostUseCase {
     const isMember = company.members.some(
       (member) =>
         member.userId.toString() === userId &&
-        (member.role === "companyAdmin" || member.role === "companyMember"),
+        (member.role === 'companyAdmin' || member.role === 'companyMember')
     );
 
     if (!isMember) {
       throw new CustomError(
         STATUS_CODES.FORBIDDEN,
-        "User is not authorized to create a job post for this company.",
+        'User is not authorized to create a job post for this company.'
       );
     }
 
@@ -106,7 +106,7 @@ export class JobPostUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while getting job posts by company Id",
+        'Error while getting job posts by company Id'
       );
     }
   }
@@ -117,7 +117,7 @@ export class JobPostUseCase {
       const deletedPost = await this.jobPostRepository.findByIdAndUpdate(
         jobPostId,
         { isDeleted: true },
-        { new: true },
+        { new: true }
       );
       return deletedPost;
     } catch (err) {
@@ -126,7 +126,7 @@ export class JobPostUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while deleting job posts ",
+        'Error while deleting job posts '
       );
     }
   }

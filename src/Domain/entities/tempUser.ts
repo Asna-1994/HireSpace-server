@@ -22,8 +22,8 @@ export class TempUser {
   }
 
   validateEmail(): void {
-    if (!this.email.includes("@")) {
-      throw new Error("Invalid email address");
+    if (!this.email.includes('@')) {
+      throw new Error('Invalid email address');
     }
   }
 }

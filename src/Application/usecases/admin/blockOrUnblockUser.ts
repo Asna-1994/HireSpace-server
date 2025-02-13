@@ -1,7 +1,7 @@
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { CustomError } from "../../../shared/error/customError";
-import { CompanyRepository } from "../../../Domain/repository/repo/companyRepository";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { CustomError } from '../../../shared/error/customError';
+import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 
 export class BlockOrUnblockUserUseCase {
   constructor(private UserRepository: UserRepository) {}
@@ -9,7 +9,7 @@ export class BlockOrUnblockUserUseCase {
   async execute(userId: string, action: string) {
     const updatedUser = await this.UserRepository.blockOrUnblock(
       userId,
-      action,
+      action
     );
 
     if (!updatedUser) {

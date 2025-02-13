@@ -1,4 +1,4 @@
-import { TempUser } from "../../entities/tempUser";
+import { TempUser } from '../../entities/tempUser';
 
 export interface TempUserRepository {
   create(tempUser: TempUser): Promise<TempUser>;

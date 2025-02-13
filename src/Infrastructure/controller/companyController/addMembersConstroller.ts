@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { AddMembersUseCase } from "../../../Application/usecases/company/addMembersUseCase";
+import { Request, Response, NextFunction } from 'express';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { AddMembersUseCase } from '../../../Application/usecases/company/addMembersUseCase';
 
 export class AddMembersController {
   constructor(private addMembersUseCase: AddMembersUseCase) {}

@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
-import { CustomError } from "../../shared/error/customError";
-import { STATUS_CODES } from "../../shared/constants/statusCodes";
+import mongoose from 'mongoose';
+import { CustomError } from '../../shared/error/customError';
+import { STATUS_CODES } from '../../shared/constants/statusCodes';
 
 export interface imageObject {
   url: string;
@@ -9,7 +9,7 @@ export interface imageObject {
 
 export interface Member {
   userId: mongoose.Types.ObjectId | string;
-  role: "companyMember" | "companyAdmin";
+  role: 'companyMember' | 'companyAdmin';
   _id?: mongoose.Types.ObjectId | string;
 }
 export class Company {
@@ -22,11 +22,11 @@ export class Company {
   industry: string;
   verificationDocument?: imageObject;
   documentNumber?: string;
-  entity: "company" | "user";
+  entity: 'company' | 'user';
   password: string;
   _id: string | mongoose.Types.ObjectId;
   companyLogo?: imageObject;
-  appPlan: "basic" | "premium";
+  appPlan: 'basic' | 'premium';
   isBlocked: boolean;
   isPremium: boolean;
   isVerified: boolean;
@@ -43,19 +43,19 @@ export class Company {
     // this.admins = data.admins  || [];
     this.email = data.email!;
     this.phone = data.phone!;
-    this.website = data.website || "";
+    this.website = data.website || '';
     this.industry = data.industry!;
-    this.documentNumber = data.documentNumber || "";
+    this.documentNumber = data.documentNumber || '';
     this.verificationDocument = data.verificationDocument || {
-      url: "",
-      publicId: "",
+      url: '',
+      publicId: '',
     };
     this.address = data.address!;
     this.establishedDate = data.establishedDate!;
     this.password = data.password!;
-    this.entity = data.entity || "company";
-    this.companyLogo = data.companyLogo || { url: "", publicId: "" };
-    this.appPlan = data.appPlan || "basic";
+    this.entity = data.entity || 'company';
+    this.companyLogo = data.companyLogo || { url: '', publicId: '' };
+    this.appPlan = data.appPlan || 'basic';
     this.isBlocked = data.isBlocked || false;
     this.isPremium = data.isPremium || false;
     this.isVerified = data.isVerified || false;
@@ -67,8 +67,8 @@ export class Company {
   }
 
   validateEmail(): void {
-    if (!this.email.includes("@")) {
-      throw new Error("Invalid email address");
+    if (!this.email.includes('@')) {
+      throw new Error('Invalid email address');
     }
   }
 
@@ -78,7 +78,7 @@ export class Company {
 
   upgradeToPremium(): void {
     this.isPremium = true;
-    this.appPlan = "premium";
+    this.appPlan = 'premium';
   }
 
   blockUser(): void {
@@ -91,7 +91,7 @@ export const normalizeCompany = (data: any): Company => {
   if (!data || !data._id) {
     throw new CustomError(
       STATUS_CODES.BAD_REQUEST,
-      "Invalid data or missing _id",
+      'Invalid data or missing _id'
     );
   }
 

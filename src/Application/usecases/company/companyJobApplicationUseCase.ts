@@ -1,8 +1,8 @@
-import { JobSeekerProfileRepository } from "../../../Domain/repository/repo/JobSeekerProfileRepo";
-import { JobApplicationRepository } from "../../../Domain/repository/repo/jobApplicationRepository";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { JobApplication } from "../../../Domain/entities/JobApplication";
+import { JobSeekerProfileRepository } from '../../../Domain/repository/repo/JobSeekerProfileRepo';
+import { JobApplicationRepository } from '../../../Domain/repository/repo/jobApplicationRepository';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { JobApplication } from '../../../Domain/entities/JobApplication';
 
 export class CompanyJobApplicationUseCase {
   constructor(private jobApplicationRepository: JobApplicationRepository) {}
@@ -11,8 +11,8 @@ export class CompanyJobApplicationUseCase {
     companyId,
     page = 1,
     limit = 10,
-    searchTerm = "",
-    status = "",
+    searchTerm = '',
+    status = '',
     jobPostId,
   }: {
     companyId: string;
@@ -31,9 +31,9 @@ export class CompanyJobApplicationUseCase {
     // Apply search filters if a search term is provided
     if (searchTerm) {
       filter.$or = [
-        { "userId.userName": { $regex: searchTerm, $options: "i" } },
-        { "userId.email": { $regex: searchTerm, $options: "i" } },
-        { "jobPostId.jobTitle": { $regex: searchTerm, $options: "i" } },
+        { 'userId.userName': { $regex: searchTerm, $options: 'i' } },
+        { 'userId.email': { $regex: searchTerm, $options: 'i' } },
+        { 'jobPostId.jobTitle': { $regex: searchTerm, $options: 'i' } },
       ];
     }
 
@@ -50,7 +50,7 @@ export class CompanyJobApplicationUseCase {
         await this.jobApplicationRepository.findApplicationWithPagination(
           offset,
           limit,
-          filter,
+          filter
         );
 
       const totalPages = Math.ceil(totalApplications / limit);
@@ -62,10 +62,10 @@ export class CompanyJobApplicationUseCase {
         currentPage: page,
       };
     } catch (err) {
-      console.error("Error while fetching applications:", err);
+      console.error('Error while fetching applications:', err);
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while getting applications",
+        'Error while getting applications'
       );
     }
   }
@@ -74,7 +74,7 @@ export class CompanyJobApplicationUseCase {
 
   async updateStatus(
     applicationId: string,
-    status: "pending" | "reviewed" | "accepted" | "rejected",
+    status: 'pending' | 'reviewed' | 'accepted' | 'rejected'
   ) {
     try {
       const application =
@@ -82,14 +82,14 @@ export class CompanyJobApplicationUseCase {
       if (!application) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No application found with this ID",
+          'No application found with this ID'
         );
       }
 
       if (!application._id || !application.userId || !application.jobPostId) {
         throw new CustomError(
           STATUS_CODES.INTERNAL_SERVER_ERROR,
-          "Application data is incomplete.",
+          'Application data is incomplete.'
         );
       }
 
@@ -103,7 +103,7 @@ export class CompanyJobApplicationUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while updating status",
+        'Error while updating status'
       );
     }
   }

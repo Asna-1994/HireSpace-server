@@ -1,8 +1,8 @@
-import app from "./app";
-import dotenv from "dotenv";
-import initializeSocket from "./socket";
-import http from "http";
-import { scheduleSubscriptionJobs } from "./shared/utils/subscriptionScheduler";
+import app from './app';
+import dotenv from 'dotenv';
+import initializeSocket from './socket';
+import http from 'http';
+import { scheduleSubscriptionJobs } from './shared/utils/subscriptionScheduler';
 
 dotenv.config();
 

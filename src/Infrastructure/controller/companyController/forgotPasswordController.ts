@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { ForgotPasswordUseCase } from "../../../Application/usecases/company/forgotPasswordUsecase";
+import { Request, Response, NextFunction } from 'express';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { ForgotPasswordUseCase } from '../../../Application/usecases/company/forgotPasswordUsecase';
 
 export class ForgotPasswordController {
   constructor(private forgotPasswordUseCase: ForgotPasswordUseCase) {}

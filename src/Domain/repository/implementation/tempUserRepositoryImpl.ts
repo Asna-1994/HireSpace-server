@@ -1,8 +1,8 @@
-import { TempUserRepository } from "../repo/tempUserRepository";
-import { TempUserModel } from "../../../Infrastructure/models/tempUserModel";
-import { TempUser } from "../../entities/tempUser";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
+import { TempUserRepository } from '../repo/tempUserRepository';
+import { TempUserModel } from '../../../Infrastructure/models/tempUserModel';
+import { TempUser } from '../../entities/tempUser';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 
 export class TempUserRepositoryImpl implements TempUserRepository {
   async create(tempUser: TempUser): Promise<TempUser> {
@@ -24,12 +24,12 @@ export class TempUserRepositoryImpl implements TempUserRepository {
     const updatedUser = await TempUserModel.findOneAndUpdate(
       { email: user.email },
       user,
-      { new: true },
+      { new: true }
     )
       .lean()
       .exec();
     if (!updatedUser) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, "User not found");
+      throw new CustomError(STATUS_CODES.NOT_FOUND, 'User not found');
     }
     return updatedUser;
   }

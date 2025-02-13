@@ -1,18 +1,18 @@
-import { sendOtpSms } from "./../../../Infrastructure/email/emailService";
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { TempUserRepository } from "../../../Domain/repository/repo/tempUserRepository";
-import { sendOtpEmail } from "../../../Infrastructure/email/emailService";
-import { CustomError } from "../../../shared/error/customError";
-import { TempUser } from "../../../Domain/entities/tempUser";
-import { generateOtp } from "../../../shared/utils/tokenUtils";
-import { hashPassword } from "../../../shared/utils/passwordUtils";
+import { sendOtpSms } from './../../../Infrastructure/email/emailService';
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { TempUserRepository } from '../../../Domain/repository/repo/tempUserRepository';
+import { sendOtpEmail } from '../../../Infrastructure/email/emailService';
+import { CustomError } from '../../../shared/error/customError';
+import { TempUser } from '../../../Domain/entities/tempUser';
+import { generateOtp } from '../../../shared/utils/tokenUtils';
+import { hashPassword } from '../../../shared/utils/passwordUtils';
 
 export class SignupUseCase {
   constructor(
     private tempUserRepository: TempUserRepository,
     private UserRepository: UserRepository,
     private emailService: typeof sendOtpEmail,
-    private smsService: typeof sendOtpSms,
+    private smsService: typeof sendOtpSms
   ) {}
 
   async execute(userData: {
@@ -28,7 +28,7 @@ export class SignupUseCase {
 
     const existingUser = await this.UserRepository.findByEmail(email);
     if (existingUser) {
-      throw new CustomError(400, "User already registered");
+      throw new CustomError(400, 'User already registered');
     }
     const existingTempUser = await this.tempUserRepository.findByEmail(email);
     if (existingTempUser) {

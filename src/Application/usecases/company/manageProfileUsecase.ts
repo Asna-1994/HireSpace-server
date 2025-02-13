@@ -1,14 +1,14 @@
-import { CustomError } from "../../../shared/error/customError";
-import { CompanyRepository } from "../../../Domain/repository/repo/companyRepository";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { CompanyProfileRepository } from "../../../Domain/repository/repo/companyProfileRepository";
-import mongoose from "mongoose";
+import { CustomError } from '../../../shared/error/customError';
+import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { CompanyProfileRepository } from '../../../Domain/repository/repo/companyProfileRepository';
+import mongoose from 'mongoose';
 
 export class ManageProfileUseCase {
   constructor(
     private CompanyRepository: CompanyRepository,
-    private companyProfileRepository: CompanyProfileRepository,
+    private companyProfileRepository: CompanyProfileRepository
   ) {}
 
   async editBasicDetails(companyData: {

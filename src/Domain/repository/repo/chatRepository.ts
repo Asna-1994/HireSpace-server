@@ -1,4 +1,4 @@
-import { Message } from "../../entities/Message";
+import { Message } from '../../entities/Message';
 
 export interface ChatRepository {
   saveMessage(message: Message): Promise<void>;
@@ -6,7 +6,7 @@ export interface ChatRepository {
   getMessagesByRoomId(roomId: string): Promise<Message[]>;
   getRecentChats(userId: string): Promise<Message[]>;
   getUnreadMessagesCount(
-    userId: string,
+    userId: string
   ): Promise<{ roomId: string; count: number }[]>;
   getUnreadMessagesByRoom(userId: string, roomId: string): Promise<number>;
 }

@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { LoginUseCase } from "../../../Application/usecases/company/loginUseCase";
+import { Request, Response, NextFunction } from 'express';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { LoginUseCase } from '../../../Application/usecases/company/loginUseCase';
 
 export class LoginController {
   constructor(private loginUseCase: LoginUseCase) {}
@@ -17,11 +17,11 @@ export class LoginController {
       if (!company) {
       }
 
-      res.cookie("authToken", token, {
+      res.cookie('authToken', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === 'production',
         maxAge: 24 * 60 * 60 * 1000,
-        sameSite: "strict",
+        sameSite: 'strict',
       });
 
       res.status(STATUS_CODES.SUCCESS).json({

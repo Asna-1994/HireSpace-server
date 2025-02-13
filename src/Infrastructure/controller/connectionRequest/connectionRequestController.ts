@@ -1,30 +1,30 @@
-import { NextFunction, Request, Response } from "express";
-import { ConnectionRequestUseCase } from "../../../Application/usecases/connectionReqeust/connectionRequestUseCase";
-import { ConnectionRequestImpl } from "../../../Domain/repository/implementation/ConnectionRequestRepoImpl";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { UserRepositoryImpl } from "../../../Domain/repository/implementation/userRepositoryImpl";
+import { NextFunction, Request, Response } from 'express';
+import { ConnectionRequestUseCase } from '../../../Application/usecases/connectionReqeust/connectionRequestUseCase';
+import { ConnectionRequestImpl } from '../../../Domain/repository/implementation/ConnectionRequestRepoImpl';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { UserRepositoryImpl } from '../../../Domain/repository/implementation/userRepositoryImpl';
 
 const connectionRequestUseCase = new ConnectionRequestUseCase(
   new ConnectionRequestImpl(),
-  new UserRepositoryImpl(),
+  new UserRepositoryImpl()
 );
 
 //  create a connection request
 export async function createConnectionRequest(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> {
   try {
     const { fromUser, toUser } = req.body;
     const newRequest = await connectionRequestUseCase.createConnectionRequest(
       fromUser,
-      toUser,
+      toUser
     );
     res.status(STATUS_CODES.CREATED).json({
       success: true,
-      message: "Connection request send",
+      message: 'Connection request send',
       data: {
         newRequest,
       },
@@ -38,7 +38,7 @@ export async function createConnectionRequest(
 export async function getAllConnectionRequestsForUser(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> {
   try {
     const { userId } = req.params;
@@ -49,7 +49,7 @@ export async function getAllConnectionRequestsForUser(
       await connectionRequestUseCase.getConnectionRequestForUser(
         userId,
         page,
-        limit,
+        limit
       );
 
     res.status(STATUS_CODES.SUCCESS).json({
@@ -71,7 +71,7 @@ export async function getAllConnectionRequestsForUser(
 export async function getAllConnectionRequestsSentByUser(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> {
   try {
     const { userId } = req.params;
@@ -82,7 +82,7 @@ export async function getAllConnectionRequestsSentByUser(
       await connectionRequestUseCase.getConnectionRequestSentByUser(
         userId,
         page,
-        limit,
+        limit
       );
     res.status(STATUS_CODES.SUCCESS).json({
       success: true,
@@ -102,20 +102,20 @@ export async function getAllConnectionRequestsSentByUser(
 export async function getConnectionRequestById(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> {
   try {
     const { id } = req.params;
     const request = await connectionRequestUseCase.getConnectionRequestById(id);
 
     if (!request) {
-      res.status(404).json({ message: "Connection request not found" });
+      res.status(404).json({ message: 'Connection request not found' });
       return;
     }
 
     res.status(STATUS_CODES.CREATED).json({
       success: true,
-      message: "Connection request send",
+      message: 'Connection request send',
       data: {
         request,
       },
@@ -129,7 +129,7 @@ export async function getConnectionRequestById(
 export async function getAllConnectionsByUserId(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> {
   try {
     const { userId } = req.params;
@@ -142,7 +142,7 @@ export async function getAllConnectionsByUserId(
         userId,
         page,
         limit,
-        search,
+        search
       );
     const totalPages = Math.ceil(total / limit);
 
@@ -165,7 +165,7 @@ export async function getAllConnectionsByUserId(
 export async function getRecommendationsForUser(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> {
   try {
     const { userId } = req.params;
@@ -176,7 +176,7 @@ export async function getRecommendationsForUser(
       await connectionRequestUseCase.recommendationForUsers(
         userId,
         page,
-        limit,
+        limit
       );
 
     res.status(STATUS_CODES.SUCCESS).json({
@@ -198,7 +198,7 @@ export async function getRecommendationsForUser(
 export async function acceptConnectionRequest(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> {
   try {
     const { id } = req.params;
@@ -206,7 +206,7 @@ export async function acceptConnectionRequest(
       await connectionRequestUseCase.acceptConnectionRequest(id);
     res.status(STATUS_CODES.SUCCESS).json({
       success: true,
-      message: "Connection request accepted",
+      message: 'Connection request accepted',
       data: {
         acceptedRequest,
       },
@@ -220,7 +220,7 @@ export async function acceptConnectionRequest(
 export async function rejectConnectionRequest(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> {
   try {
     const { id } = req.params;
@@ -228,7 +228,7 @@ export async function rejectConnectionRequest(
       await connectionRequestUseCase.rejectConnectionRequest(id);
     res.status(STATUS_CODES.SUCCESS).json({
       success: true,
-      message: "Connection request rejected",
+      message: 'Connection request rejected',
       data: {
         rejectedRequest,
       },
@@ -242,14 +242,14 @@ export async function rejectConnectionRequest(
 export async function deleteConnectionRequest(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> {
   try {
     const { id } = req.params;
     const deleted = await connectionRequestUseCase.deleteConnectionRequest(id);
     res.status(STATUS_CODES.SUCCESS).json({
       success: true,
-      message: "Connection request Deleted",
+      message: 'Connection request Deleted',
       data: {
         deleted,
       },

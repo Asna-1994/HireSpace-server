@@ -1,16 +1,16 @@
-import { CompanyRepository } from "../../../Domain/repository/repo/companyRepository";
-import { CustomError } from "../../../shared/error/customError";
-import { generateToken } from "../../../shared/utils/tokenUtils";
-import { comparePassword } from "../../../shared/utils/passwordUtils";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { User } from "../../../Domain/entities/User";
-import { MESSAGES } from "../../../shared/constants/messages";
+import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
+import { CustomError } from '../../../shared/error/customError';
+import { generateToken } from '../../../shared/utils/tokenUtils';
+import { comparePassword } from '../../../shared/utils/passwordUtils';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { User } from '../../../Domain/entities/User';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class LoginUseCase {
   constructor(
     private companyRepository: CompanyRepository,
-    private userRepository: UserRepository,
+    private userRepository: UserRepository
   ) {}
 
   async execute(loginData: { email: string; password: string }) {
@@ -19,7 +19,7 @@ export class LoginUseCase {
     if (!email || !password) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "Please provide Email and password",
+        'Please provide Email and password'
       );
     }
 
@@ -29,29 +29,29 @@ export class LoginUseCase {
       if (existingUser.isBlocked) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "This user account has been blocked. Please contact Admin",
+          'This user account has been blocked. Please contact Admin'
         );
       }
 
       const isUserPasswordValid = await comparePassword(
         password,
-        existingUser.password as string,
+        existingUser.password as string
       );
       if (!isUserPasswordValid) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "Incorrect password");
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, 'Incorrect password');
       }
 
-      const validRoles = ["companyAdmin", "companyMember"];
+      const validRoles = ['companyAdmin', 'companyMember'];
       if (!validRoles.includes(existingUser?.userRole as string)) {
         throw new CustomError(
           STATUS_CODES.UNAUTHORIZED,
-          "You do not have the necessary permissions to log in",
+          'You do not have the necessary permissions to log in'
         );
       }
 
       const companyAccount = existingUser.companyId
         ? await this.companyRepository.findById(
-            existingUser.companyId.toString(),
+            existingUser.companyId.toString()
           )
         : null;
       if (companyAccount?.isBlocked) {
@@ -63,7 +63,7 @@ export class LoginUseCase {
         email: existingUser.email,
         role: existingUser.userRole,
         companyId: existingUser.companyId,
-        entity: "user",
+        entity: 'user',
       });
 
       return {
@@ -78,7 +78,7 @@ export class LoginUseCase {
     if (!existingCompany) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        MESSAGES.COMPANY_NOT_FOUND,
+        MESSAGES.COMPANY_NOT_FOUND
       );
     }
 
@@ -88,20 +88,20 @@ export class LoginUseCase {
 
     const isCompanyPasswordValid = await comparePassword(
       password,
-      existingCompany.password as string,
+      existingCompany.password as string
     );
     if (!isCompanyPasswordValid) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        MESSAGES.INVALID_PASSWORD,
+        MESSAGES.INVALID_PASSWORD
       );
     }
 
     const companyToken = generateToken({
       id: existingCompany._id,
       email: existingCompany.email,
-      role: "companyAdmin",
-      entity: "company",
+      role: 'companyAdmin',
+      entity: 'company',
     });
 
     return {

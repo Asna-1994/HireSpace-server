@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from "express";
-import { VerifyOtpUseCase } from "../../../Application/usecases/user/otpVerificationUsecase";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
+import { NextFunction, Request, Response } from 'express';
+import { VerifyOtpUseCase } from '../../../Application/usecases/user/otpVerificationUsecase';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class VerifyOtpController {
   constructor(private verifyOtpUseCase: VerifyOtpUseCase) {}

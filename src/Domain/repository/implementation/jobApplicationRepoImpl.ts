@@ -1,11 +1,11 @@
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { CustomError } from "../../../shared/error/customError";
-import { JobApplicationRepository } from "../repo/jobApplicationRepository";
-import { JobApplicationModel } from "../../../Infrastructure/models/JobApplicationModel";
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { CustomError } from '../../../shared/error/customError';
+import { JobApplicationRepository } from '../repo/jobApplicationRepository';
+import { JobApplicationModel } from '../../../Infrastructure/models/JobApplicationModel';
 import {
   JobApplication,
   normalizeJobApplication,
-} from "../../entities/JobApplication";
+} from '../../entities/JobApplication';
 
 export class JobApplicationRepositoryImpl implements JobApplicationRepository {
   async findOne(filter: object): Promise<JobApplication | null> {
@@ -15,12 +15,12 @@ export class JobApplicationRepositoryImpl implements JobApplicationRepository {
 
   async find(filter: object): Promise<JobApplication[] | []> {
     const jobApplications = await JobApplicationModel.find(filter)
-      .populate("userId", "userName email phone address profilePhoto")
+      .populate('userId', 'userName email phone address profilePhoto')
       .populate({
-        path: "jobPostId",
+        path: 'jobPostId',
         populate: {
-          path: "companyId",
-          select: "companyName email phone address industry companyLogo",
+          path: 'companyId',
+          select: 'companyName email phone address industry companyLogo',
         },
       });
     return jobApplications as JobApplication[] | [];
@@ -29,16 +29,16 @@ export class JobApplicationRepositoryImpl implements JobApplicationRepository {
   async findApplicationWithPagination(
     offset: number,
     limit: number,
-    filter: object,
+    filter: object
   ): Promise<{ jobApplications: JobApplication[]; totalApplications: number }> {
     try {
       const jobApplications = await JobApplicationModel.find(filter)
-        .populate("userId", "userName email phone address profilePhoto")
+        .populate('userId', 'userName email phone address profilePhoto')
         .populate({
-          path: "jobPostId",
+          path: 'jobPostId',
           populate: {
-            path: "companyId",
-            select: "companyName email phone address industry companyLogo",
+            path: 'companyId',
+            select: 'companyName email phone address industry companyLogo',
           },
         })
         .skip(offset)
@@ -47,7 +47,7 @@ export class JobApplicationRepositoryImpl implements JobApplicationRepository {
       const totalApplications =
         await JobApplicationModel.countDocuments(filter);
 
-      console.log("Job applications in repo", jobApplications);
+      console.log('Job applications in repo', jobApplications);
       return {
         jobApplications: jobApplications as JobApplication[],
         totalApplications,
@@ -55,7 +55,7 @@ export class JobApplicationRepositoryImpl implements JobApplicationRepository {
     } catch (err) {
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Failed to return data from repository",
+        'Failed to return data from repository'
       );
     }
   }
@@ -70,12 +70,12 @@ export class JobApplicationRepositoryImpl implements JobApplicationRepository {
     const updatedApplication = await JobApplicationModel.findByIdAndUpdate(
       jobApplication._id,
       jobApplication,
-      { new: true },
+      { new: true }
     )
       .lean()
       .exec();
     if (!updatedApplication) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, "Failed to update");
+      throw new CustomError(STATUS_CODES.NOT_FOUND, 'Failed to update');
     }
     return updatedApplication;
   }
@@ -83,12 +83,12 @@ export class JobApplicationRepositoryImpl implements JobApplicationRepository {
   async findOneAndUpdate(
     filter: object,
     update: object,
-    options: object,
+    options: object
   ): Promise<JobApplication | null> {
     const jobApplication = await JobApplicationModel.findOneAndUpdate(
       filter,
       update,
-      options,
+      options
     ).lean();
     return jobApplication;
   }
@@ -96,22 +96,22 @@ export class JobApplicationRepositoryImpl implements JobApplicationRepository {
   async findByIdAndUpdate(
     jobApplicationId: string,
     update: object,
-    options: object,
+    options: object
   ): Promise<JobApplication | null> {
     const jobApplication = await JobApplicationModel.findByIdAndUpdate(
       jobApplicationId,
       update,
-      options,
+      options
     ).lean();
     return jobApplication;
   }
 
   async create(
-    jobApplication: Partial<JobApplication>,
+    jobApplication: Partial<JobApplication>
   ): Promise<JobApplication> {
     const newJobApplication = new JobApplicationModel(jobApplication);
     await newJobApplication.save();
-    console.log("application creted in reposoroty", newJobApplication);
+    console.log('application creted in reposoroty', newJobApplication);
     return newJobApplication;
   }
 
@@ -120,12 +120,12 @@ export class JobApplicationRepositoryImpl implements JobApplicationRepository {
       return await JobApplicationModel.countDocuments(filter).exec();
     } catch (error) {
       console.error(
-        "Error counting documents in jobApplicationRepository:",
-        error,
+        'Error counting documents in jobApplicationRepository:',
+        error
       );
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while counting job applications",
+        'Error while counting job applications'
       );
     }
   }
@@ -135,19 +135,19 @@ export class JobApplicationRepositoryImpl implements JobApplicationRepository {
   }
 
   async getStatusDistribution(
-    query: any,
+    query: any
   ): Promise<Array<{ name: string; value: number }>> {
     return await JobApplicationModel.aggregate([
       { $match: query },
       {
         $group: {
-          _id: "$status",
+          _id: '$status',
           value: { $sum: 1 },
         },
       },
       {
         $project: {
-          name: "$_id",
+          name: '$_id',
           value: 1,
           _id: 0,
         },

@@ -1,12 +1,12 @@
-import mongoose, { Schema, Document } from "mongoose";
-import { imageObject, Member } from "../../Domain/entities/Company";
+import mongoose, { Schema, Document } from 'mongoose';
+import { imageObject, Member } from '../../Domain/entities/Company';
 
 export interface CompanyDocument extends Document {
   companyName: string;
   _id: string;
   email: string;
   phone: string;
-  entity: "company" | "user";
+  entity: 'company' | 'user';
   password: string;
   address: string;
   companyLogo?: imageObject;
@@ -14,7 +14,7 @@ export interface CompanyDocument extends Document {
   documentNumber?: string;
   industry: string;
   establishedDate: Date;
-  appPlan: "basic" | "premium";
+  appPlan: 'basic' | 'premium';
   isBlocked: boolean;
   isPremium: boolean;
   isDeleted: boolean;
@@ -35,7 +35,7 @@ const companySchema = new Schema<CompanyDocument>(
     companyName: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true },
     phone: { type: String },
-    entity: { type: String, enum: ["company", "user"], default: "company" },
+    entity: { type: String, enum: ['company', 'user'], default: 'company' },
     password: { type: String },
     address: { type: String },
     companyLogo: {
@@ -43,7 +43,7 @@ const companySchema = new Schema<CompanyDocument>(
         url: { type: String },
         publicId: { type: String },
       },
-      default: { url: "", publicId: "" },
+      default: { url: '', publicId: '' },
     },
     establishedDate: { type: Date },
     verificationDocument: {
@@ -51,14 +51,14 @@ const companySchema = new Schema<CompanyDocument>(
         url: { type: String },
         publicId: { type: String },
       },
-      default: { url: "", publicId: "" },
+      default: { url: '', publicId: '' },
     },
     documentNumber: { type: String },
     industry: { type: String, required: true },
     appPlan: {
       type: String,
-      enum: ["basic", "premium"],
-      default: "basic",
+      enum: ['basic', 'premium'],
+      default: 'basic',
     },
     isVerified: { type: Boolean, default: false },
     // admins : [{ type: Schema.Types.ObjectId, ref: 'UserModel' }],
@@ -70,19 +70,19 @@ const companySchema = new Schema<CompanyDocument>(
       {
         role: {
           type: String,
-          enum: ["companyAdmin", "companyMember"],
-          default: "companyMember",
+          enum: ['companyAdmin', 'companyMember'],
+          default: 'companyMember',
         },
-        userId: { type: Schema.Types.ObjectId, ref: "UserModel" },
+        userId: { type: Schema.Types.ObjectId, ref: 'UserModel' },
       },
     ],
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 companySchema.methods.validateEmail = function () {
-  if (!this.email.includes("@")) {
-    throw new Error("Invalid email address");
+  if (!this.email.includes('@')) {
+    throw new Error('Invalid email address');
   }
 };
 
@@ -92,7 +92,7 @@ companySchema.methods.markAsVerified = function () {
 
 companySchema.methods.upgradeToPremium = function () {
   this.isPremium = true;
-  this.appPlan = "premium";
+  this.appPlan = 'premium';
 };
 
 companySchema.methods.blockUser = function () {
@@ -100,6 +100,6 @@ companySchema.methods.blockUser = function () {
 };
 
 export const CompanyModel = mongoose.model<CompanyDocument>(
-  "CompanyModel",
-  companySchema,
+  'CompanyModel',
+  companySchema
 );

@@ -1,19 +1,19 @@
-import mongoose from "mongoose";
-import { stripe } from "../../../shared/utils/stripeClient";
-import { PaymentRepository } from "../../../Domain/repository/repo/paymentRepo";
-import { SubscriptionRepo } from "../../../Domain/repository/repo/subscriptionRepo";
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { PlanRepository } from "../../../Domain/repository/repo/planRepo";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
+import mongoose from 'mongoose';
+import { stripe } from '../../../shared/utils/stripeClient';
+import { PaymentRepository } from '../../../Domain/repository/repo/paymentRepo';
+import { SubscriptionRepo } from '../../../Domain/repository/repo/subscriptionRepo';
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { PlanRepository } from '../../../Domain/repository/repo/planRepo';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class HandlePaymentSuccessUseCase {
   constructor(
     private paymentRepo: PaymentRepository,
     private subscriptionRepo: SubscriptionRepo,
     private userRepo: UserRepository,
-    private planRepo: PlanRepository,
+    private planRepo: PlanRepository
   ) {}
 
   async execute(paymentIntentId: string) {
@@ -24,10 +24,10 @@ export class HandlePaymentSuccessUseCase {
       const paymentIntent =
         await stripe.paymentIntents.retrieve(paymentIntentId);
 
-      if (paymentIntent.status !== "succeeded") {
+      if (paymentIntent.status !== 'succeeded') {
         throw new CustomError(
           STATUS_CODES.INTERNAL_SERVER_ERROR,
-          "Payment not successful",
+          'Payment not successful'
         );
       }
 
@@ -37,9 +37,9 @@ export class HandlePaymentSuccessUseCase {
       const updatedPayment = await this.paymentRepo.findAndUpdate(
         { transactionId: paymentIntent.id },
         {
-          paymentStatus: "success",
+          paymentStatus: 'success',
         },
-        session,
+        session
       );
 
       const startDate = new Date();
@@ -53,16 +53,16 @@ export class HandlePaymentSuccessUseCase {
           startDate,
           endDate,
           isActive: true,
-          paymentStatus: "success",
+          paymentStatus: 'success',
           transactionId: paymentIntent.id,
           paymentId: new mongoose.Types.ObjectId(paymentId),
         },
-        session,
+        session
       );
 
       const plan = await this.planRepo.getPlanById(planId);
       if (!plan) {
-        throw new CustomError(STATUS_CODES.NOT_FOUND, "Plan not found");
+        throw new CustomError(STATUS_CODES.NOT_FOUND, 'Plan not found');
       }
 
       const user = await this.userRepo.findById(userId);
@@ -85,13 +85,13 @@ export class HandlePaymentSuccessUseCase {
       return { subscription, updatedUser };
     } catch (error) {
       await session.abortTransaction();
-      console.error("Error handling payment success:", error);
+      console.error('Error handling payment success:', error);
       if (error instanceof CustomError) {
         throw error;
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Failed to process payment success",
+        'Failed to process payment success'
       );
     } finally {
       session.endSession();

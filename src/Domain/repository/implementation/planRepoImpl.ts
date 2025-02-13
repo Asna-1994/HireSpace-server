@@ -1,6 +1,6 @@
-import { PlanModel } from "../../../Infrastructure/models/PlanModel";
-import { PlanRepository } from "../repo/planRepo";
-import { normalizePlans, Plans } from "../../entities/AppPlans";
+import { PlanModel } from '../../../Infrastructure/models/PlanModel';
+import { PlanRepository } from '../repo/planRepo';
+import { normalizePlans, Plans } from '../../entities/AppPlans';
 
 export class PlanRepositoryImpl implements PlanRepository {
   async createPlan(planData: Partial<Plans>): Promise<Plans> {
@@ -16,7 +16,7 @@ export class PlanRepositoryImpl implements PlanRepository {
 
   async updatePlan(
     id: string,
-    planData: Partial<Plans>,
+    planData: Partial<Plans>
   ): Promise<Plans | null> {
     const plan = await PlanModel.findByIdAndUpdate(id, planData, { new: true })
       .lean()
@@ -34,7 +34,7 @@ export class PlanRepositoryImpl implements PlanRepository {
   async getAllPlans(
     filter: object,
     skip?: number,
-    limit?: number,
+    limit?: number
   ): Promise<Plans[]> {
     let plans;
     if (skip !== undefined && limit !== undefined) {

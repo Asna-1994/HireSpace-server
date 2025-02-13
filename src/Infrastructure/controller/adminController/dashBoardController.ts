@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import { DashboardUseCase } from "../../../Application/usecases/admin/dashBoardUseCase";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { CustomError } from "../../../shared/error/customError";
+import { Request, Response, NextFunction } from 'express';
+import { DashboardUseCase } from '../../../Application/usecases/admin/dashBoardUseCase';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { CustomError } from '../../../shared/error/customError';
 
 export class DashboardController {
   constructor(private dashboardUseCase: DashboardUseCase) {}
@@ -9,33 +9,33 @@ export class DashboardController {
   async getDashboardStats(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { startDate, endDate } = req.query;
 
       if (startDate || endDate) {
         if (!startDate || !endDate) {
-          throw new CustomError(STATUS_CODES.BAD_REQUEST, "Provide both dates");
+          throw new CustomError(STATUS_CODES.BAD_REQUEST, 'Provide both dates');
         }
 
         const start = new Date(startDate as string);
         const end = new Date(endDate as string);
 
         if (
-          start.toString() === "Invalid Date" ||
-          end.toString() === "Invalid Date"
+          start.toString() === 'Invalid Date' ||
+          end.toString() === 'Invalid Date'
         ) {
           throw new CustomError(
             STATUS_CODES.BAD_REQUEST,
-            "Invalid date format. Please use YYYY-MM-DD format",
+            'Invalid date format. Please use YYYY-MM-DD format'
           );
         }
 
         if (start > end) {
           throw new CustomError(
             STATUS_CODES.BAD_REQUEST,
-            "'Start date must be before or equal to end date'",
+            "'Start date must be before or equal to end date'"
           );
         }
 
@@ -58,7 +58,7 @@ export class DashboardController {
         stats,
       });
     } catch (error) {
-      console.error("Dashboard controller error:", error);
+      console.error('Dashboard controller error:', error);
       next(error);
     }
   }

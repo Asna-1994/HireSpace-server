@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
+import { Request, Response, NextFunction } from 'express';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
 
-import { CustomError } from "../../../shared/error/customError";
-import { BlockOrUnblockCompanyUseCase } from "../../../Application/usecases/admin/blockOrUnblockCompany";
+import { CustomError } from '../../../shared/error/customError';
+import { BlockOrUnblockCompanyUseCase } from '../../../Application/usecases/admin/blockOrUnblockCompany';
 
 export class BlockOrUnblockCompanyController {
   constructor(private blockOrUnblockUseCase: BlockOrUnblockCompanyUseCase) {}
@@ -15,13 +15,13 @@ export class BlockOrUnblockCompanyController {
       if (!companyId || !action) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Missing required query parameters:companyId, or action",
+          'Missing required query parameters:companyId, or action'
         );
       }
 
       const updatedUSer = await this.blockOrUnblockUseCase.execute(
         companyId as string,
-        action as string,
+        action as string
       );
 
       res.status(STATUS_CODES.SUCCESS).json({
@@ -41,7 +41,7 @@ export class BlockOrUnblockCompanyController {
       if (!companyId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Missing required query parameters:companyId",
+          'Missing required query parameters:companyId'
         );
       }
 
@@ -49,7 +49,7 @@ export class BlockOrUnblockCompanyController {
         await this.blockOrUnblockUseCase.verifyCompany(companyId);
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
-        message: "Company verified",
+        message: 'Company verified',
       });
     } catch (error) {
       next(error);

@@ -1,12 +1,12 @@
-import mongoose from "mongoose";
-import { JobSeekerProfileModel } from "../../../Infrastructure/models/JobSeekerProfileModel";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { CustomError } from "../../../shared/error/customError";
+import mongoose from 'mongoose';
+import { JobSeekerProfileModel } from '../../../Infrastructure/models/JobSeekerProfileModel';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { CustomError } from '../../../shared/error/customError';
 import {
   JobSeekerProfile,
   normalizeJobSeekerProfile,
-} from "../../entities/JobSeekerProfile";
-import { JobSeekerProfileRepository } from "../repo/JobSeekerProfileRepo";
+} from '../../entities/JobSeekerProfile';
+import { JobSeekerProfileRepository } from '../repo/JobSeekerProfileRepo';
 
 export class JobSeekerProfileImpl implements JobSeekerProfileRepository {
   async findOne(filter: object): Promise<JobSeekerProfile> {
@@ -15,20 +15,20 @@ export class JobSeekerProfileImpl implements JobSeekerProfileRepository {
   }
 
   async update(
-    jobSeekerProfile: Partial<JobSeekerProfile>,
+    jobSeekerProfile: Partial<JobSeekerProfile>
   ): Promise<JobSeekerProfile> {
     if (!jobSeekerProfile._id) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST, "Profile ID is required");
+      throw new CustomError(STATUS_CODES.BAD_REQUEST, 'Profile ID is required');
     }
 
     const updatedProfile = await JobSeekerProfileModel.findByIdAndUpdate(
       jobSeekerProfile._id,
       { $set: jobSeekerProfile },
-      { new: true, lean: true },
+      { new: true, lean: true }
     ).exec();
 
     if (!updatedProfile) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, "Profile not found");
+      throw new CustomError(STATUS_CODES.NOT_FOUND, 'Profile not found');
     }
 
     return normalizeJobSeekerProfile(updatedProfile);
@@ -55,12 +55,12 @@ export class JobSeekerProfileImpl implements JobSeekerProfileRepository {
   async findOneAndUpdate(
     filter: object,
     update: object,
-    options: object,
+    options: object
   ): Promise<JobSeekerProfile> {
     const jobSeekerProfile = await JobSeekerProfileModel.findOneAndUpdate(
       filter,
       update,
-      options,
+      options
     );
     return normalizeJobSeekerProfile(jobSeekerProfile);
   }
@@ -81,10 +81,10 @@ export class JobSeekerProfileImpl implements JobSeekerProfileRepository {
 
   async create(
     jobSeekerProfile: Partial<JobSeekerProfile>,
-    options?: { session?: mongoose.ClientSession },
+    options?: { session?: mongoose.ClientSession }
   ): Promise<JobSeekerProfile> {
     if (!jobSeekerProfile.userId) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST, "User ID is required");
+      throw new CustomError(STATUS_CODES.BAD_REQUEST, 'User ID is required');
     }
 
     const newJobSeekerProfile = new JobSeekerProfileModel({

@@ -1,12 +1,12 @@
-import { PaymentRepository } from "../repo/paymentRepo";
-import { PaymentModel } from "../../../Infrastructure/models/PaymentModel";
-import { normalizePayment, Payment } from "../../entities/Payment";
-import mongoose from "mongoose";
+import { PaymentRepository } from '../repo/paymentRepo';
+import { PaymentModel } from '../../../Infrastructure/models/PaymentModel';
+import { normalizePayment, Payment } from '../../entities/Payment';
+import mongoose from 'mongoose';
 
 export class PaymentRepoImpl implements PaymentRepository {
   async createPayment(
     paymentData: Partial<Payment>,
-    session?: mongoose.ClientSession,
+    session?: mongoose.ClientSession
   ): Promise<Payment> {
     const newPayment = await PaymentModel.create([{ ...paymentData }], {
       session,
@@ -18,7 +18,7 @@ export class PaymentRepoImpl implements PaymentRepository {
   async findAndUpdate(
     filter: object,
     update: object,
-    session?: mongoose.ClientSession,
+    session?: mongoose.ClientSession
   ): Promise<Payment | null> {
     const updatedPayment = await PaymentModel.findOneAndUpdate(filter, update, {
       session,

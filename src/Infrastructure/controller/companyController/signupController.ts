@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express';
 
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { CustomError } from "../../../shared/error/customError";
-import { SignupUseCase } from "../../../Application/usecases/company/signupUsecase";
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { CustomError } from '../../../shared/error/customError';
+import { SignupUseCase } from '../../../Application/usecases/company/signupUsecase';
 
 export class SignupController {
   constructor(private signUpUseCase: SignupUseCase) {}
@@ -33,7 +33,7 @@ export class SignupController {
       ) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please Provide all the details",
+          'Please Provide all the details'
         );
       }
 
@@ -48,8 +48,8 @@ export class SignupController {
         companyAdminEmail,
       });
 
-      console.log("temporary user created", newTempCompany);
-      console.log("singup ended");
+      console.log('temporary user created', newTempCompany);
+      console.log('singup ended');
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
         message: MESSAGES.OTP_SENT,

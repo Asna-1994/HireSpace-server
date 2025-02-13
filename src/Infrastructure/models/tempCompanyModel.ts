@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, model } from "mongoose";
+import mongoose, { Document, Schema, model } from 'mongoose';
 
 export interface TempCompanyDocument extends Document {
   companyName: string;
@@ -28,6 +28,6 @@ const tempCompanySchema = new Schema<TempCompanyDocument>({
 });
 
 export const TempCompanyModel = model<TempCompanyDocument>(
-  "TempCompanyModel",
-  tempCompanySchema,
+  'TempCompanyModel',
+  tempCompanySchema
 );

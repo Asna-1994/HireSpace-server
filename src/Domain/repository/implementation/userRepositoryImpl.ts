@@ -1,14 +1,14 @@
-import { UserRepository } from "../repo/userRepository";
-import { UserModel } from "../../../Infrastructure/models/UserModel";
-import { User } from "../../entities/User";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import mongoose from "mongoose";
+import { UserRepository } from '../repo/userRepository';
+import { UserModel } from '../../../Infrastructure/models/UserModel';
+import { User } from '../../entities/User';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import mongoose from 'mongoose';
 
 export class UserRepositoryImpl implements UserRepository {
   async create(
     userData: Partial<User>,
-    options?: { session?: mongoose.ClientSession },
+    options?: { session?: mongoose.ClientSession }
   ): Promise<User> {
     const newUser = new UserModel(userData);
     const savedUser = options?.session
@@ -29,10 +29,10 @@ export class UserRepositoryImpl implements UserRepository {
 
   async findMembers(
     filter: object = {},
-    projection: string = "",
+    projection: string = ''
   ): Promise<User[] | null> {
     const user = await UserModel.find(filter, projection).lean().exec();
-    console.log("fetched user : ", user);
+    console.log('fetched user : ', user);
     return user;
   }
 
@@ -50,7 +50,7 @@ export class UserRepositoryImpl implements UserRepository {
       .exec();
 
     if (!updatedUser) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, "User not found");
+      throw new CustomError(STATUS_CODES.NOT_FOUND, 'User not found');
     }
     return updatedUser as User;
   }
@@ -61,9 +61,9 @@ export class UserRepositoryImpl implements UserRepository {
 
   async findUsersWithActiveSubscriptions(): Promise<User[]> {
     const users = await UserModel.find({
-      "appPlan.planType": { $ne: "basic" },
-      "appPlan.startDate": { $ne: null },
-      "appPlan.endDate": { $ne: null },
+      'appPlan.planType': { $ne: 'basic' },
+      'appPlan.startDate': { $ne: null },
+      'appPlan.endDate': { $ne: null },
     });
     return users;
   }
@@ -71,17 +71,17 @@ export class UserRepositoryImpl implements UserRepository {
   async findPremiumUsers(
     offset: number,
     limit: number,
-    filter: object,
+    filter: object
   ): Promise<{ users: User[]; total: number }> {
     const [users, total] = await Promise.all([
       UserModel.find(filter)
         .skip(offset)
         .limit(limit)
         .populate({
-          path: "appPlan.subscriptionId",
+          path: 'appPlan.subscriptionId',
           populate: {
-            path: "planId",
-            model: "PlanModel",
+            path: 'planId',
+            model: 'PlanModel',
           },
         })
         .lean(),
@@ -94,24 +94,24 @@ export class UserRepositoryImpl implements UserRepository {
   async findUsersWithPagination(
     offset: number,
     limit: number,
-    filter: object,
+    filter: object
   ): Promise<User[]> {
     return await UserModel.find(filter).skip(offset).limit(limit).lean().exec();
   }
 
   async blockOrUnblock(entityId: string, action: string): Promise<User> {
     let blockedUser;
-    if (action === "block") {
+    if (action === 'block') {
       blockedUser = await UserModel.findByIdAndUpdate(
         entityId,
         { isBlocked: true },
-        { new: true },
+        { new: true }
       );
     } else {
       blockedUser = await UserModel.findByIdAndUpdate(
         entityId,
         { isBlocked: false },
-        { new: true },
+        { new: true }
       );
     }
 
@@ -124,7 +124,7 @@ export class UserRepositoryImpl implements UserRepository {
 
   async addConnection(
     userId: string,
-    connectionId: string,
+    connectionId: string
   ): Promise<User | null> {
     const updatedUser = await UserModel.findByIdAndUpdate(userId, {
       $addToSet: { connections: connectionId },
@@ -157,40 +157,40 @@ export class UserRepositoryImpl implements UserRepository {
     userId: string,
     offset: number,
     limit: number,
-    search: string | null,
+    search: string | null
   ): Promise<{ connections: User[]; total: number }> {
     const userWithConnections = await UserModel.findById(userId)
       .populate({
-        path: "connections",
+        path: 'connections',
         match: search
           ? {
               $or: [
-                { userName: { $regex: search, $options: "i" } },
-                { email: { $regex: search, $options: "i" } },
+                { userName: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } },
               ],
             }
           : undefined,
-        select: "userName email profilePhoto tagLine",
+        select: 'userName email profilePhoto tagLine',
         options: { skip: offset, limit: limit },
       })
       .exec();
 
     if (!userWithConnections) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, "No user found with ID");
+      throw new CustomError(STATUS_CODES.NOT_FOUND, 'No user found with ID');
     }
 
     const totalConnections = await UserModel.findById(userId)
       .populate({
-        path: "connections",
+        path: 'connections',
         match: search
           ? {
               $or: [
-                { userName: { $regex: search, $options: "i" } },
-                { email: { $regex: search, $options: "i" } },
+                { userName: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } },
               ],
             }
           : undefined,
-        select: "_id",
+        select: '_id',
       })
       .exec();
 
@@ -213,7 +213,7 @@ export class UserRepositoryImpl implements UserRepository {
   async findUsers(
     offset: number,
     limit: number,
-    filter: object,
+    filter: object
   ): Promise<{ users: User[]; total: number }> {
     const [users, total] = await Promise.all([
       UserModel.find(filter).skip(offset).limit(limit).lean().exec(),

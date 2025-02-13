@@ -1,9 +1,9 @@
-import multer from "multer";
-import { v2 as cloudinary } from "cloudinary";
-import dotenv from "dotenv";
-import fs from "fs/promises";
-import { CustomError } from "../../shared/error/customError";
-import { STATUS_CODES } from "../../shared/constants/statusCodes";
+import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv';
+import fs from 'fs/promises';
+import { CustomError } from '../../shared/error/customError';
+import { STATUS_CODES } from '../../shared/constants/statusCodes';
 
 dotenv.config();
 
@@ -14,18 +14,18 @@ cloudinary.config({
 });
 
 const upload = multer({
-  dest: "uploads/",
+  dest: 'uploads/',
   limits: {
     fileSize: 5 * 1024 * 1024,
   },
   fileFilter: (req, file, cb) => {
     const allowedMimeTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/jpg",
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      'image/jpeg',
+      'image/png',
+      'image/jpg',
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     ];
     if (allowedMimeTypes.includes(file.mimetype)) {
       cb(null, true);
@@ -33,8 +33,8 @@ const upload = multer({
       cb(
         new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Invalid file type. Only JPEG, PNG are allowed.",
-        ),
+          'Invalid file type. Only JPEG, PNG are allowed.'
+        )
       );
     }
   },

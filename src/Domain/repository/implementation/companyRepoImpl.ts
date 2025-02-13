@@ -1,8 +1,8 @@
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { CompanyRepository } from "../repo/companyRepository";
-import { CompanyModel } from "../../../Infrastructure/models/CompanyModel";
-import { Company, normalizeCompany } from "../../entities/Company";
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { CompanyRepository } from '../repo/companyRepository';
+import { CompanyModel } from '../../../Infrastructure/models/CompanyModel';
+import { Company, normalizeCompany } from '../../entities/Company';
 
 export class CompanyRepositoryImpl implements CompanyRepository {
   async create(companyData: Partial<Company>): Promise<Company> {
@@ -29,12 +29,12 @@ export class CompanyRepositoryImpl implements CompanyRepository {
     const updatedCompany = await CompanyModel.findByIdAndUpdate(
       company._id,
       company,
-      { new: true },
+      { new: true }
     )
       .lean()
       .exec();
     if (!updatedCompany) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, "Company not found");
+      throw new CustomError(STATUS_CODES.NOT_FOUND, 'Company not found');
     }
     return normalizeCompany(updatedCompany);
   }
@@ -45,7 +45,7 @@ export class CompanyRepositoryImpl implements CompanyRepository {
   async findCompaniesWithPagination(
     offset: number,
     limit: number,
-    filter: object,
+    filter: object
   ): Promise<Company[]> {
     const companies = await CompanyModel.find(filter)
       .skip(offset)
@@ -58,7 +58,7 @@ export class CompanyRepositoryImpl implements CompanyRepository {
   async findCompanies(
     offset: number,
     limit: number,
-    filter: object,
+    filter: object
   ): Promise<{ companies: Company[]; total: number }> {
     const [companies, total] = await Promise.all([
       CompanyModel.find(filter).skip(offset).limit(limit).lean().exec(),
@@ -75,17 +75,17 @@ export class CompanyRepositoryImpl implements CompanyRepository {
 
   async blockOrUnblock(companyId: string, action: string): Promise<Company> {
     let blockedCompany;
-    if (action === "block") {
+    if (action === 'block') {
       blockedCompany = await CompanyModel.findByIdAndUpdate(
         companyId,
         { isBlocked: true },
-        { new: true },
+        { new: true }
       );
     } else {
       blockedCompany = await CompanyModel.findByIdAndUpdate(
         companyId,
         { isBlocked: false },
-        { new: true },
+        { new: true }
       );
     }
 

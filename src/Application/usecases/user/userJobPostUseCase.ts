@@ -1,22 +1,22 @@
-import { SpamRepository } from "./../../../Domain/repository/repo/spamRepository";
-import { JobPostRepository } from "../../../Domain/repository/repo/jobPostRepository";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { SpamReport } from "../../../Domain/entities/SpamReport";
+import { SpamRepository } from './../../../Domain/repository/repo/spamRepository';
+import { JobPostRepository } from '../../../Domain/repository/repo/jobPostRepository';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { SpamReport } from '../../../Domain/entities/SpamReport';
 
 export class UserJobPostUseCase {
   constructor(
     private jobPostRepository: JobPostRepository,
     private userRepository: UserRepository,
-    private spamRepository: SpamRepository,
+    private spamRepository: SpamRepository
   ) {}
 
   async getAllJobPostForUser({
     page = 1,
     limit = 10,
-    searchTerm = "",
-    tagLine = "",
+    searchTerm = '',
+    tagLine = '',
   }: {
     page?: number;
     limit?: number;
@@ -31,9 +31,9 @@ export class UserJobPostUseCase {
 
       if (searchTerm) {
         filter.$or = [
-          { "companyId.companyName": { $regex: searchTerm, $options: "i" } },
-          { "companyId.email": { $regex: searchTerm, $options: "i" } },
-          { jobTitle: { $regex: searchTerm, $options: "i" } },
+          { 'companyId.companyName': { $regex: searchTerm, $options: 'i' } },
+          { 'companyId.email': { $regex: searchTerm, $options: 'i' } },
+          { jobTitle: { $regex: searchTerm, $options: 'i' } },
         ];
       } else if (tagLine) {
         const keywords = tagLine
@@ -43,7 +43,7 @@ export class UserJobPostUseCase {
 
         if (keywords.length > 0) {
           filter.$or = keywords.map((keyword) => ({
-            jobTitle: { $regex: keyword, $options: "i" },
+            jobTitle: { $regex: keyword, $options: 'i' },
           }));
         }
       }
@@ -51,7 +51,7 @@ export class UserJobPostUseCase {
       const allJobPosts = await this.jobPostRepository.findPostsWithPagination(
         offset,
         limit,
-        filter,
+        filter
       );
       return allJobPosts;
     } catch (err) {
@@ -60,7 +60,7 @@ export class UserJobPostUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while getting job posts",
+        'Error while getting job posts'
       );
     }
   }
@@ -71,7 +71,7 @@ export class UserJobPostUseCase {
       if (!user) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
 
@@ -82,7 +82,7 @@ export class UserJobPostUseCase {
           _id: { $in: savedJobPostIds },
         });
 
-      console.log("saved jobs", savedJobPosts);
+      console.log('saved jobs', savedJobPosts);
       return savedJobPosts;
     } catch (err) {
       if (err instanceof CustomError) {
@@ -90,7 +90,7 @@ export class UserJobPostUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while getting saved job posts",
+        'Error while getting saved job posts'
       );
     }
   }

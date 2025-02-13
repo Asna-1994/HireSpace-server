@@ -1,19 +1,19 @@
-import mongoose from "mongoose";
-import { Subscriptions } from "../../entities/Subscription";
+import mongoose from 'mongoose';
+import { Subscriptions } from '../../entities/Subscription';
 
 export interface SubscriptionRepo {
   findExpiredSubscriptions(currentDate: Date): Promise<Subscriptions[] | []>;
   createSubscription(
     data: Partial<Subscriptions>,
-    session?: mongoose.ClientSession,
+    session?: mongoose.ClientSession
   ): Promise<Subscriptions>;
   updateSubscriptionStatus(
     transactionId: string,
-    status: string,
+    status: string
   ): Promise<Subscriptions | null>;
   findOne(filter: object): Promise<Subscriptions | null>;
   updateSubscriptionStatusById(
     subscriptionId: string,
-    isActive: boolean,
+    isActive: boolean
   ): Promise<Subscriptions | null>;
 }

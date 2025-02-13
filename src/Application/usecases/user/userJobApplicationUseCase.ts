@@ -1,39 +1,39 @@
-import { JobPostRepository } from "./../../../Domain/repository/repo/jobPostRepository";
-import { UserRepository } from "./../../../Domain/repository/repo/userRepository";
-import { JobSeekerProfileRepository } from "../../../Domain/repository/repo/JobSeekerProfileRepo";
-import { JobApplicationRepository } from "../../../Domain/repository/repo/jobApplicationRepository";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { JobApplication } from "../../../Domain/entities/JobApplication";
-import { MESSAGES } from "../../../shared/constants/messages";
+import { JobPostRepository } from './../../../Domain/repository/repo/jobPostRepository';
+import { UserRepository } from './../../../Domain/repository/repo/userRepository';
+import { JobSeekerProfileRepository } from '../../../Domain/repository/repo/JobSeekerProfileRepo';
+import { JobApplicationRepository } from '../../../Domain/repository/repo/jobApplicationRepository';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { JobApplication } from '../../../Domain/entities/JobApplication';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class UserJobApplicationUseCase {
   constructor(
     private jobApplicationRepository: JobApplicationRepository,
     private jobSeekerProfileRepository: JobSeekerProfileRepository,
     private userRepository: UserRepository,
-    private jobPostRepository: JobPostRepository,
+    private jobPostRepository: JobPostRepository
   ) {}
 
   async createJobApplication(
-    jobApplicationData: Partial<JobApplication>,
+    jobApplicationData: Partial<JobApplication>
   ): Promise<JobApplication> {
     try {
       const { userId, jobPostId, coverLetter, companyId } = jobApplicationData;
 
-      console.log("Received job application data:", jobApplicationData);
+      console.log('Received job application data:', jobApplicationData);
 
       if (!userId || !jobPostId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "User ID and Job Post ID are required.",
+          'User ID and Job Post ID are required.'
         );
       }
 
       if (!coverLetter) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please add cover letter",
+          'Please add cover letter'
         );
       }
 
@@ -46,7 +46,7 @@ export class UserJobApplicationUseCase {
       if (existingApplication) {
         throw new CustomError(
           STATUS_CODES.CONFLICT,
-          "You have already applied for this job.",
+          'You have already applied for this job.'
         );
       }
 
@@ -68,7 +68,7 @@ export class UserJobApplicationUseCase {
         if (recentApplicationsCount >= 10) {
           throw new CustomError(
             STATUS_CODES.FORBIDDEN,
-            "You can only apply for 10 jobs per month as a regular user. Upgrade to premium for unlimited applications.",
+            'You can only apply for 10 jobs per month as a regular user. Upgrade to premium for unlimited applications.'
           );
         }
       }
@@ -81,31 +81,31 @@ export class UserJobApplicationUseCase {
         ...jobApplicationData,
         appliedDate: new Date(),
         updatedDate: new Date(),
-        status: "pending",
+        status: 'pending',
       };
 
       if (!jobSeekerProfile?.resume?.url) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please upload resume in you profile",
+          'Please upload resume in you profile'
         );
       }
       newJobApplicationData.resumeUrl = jobSeekerProfile.resume.url;
       newJobApplicationData.coverLetter = coverLetter;
 
       const newApplication = await this.jobApplicationRepository.create(
-        newJobApplicationData,
+        newJobApplicationData
       );
 
       return newApplication as JobApplication;
     } catch (err) {
-      console.error("Error in createJobApplication:", err);
+      console.error('Error in createJobApplication:', err);
       if (err instanceof CustomError) {
         throw err;
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while creating job application",
+        'Error while creating job application'
       );
     }
   }
@@ -114,7 +114,7 @@ export class UserJobApplicationUseCase {
     userId: string,
     page: number,
     limit: number,
-    searchTerm?: string,
+    searchTerm?: string
   ) {
     try {
       const skip = (page - 1) * limit;
@@ -122,11 +122,11 @@ export class UserJobApplicationUseCase {
 
       if (searchTerm) {
         query.$or = [
-          { "jobPostId.jobTitle": { $regex: searchTerm, $options: "i" } },
+          { 'jobPostId.jobTitle': { $regex: searchTerm, $options: 'i' } },
           {
-            "jobPostId.companyId.companyName": {
+            'jobPostId.companyId.companyName': {
               $regex: searchTerm,
-              $options: "i",
+              $options: 'i',
             },
           },
         ];
@@ -136,18 +136,18 @@ export class UserJobApplicationUseCase {
         await this.jobApplicationRepository.findApplicationWithPagination(
           skip,
           limit,
-          query,
+          query
         );
 
       return { allApplications, totalApplications };
     } catch (err) {
-      console.error("Error in getting bApplication:", err);
+      console.error('Error in getting bApplication:', err);
       if (err instanceof CustomError) {
         throw err;
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error while getting applications",
+        'Error while getting applications'
       );
     }
   }
@@ -159,7 +159,7 @@ export class UserJobApplicationUseCase {
       if (!user) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
 
@@ -167,7 +167,7 @@ export class UserJobApplicationUseCase {
         await this.jobApplicationRepository.countTotal({ userId: userId });
       const totalJobPosts = await this.jobPostRepository.countTotal({
         isDeleted: false,
-        status: "Active",
+        status: 'Active',
       });
 
       return { totalJobPosts, totalJobApplications };
@@ -178,7 +178,7 @@ export class UserJobApplicationUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Error in getting details for home",
+        'Error in getting details for home'
       );
     }
   }

@@ -1,10 +1,10 @@
-import { normalizeMessage } from "./../../entities/Message";
-import { ChatRepository } from "../repo/chatRepository";
-import { Message } from "../../entities/Message";
-import { MessageModel } from "../../../Infrastructure/models/MessageModel";
-import mongoose from "mongoose";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
+import { normalizeMessage } from './../../entities/Message';
+import { ChatRepository } from '../repo/chatRepository';
+import { Message } from '../../entities/Message';
+import { MessageModel } from '../../../Infrastructure/models/MessageModel';
+import mongoose from 'mongoose';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 
 export class ChatRepositoryImpl implements ChatRepository {
   async saveMessage(message: Message): Promise<void> {
@@ -24,8 +24,8 @@ export class ChatRepositoryImpl implements ChatRepository {
 
     const updatedMessage = await MessageModel.findByIdAndUpdate(
       messageId,
-      { status: "read" },
-      { new: true },
+      { status: 'read' },
+      { new: true }
     );
     return normalizeMessage(updatedMessage);
   }
@@ -55,32 +55,32 @@ export class ChatRepositoryImpl implements ChatRepository {
       { $sort: { createdAt: -1 } },
       {
         $group: {
-          _id: "$roomId",
-          latestMessage: { $first: "$$ROOT" },
+          _id: '$roomId',
+          latestMessage: { $first: '$$ROOT' },
         },
       },
       {
         $lookup: {
-          from: "usermodels",
-          localField: "latestMessage.senderId",
-          foreignField: "_id",
-          as: "senderDetails",
+          from: 'usermodels',
+          localField: 'latestMessage.senderId',
+          foreignField: '_id',
+          as: 'senderDetails',
         },
       },
       {
         $lookup: {
-          from: "usermodels",
-          localField: "latestMessage.receiverId",
-          foreignField: "_id",
-          as: "receiverDetails",
+          from: 'usermodels',
+          localField: 'latestMessage.receiverId',
+          foreignField: '_id',
+          as: 'receiverDetails',
         },
       },
       {
         $project: {
           _id: 1,
           latestMessage: 1,
-          senderDetails: { $arrayElemAt: ["$senderDetails", 0] },
-          receiverDetails: { $arrayElemAt: ["$receiverDetails", 0] },
+          senderDetails: { $arrayElemAt: ['$senderDetails', 0] },
+          receiverDetails: { $arrayElemAt: ['$receiverDetails', 0] },
         },
       },
     ]);
@@ -107,7 +107,7 @@ export class ChatRepositoryImpl implements ChatRepository {
   }
 
   async getUnreadMessagesCount(
-    userId: string,
+    userId: string
   ): Promise<{ roomId: string; count: number }[]> {
     try {
       const results = await MessageModel.aggregate([
@@ -115,27 +115,27 @@ export class ChatRepositoryImpl implements ChatRepository {
           $match: {
             receiverId: new mongoose.Types.ObjectId(userId),
             senderId: { $ne: new mongoose.Types.ObjectId(userId) },
-            status: "sent",
+            status: 'sent',
           },
         },
         {
           $group: {
-            _id: "$roomId",
+            _id: '$roomId',
             count: { $sum: 1 },
-            lastMessage: { $last: "$$ROOT" },
+            lastMessage: { $last: '$$ROOT' },
           },
         },
 
         {
           $sort: {
-            "lastMessage.createdAt": -1,
+            'lastMessage.createdAt': -1,
           },
         },
 
         {
           $project: {
             _id: 0,
-            roomId: "$_id",
+            roomId: '$_id',
             count: 1,
           },
         },
@@ -146,29 +146,29 @@ export class ChatRepositoryImpl implements ChatRepository {
         count: result.count,
       }));
     } catch (error) {
-      console.error("Error getting unread message counts:", error);
+      console.error('Error getting unread message counts:', error);
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Failed to get unread message counts",
+        'Failed to get unread message counts'
       );
     }
   }
 
   async getUnreadMessagesByRoom(
     userId: string,
-    roomId: string,
+    roomId: string
   ): Promise<number> {
     try {
       const unreadCount = await MessageModel.countDocuments({
         roomId,
         receiverId: userId,
-        status: { $ne: "read" },
+        status: { $ne: 'read' },
       });
 
       return unreadCount;
     } catch (error) {
-      console.error("Error fetching unread messages:", error);
-      throw new Error("Failed to fetch unread messages.");
+      console.error('Error fetching unread messages:', error);
+      throw new Error('Failed to fetch unread messages.');
     }
   }
 }

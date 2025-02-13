@@ -1,18 +1,18 @@
-import { JobSeekerProfileRepository } from "./../../../Domain/repository/repo/JobSeekerProfileRepo";
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { CustomError } from "../../../shared/error/customError";
-import { generateToken } from "../../../shared/utils/tokenUtils";
-import { OAuth2Client } from "google-auth-library";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { User } from "../../../Domain/entities/User";
-import mongoose from "mongoose";
+import { JobSeekerProfileRepository } from './../../../Domain/repository/repo/JobSeekerProfileRepo';
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { CustomError } from '../../../shared/error/customError';
+import { generateToken } from '../../../shared/utils/tokenUtils';
+import { OAuth2Client } from 'google-auth-library';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { User } from '../../../Domain/entities/User';
+import mongoose from 'mongoose';
 
 export class GoogleSignInUseCase {
   private oauthClient: OAuth2Client;
 
   constructor(
     private userRepository: UserRepository,
-    private jobSeekerProfileRepository: JobSeekerProfileRepository,
+    private jobSeekerProfileRepository: JobSeekerProfileRepository
   ) {
     this.oauthClient = new OAuth2Client(process.env.oauth_client_id);
   }
@@ -25,7 +25,7 @@ export class GoogleSignInUseCase {
 
     const payload = ticket.getPayload();
     if (!payload) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST, "Invalid Google Token");
+      throw new CustomError(STATUS_CODES.BAD_REQUEST, 'Invalid Google Token');
     }
 
     const { sub: googleId, name, email, picture: profilePicture } = payload;
@@ -33,11 +33,11 @@ export class GoogleSignInUseCase {
     if (!email) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "Email is required for Google authentication",
+        'Email is required for Google authentication'
       );
     }
 
-    const userName: string = name ?? email.split("@")[0];
+    const userName: string = name ?? email.split('@')[0];
 
     let existingUser = await this.userRepository.findByGoogleId(googleId);
 
@@ -54,7 +54,7 @@ export class GoogleSignInUseCase {
           userName: userName,
           email,
           // profilePhoto: profilePicture,
-          entity: "user",
+          entity: 'user',
           isBlocked: false,
           isPremium: false,
           isVerified: false,
@@ -71,7 +71,7 @@ export class GoogleSignInUseCase {
       id: existingUser._id,
       email: existingUser.email,
       role: existingUser.userRole,
-      entity: "user",
+      entity: 'user',
     });
 
     return {

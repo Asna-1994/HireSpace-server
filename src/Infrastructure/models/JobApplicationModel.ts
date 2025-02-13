@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from 'mongoose';
 
 export interface CoverLetter {
   salutation: string;
@@ -12,7 +12,7 @@ export interface JobApplicationDocument extends Document {
   companyId: mongoose.Types.ObjectId | string;
   jobPostId: mongoose.Types.ObjectId | string;
   coverLetter: CoverLetter;
-  status: "pending" | "reviewed" | "accepted" | "rejected";
+  status: 'pending' | 'reviewed' | 'accepted' | 'rejected';
   appliedDate: Date;
   updatedDate: Date;
   resumeUrl: string;
@@ -23,15 +23,15 @@ export interface JobApplicationDocument extends Document {
 
 const JobApplicationSchema: Schema = new Schema(
   {
-    userId: { type: mongoose.Types.ObjectId, ref: "UserModel", required: true },
+    userId: { type: mongoose.Types.ObjectId, ref: 'UserModel', required: true },
     companyId: {
       type: mongoose.Types.ObjectId,
-      ref: "CompanyModel",
+      ref: 'CompanyModel',
       required: true,
     },
     jobPostId: {
       type: mongoose.Types.ObjectId,
-      ref: "JobPostModel",
+      ref: 'JobPostModel',
       required: true,
     },
     coverLetter: {
@@ -41,18 +41,18 @@ const JobApplicationSchema: Schema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "reviewed", "accepted", "rejected"],
-      default: "pending",
+      enum: ['pending', 'reviewed', 'accepted', 'rejected'],
+      default: 'pending',
     },
     appliedDate: { type: Date, default: Date.now },
     updatedDate: { type: Date, default: Date.now },
     isDeleted: { type: Boolean, required: true, default: false },
     resumeUrl: { type: String },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export const JobApplicationModel = mongoose.model<JobApplicationDocument>(
-  "JobApplicationModel",
-  JobApplicationSchema,
+  'JobApplicationModel',
+  JobApplicationSchema
 );

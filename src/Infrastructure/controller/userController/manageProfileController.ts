@@ -1,10 +1,10 @@
-import { JobSeekerProfile } from "./../../../Domain/entities/JobSeekerProfile";
+import { JobSeekerProfile } from './../../../Domain/entities/JobSeekerProfile';
 
-import { Request, Response, NextFunction } from "express";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { ManageProfileUseCase } from "../../../Application/usecases/user/manageProfileUsecase";
-import { CustomError } from "../../../shared/error/customError";
+import { Request, Response, NextFunction } from 'express';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { ManageProfileUseCase } from '../../../Application/usecases/user/manageProfileUsecase';
+import { CustomError } from '../../../shared/error/customError';
 
 export class ManageJobSeekerProfileController {
   constructor(private manageProfileUseCase: ManageProfileUseCase) {}
@@ -12,7 +12,7 @@ export class ManageJobSeekerProfileController {
   async addEducation(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const {
@@ -25,7 +25,7 @@ export class ManageJobSeekerProfileController {
       } = req.body;
       const { userId } = req.params;
       const educationId =
-        typeof req.query.educationId === "string"
+        typeof req.query.educationId === 'string'
           ? req.query.educationId
           : undefined;
 
@@ -39,11 +39,11 @@ export class ManageJobSeekerProfileController {
       ) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please fill complete details",
+          'Please fill complete details'
         );
       }
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "No User Id provided");
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, 'No User Id provided');
       }
 
       const userData = {
@@ -62,13 +62,13 @@ export class ManageJobSeekerProfileController {
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
-        message: "Education added successfully",
+        message: 'Education added successfully',
         data: {
           updatedProfile,
         },
       });
     } catch (error) {
-      console.error("Error in adding education:", error);
+      console.error('Error in adding education:', error);
       next(error);
     }
   }
@@ -77,14 +77,14 @@ export class ManageJobSeekerProfileController {
   async getAllEducation(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId } = req.params;
       if (!userId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please Provide the userId",
+          'Please Provide the userId'
         );
       }
 
@@ -99,7 +99,7 @@ export class ManageJobSeekerProfileController {
         },
       });
     } catch (error) {
-      console.error("Error in getting education", error);
+      console.error('Error in getting education', error);
       next(error);
     }
   }
@@ -108,21 +108,21 @@ export class ManageJobSeekerProfileController {
   async deleteEducation(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId, educationId } = req.params;
       if (!userId || !educationId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please Provide the required parameters",
+          'Please Provide the required parameters'
         );
       }
 
       const updatedEducation =
         await this.manageProfileUseCase.deleteEducationById(
           userId,
-          educationId,
+          educationId
         );
 
       res.status(STATUS_CODES.SUCCESS).json({
@@ -133,7 +133,7 @@ export class ManageJobSeekerProfileController {
         },
       });
     } catch (error) {
-      console.error("Error in deleting education", error);
+      console.error('Error in deleting education', error);
       next(error);
     }
   }
@@ -143,7 +143,7 @@ export class ManageJobSeekerProfileController {
   async addWorkExperience(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const {
@@ -156,7 +156,7 @@ export class ManageJobSeekerProfileController {
       } = req.body;
       const { userId } = req.params;
       const experienceId =
-        typeof req.query.experienceId === "string"
+        typeof req.query.experienceId === 'string'
           ? req.query.experienceId
           : undefined;
 
@@ -170,11 +170,11 @@ export class ManageJobSeekerProfileController {
       ) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please fill complete details",
+          'Please fill complete details'
         );
       }
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "No User Id provided");
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, 'No User Id provided');
       }
 
       const experienceData = {
@@ -193,13 +193,13 @@ export class ManageJobSeekerProfileController {
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
-        message: "Experience added successfully",
+        message: 'Experience added successfully',
         data: {
           experience: updatedExperience, // Use the correct field name here
         },
       });
     } catch (error) {
-      console.error("Error in adding experience:", error);
+      console.error('Error in adding experience:', error);
       next(error);
     }
   }
@@ -209,14 +209,14 @@ export class ManageJobSeekerProfileController {
   async getAllExperience(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId } = req.params;
       if (!userId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please Provide the userId",
+          'Please Provide the userId'
         );
       }
 
@@ -231,7 +231,7 @@ export class ManageJobSeekerProfileController {
         },
       });
     } catch (error) {
-      console.error("Error in getting experience", error);
+      console.error('Error in getting experience', error);
       next(error);
     }
   }
@@ -240,21 +240,21 @@ export class ManageJobSeekerProfileController {
   async deleteExperience(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId, experienceId } = req.params;
       if (!userId || !experienceId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please Provide the required parameters",
+          'Please Provide the required parameters'
         );
       }
 
       const updatedExperience =
         await this.manageProfileUseCase.deleteExperienceById(
           userId,
-          experienceId,
+          experienceId
         );
 
       res.status(STATUS_CODES.SUCCESS).json({
@@ -265,7 +265,7 @@ export class ManageJobSeekerProfileController {
         },
       });
     } catch (error) {
-      console.error("Error in deleting experience", error);
+      console.error('Error in deleting experience', error);
       next(error);
     }
   }
@@ -275,14 +275,14 @@ export class ManageJobSeekerProfileController {
   async addSkills(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { hardSkills, softSkills, technicalSkills } = req.body;
       const { userId } = req.params;
 
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "No User Id provided");
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, 'No User Id provided');
       }
 
       const skillsData = {
@@ -297,13 +297,13 @@ export class ManageJobSeekerProfileController {
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
-        message: "Experience added successfully",
+        message: 'Experience added successfully',
         data: {
           skills: updatedSkills,
         },
       });
     } catch (error) {
-      console.error("Error in adding experience:", error);
+      console.error('Error in adding experience:', error);
       next(error);
     }
   }
@@ -312,14 +312,14 @@ export class ManageJobSeekerProfileController {
   async getAllSkills(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId } = req.params;
       if (!userId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please Provide the userId",
+          'Please Provide the userId'
         );
       }
 
@@ -333,7 +333,7 @@ export class ManageJobSeekerProfileController {
         },
       });
     } catch (error) {
-      console.error("Error in getting experience", error);
+      console.error('Error in getting experience', error);
       next(error);
     }
   }
@@ -342,7 +342,7 @@ export class ManageJobSeekerProfileController {
   async deleteSkill(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId } = req.params;
@@ -350,13 +350,13 @@ export class ManageJobSeekerProfileController {
       if (!userId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please Provide the required parameters",
+          'Please Provide the required parameters'
         );
       }
 
       const updatedSkills = await this.manageProfileUseCase.deleteSkill(
         userId,
-        skillName,
+        skillName
       );
 
       res.status(STATUS_CODES.SUCCESS).json({
@@ -367,7 +367,7 @@ export class ManageJobSeekerProfileController {
         },
       });
     } catch (error) {
-      console.error("Error in deleting skills", error);
+      console.error('Error in deleting skills', error);
       next(error);
     }
   }
@@ -376,7 +376,7 @@ export class ManageJobSeekerProfileController {
   async addOrEditCertificates(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const {
@@ -388,18 +388,18 @@ export class ManageJobSeekerProfileController {
       } = req.body;
       const { userId } = req.params;
       const certificateId =
-        typeof req.query.certificateId === "string"
+        typeof req.query.certificateId === 'string'
           ? req.query.certificateId
           : undefined;
 
       if (!certificateTitle || !issuer || !issuedDate) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please fill Necessary fields",
+          'Please fill Necessary fields'
         );
       }
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "No User Id provided");
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, 'No User Id provided');
       }
 
       const certificateData = {
@@ -417,13 +417,13 @@ export class ManageJobSeekerProfileController {
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
-        message: "certificate added successfully",
+        message: 'certificate added successfully',
         data: {
           certificate: updatedCertificate,
         },
       });
     } catch (error) {
-      console.error("Error in adding certificate:", error);
+      console.error('Error in adding certificate:', error);
       next(error);
     }
   }
@@ -432,14 +432,14 @@ export class ManageJobSeekerProfileController {
   async getAllCertificates(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId } = req.params;
       if (!userId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please Provide the userId",
+          'Please Provide the userId'
         );
       }
 
@@ -454,7 +454,7 @@ export class ManageJobSeekerProfileController {
         },
       });
     } catch (error) {
-      console.error("Error in getting certificates", error);
+      console.error('Error in getting certificates', error);
       next(error);
     }
   }
@@ -463,21 +463,21 @@ export class ManageJobSeekerProfileController {
   async deleteCertificate(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId, certificateId } = req.params;
       if (!userId || !certificateId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please Provide the required parameters",
+          'Please Provide the required parameters'
         );
       }
 
       const updatedCertificate =
         await this.manageProfileUseCase.deleteCertificateById(
           userId,
-          certificateId,
+          certificateId
         );
 
       res.status(STATUS_CODES.SUCCESS).json({
@@ -488,7 +488,7 @@ export class ManageJobSeekerProfileController {
         },
       });
     } catch (error) {
-      console.error("Error in deleting certificate", error);
+      console.error('Error in deleting certificate', error);
       next(error);
     }
   }
@@ -497,14 +497,14 @@ export class ManageJobSeekerProfileController {
   async getJobSeekerProfile(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId } = req.params;
       if (!userId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please Provide the userId",
+          'Please Provide the userId'
         );
       }
 
@@ -519,7 +519,7 @@ export class ManageJobSeekerProfileController {
         },
       });
     } catch (error) {
-      console.error("Error in getting profile", error);
+      console.error('Error in getting profile', error);
       next(error);
     }
   }
@@ -527,19 +527,19 @@ export class ManageJobSeekerProfileController {
   async saveJob(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId, jobPostId } = req.params;
       if (!userId || !jobPostId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Provide necessary parameters",
+          'Provide necessary parameters'
         );
       }
       const updatedUser = await this.manageProfileUseCase.saveJobs(
         userId,
-        jobPostId,
+        jobPostId
       );
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
@@ -552,7 +552,7 @@ export class ManageJobSeekerProfileController {
   async addTagline(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId } = req.params;
@@ -560,12 +560,12 @@ export class ManageJobSeekerProfileController {
       if (!userId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Provide necessary parameters",
+          'Provide necessary parameters'
         );
       }
       const updatedUser = await this.manageProfileUseCase.addTagLine(
         userId,
-        tagline,
+        tagline
       );
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,

@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
-import { ChatUseCase } from "../../../Application/usecases/chat/chatUseCase";
-import { ChatRepositoryImpl } from "../../../Domain/repository/implementation/chatRepoImpl";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
+import { Request, Response, NextFunction } from 'express';
+import { ChatUseCase } from '../../../Application/usecases/chat/chatUseCase';
+import { ChatRepositoryImpl } from '../../../Domain/repository/implementation/chatRepoImpl';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 const chatUseCase = new ChatUseCase(new ChatRepositoryImpl());
 
@@ -12,7 +12,7 @@ export const chatController = {
     const userId = req.query.userId as string;
 
     if (!userId) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST, "User ID is required");
+      throw new CustomError(STATUS_CODES.BAD_REQUEST, 'User ID is required');
     }
 
     try {
@@ -26,7 +26,7 @@ export const chatController = {
       });
     } catch (error) {
       next(error);
-      console.error("Error fetching recent chats:", error);
+      console.error('Error fetching recent chats:', error);
     }
   },
 
@@ -34,7 +34,7 @@ export const chatController = {
     const { roomId } = req.params;
 
     if (!roomId) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST, "Room ID is required");
+      throw new CustomError(STATUS_CODES.BAD_REQUEST, 'Room ID is required');
     }
 
     try {
@@ -47,7 +47,7 @@ export const chatController = {
         },
       });
     } catch (error) {
-      console.error("Error fetching chat history:", error);
+      console.error('Error fetching chat history:', error);
       next(error);
     }
   },

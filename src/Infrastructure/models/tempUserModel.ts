@@ -1,4 +1,4 @@
-import { Document, Schema, model } from "mongoose";
+import { Document, Schema, model } from 'mongoose';
 
 export interface TempUserDocument extends Document {
   userName: string;
@@ -27,6 +27,6 @@ const tempUserSchema = new Schema<TempUserDocument>({
 });
 
 export const TempUserModel = model<TempUserDocument>(
-  "TempUserModel",
-  tempUserSchema,
+  'TempUserModel',
+  tempUserSchema
 );

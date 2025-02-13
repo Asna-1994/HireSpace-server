@@ -1,64 +1,64 @@
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { CompanyRepository } from "../../../Domain/repository/repo/companyRepository";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { Types } from "mongoose";
-import { MESSAGES } from "../../../shared/constants/messages";
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { Types } from 'mongoose';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class AddMembersUseCase {
   constructor(
     private companyRepository: CompanyRepository,
-    private userRepository: UserRepository,
+    private userRepository: UserRepository
   ) {}
 
   async execute(email: string, companyId: string, userRole: string) {
     if (!email || !companyId) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "Please provide Email and companyId",
+        'Please provide Email and companyId'
       );
     }
 
     const objectIdCompanyId = new Types.ObjectId(companyId);
     const existingCompany = await this.companyRepository.findById(companyId);
     if (!existingCompany) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, "No company found with Id");
+      throw new CustomError(STATUS_CODES.NOT_FOUND, 'No company found with Id');
     }
 
     const existingUser = await this.userRepository.findByEmail(email);
     if (!existingUser) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "No User registered with this email, Please signup first",
+        'No User registered with this email, Please signup first'
       );
     }
     const objectIdUserId = new Types.ObjectId(existingUser._id);
     if (existingCompany.isBlocked) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "This Company has been blocked. Please contact Admin",
+        'This Company has been blocked. Please contact Admin'
       );
     }
 
     if (existingUser.isBlocked) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "This User has been blocked. Please contact Admin",
+        'This User has been blocked. Please contact Admin'
       );
     }
 
     if (
       existingCompany.members.some(
-        (member) => member.userId.toString() === objectIdUserId.toString(),
+        (member) => member.userId.toString() === objectIdUserId.toString()
       )
     ) {
       throw new CustomError(
         STATUS_CODES.CONFLICT,
-        "User is already a member of this company",
+        'User is already a member of this company'
       );
     }
 
-    const role = userRole === "admin" ? "companyAdmin" : "companyMember";
+    const role = userRole === 'admin' ? 'companyAdmin' : 'companyMember';
     existingUser.companyId = objectIdCompanyId;
     existingUser.userRole = role;
 
@@ -80,7 +80,7 @@ export class AddMembersUseCase {
       if (!companyId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please Provide company Id",
+          'Please Provide company Id'
         );
       }
 
@@ -88,7 +88,7 @@ export class AddMembersUseCase {
       if (!existingCompany) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          MESSAGES.COMPANY_NOT_FOUND,
+          MESSAGES.COMPANY_NOT_FOUND
         );
       }
       const memberObjects = existingCompany.members;
@@ -99,18 +99,18 @@ export class AddMembersUseCase {
       console.log(memberObjects);
 
       const memberIds = memberObjects.map((member) => member.userId);
-      console.log("members ids", memberIds);
+      console.log('members ids', memberIds);
 
       const users = await this.userRepository.findMembers(
         { _id: { $in: memberIds } },
-        "userName email",
+        'userName email'
       );
 
       console.log(users);
 
       const membersWithRoles = users?.map((user) => {
         const member = memberObjects.find(
-          (m) => m.userId?.toString() === user._id.toString(),
+          (m) => m.userId?.toString() === user._id.toString()
         );
         return {
           ...user,
@@ -127,7 +127,7 @@ export class AddMembersUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Failed to fetch member details",
+        'Failed to fetch member details'
       );
     }
   }
@@ -137,7 +137,7 @@ export class AddMembersUseCase {
     if (!userId || !companyId) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "Please provide userId and Company ID",
+        'Please provide userId and Company ID'
       );
     }
 
@@ -157,18 +157,18 @@ export class AddMembersUseCase {
     if (existingCompany.isBlocked) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "This Company has been blocked. Please contact Admin",
+        'This Company has been blocked. Please contact Admin'
       );
     }
 
     const memberIndex = existingCompany.members.findIndex(
-      (member) => member.userId.toString() === objectIdUserId.toString(),
+      (member) => member.userId.toString() === objectIdUserId.toString()
     );
 
     if (memberIndex === -1) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "The user is not a member of this company",
+        'The user is not a member of this company'
       );
     }
 

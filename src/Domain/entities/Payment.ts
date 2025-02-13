@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
-import { CustomError } from "../../shared/error/customError";
-import { STATUS_CODES } from "../../shared/constants/statusCodes";
+import mongoose from 'mongoose';
+import { CustomError } from '../../shared/error/customError';
+import { STATUS_CODES } from '../../shared/constants/statusCodes';
 
 export class Payment {
   _id: mongoose.Types.ObjectId;
@@ -9,7 +9,7 @@ export class Payment {
   amountPaid: number;
   paymentDate: Date;
   paymentMethod: string;
-  paymentStatus: "success" | "pending" | "failed";
+  paymentStatus: 'success' | 'pending' | 'failed';
   transactionId: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -22,7 +22,7 @@ export class Payment {
     this.updatedAt = data.updatedAt;
     this.paymentMethod = data.paymentMethod!;
     this.transactionId = data.transactionId!;
-    this.paymentStatus = data.paymentStatus || "pending";
+    this.paymentStatus = data.paymentStatus || 'pending';
     this.amountPaid = data.amountPaid!;
     this.paymentDate = data.paymentDate!;
   }
@@ -33,7 +33,7 @@ export const normalizePayment = (data: any): Payment => {
   if (!data || !data._id) {
     throw new CustomError(
       STATUS_CODES.BAD_REQUEST,
-      "Invalid data or missing _id in payment",
+      'Invalid data or missing _id in payment'
     );
   }
 

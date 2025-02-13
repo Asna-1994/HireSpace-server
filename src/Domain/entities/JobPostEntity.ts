@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 import {
   SalaryRange,
   Location,
-} from "../../Infrastructure/models/JobPostModel";
-import { CustomError } from "../../shared/error/customError";
-import { STATUS_CODES } from "../../shared/constants/statusCodes";
+} from '../../Infrastructure/models/JobPostModel';
+import { CustomError } from '../../shared/error/customError';
+import { STATUS_CODES } from '../../shared/constants/statusCodes';
 
 export class JobPost {
   companyId: mongoose.Types.ObjectId;
@@ -50,7 +50,7 @@ export class JobPost {
     this.benefits = data.benefits || [];
     this.createdAt = data.createdAt || new Date();
     this.updatedAt = data.updatedAt || new Date();
-    this.status = data.status || "Active";
+    this.status = data.status || 'Active';
   }
 
   updateStatus(newStatus: string): void {
@@ -63,11 +63,11 @@ export class JobPost {
 
   validateFields(): void {
     if (!this.jobTitle || !this.description) {
-      throw new Error("Job title and description are required.");
+      throw new Error('Job title and description are required.');
     }
     if (this.salaryRange.min > this.salaryRange.max) {
       throw new Error(
-        "Invalid salary range: minimum cannot be greater than maximum.",
+        'Invalid salary range: minimum cannot be greater than maximum.'
       );
     }
   }
@@ -77,7 +77,7 @@ export const normalizeJobPost = (data: any): JobPost => {
   if (!data || !data.companyId || !data.postedBy) {
     throw new CustomError(
       STATUS_CODES.BAD_REQUEST,
-      "Invalid data: missing required fields.",
+      'Invalid data: missing required fields.'
     );
   }
 

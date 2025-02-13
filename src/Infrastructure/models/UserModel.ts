@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from 'mongoose';
 
 interface imageObject {
   url: string;
@@ -10,14 +10,14 @@ export interface UserDocument extends Document {
   _id: string;
   email: string;
   phone?: string;
-  entity: "company" | "user";
+  entity: 'company' | 'user';
   password?: string;
   address?: string;
   tagLine?: string;
   profilePhoto?: imageObject;
   dateOfBirth?: Date;
   googleId?: string;
-  userRole?: "jobSeeker" | "companyAdmin" | "companyMember" | "admin";
+  userRole?: 'jobSeeker' | 'companyAdmin' | 'companyMember' | 'admin';
   appPlan: {
     planType: string;
     startDate: Date | null;
@@ -49,7 +49,7 @@ const userSchema = new Schema<UserDocument>(
     userName: { type: String },
     email: { type: String, required: true, unique: true, lowercase: true },
     phone: { type: String },
-    entity: { type: String, enum: ["company", "user"], default: "user" },
+    entity: { type: String, enum: ['company', 'user'], default: 'user' },
     password: { type: String },
     address: { type: String },
     tagLine: { type: String },
@@ -58,21 +58,21 @@ const userSchema = new Schema<UserDocument>(
         url: { type: String },
         publicId: { type: String },
       },
-      default: { url: "", publicId: "" },
+      default: { url: '', publicId: '' },
     },
     dateOfBirth: { type: Date },
     googleId: { type: String, unique: true, sparse: true },
     userRole: {
       type: String,
-      enum: ["jobSeeker", "companyAdmin", "companyMember", "admin"],
+      enum: ['jobSeeker', 'companyAdmin', 'companyMember', 'admin'],
     },
     appPlan: {
-      planType: { type: String, default: "basic" },
+      planType: { type: String, default: 'basic' },
       startDate: { type: Date, default: null },
       endDate: { type: Date, default: null },
       subscriptionId: {
         type: Schema.Types.ObjectId,
-        ref: "SubscriptionModel",
+        ref: 'SubscriptionModel',
         default: null,
       },
     },
@@ -82,17 +82,17 @@ const userSchema = new Schema<UserDocument>(
     isDeleted: { type: Boolean, default: false },
     isFresher: { type: Boolean, default: true },
     isSpam: { type: Boolean, default: false },
-    companyId: { type: Schema.Types.ObjectId, ref: "CompanyModel" },
-    connections: [{ type: Schema.Types.ObjectId, ref: "UserModel" }],
-    savedJobs: [{ type: Schema.Types.ObjectId, ref: "JobPostModel" }],
-    appliedJobs: [{ type: Schema.Types.ObjectId, ref: "Job" }],
+    companyId: { type: Schema.Types.ObjectId, ref: 'CompanyModel' },
+    connections: [{ type: Schema.Types.ObjectId, ref: 'UserModel' }],
+    savedJobs: [{ type: Schema.Types.ObjectId, ref: 'JobPostModel' }],
+    appliedJobs: [{ type: Schema.Types.ObjectId, ref: 'Job' }],
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 userSchema.methods.validateEmail = function () {
-  if (!this.email.includes("@")) {
-    throw new Error("Invalid email address");
+  if (!this.email.includes('@')) {
+    throw new Error('Invalid email address');
   }
 };
 
@@ -102,7 +102,7 @@ userSchema.methods.markAsVerified = function () {
 
 userSchema.methods.upgradeToPremium = function () {
   this.isPremium = true;
-  this.appPlan = "premium";
+  this.appPlan = 'premium';
 };
 
 userSchema.methods.blockUser = function () {
@@ -110,11 +110,11 @@ userSchema.methods.blockUser = function () {
 };
 
 userSchema.methods.addConnection = function (
-  connectionId: mongoose.Types.ObjectId,
+  connectionId: mongoose.Types.ObjectId
 ) {
   if (!this.connections.includes(connectionId)) {
     this.connections.push(connectionId);
   }
 };
 
-export const UserModel = mongoose.model<UserDocument>("UserModel", userSchema);
+export const UserModel = mongoose.model<UserDocument>('UserModel', userSchema);

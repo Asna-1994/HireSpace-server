@@ -1,21 +1,21 @@
-import { Request, Response, NextFunction } from "express";
-import { FileUploadUseCase } from "../../../Application/usecases/shared/fileUploadUsecase";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { CompanyRepository } from "../../../Domain/repository/repo/companyRepository";
-import { handleFileUploadAndUpdate } from "../../../Application/service/company/fileUploadService";
-import { CustomError } from "../../../shared/error/customError";
+import { Request, Response, NextFunction } from 'express';
+import { FileUploadUseCase } from '../../../Application/usecases/shared/fileUploadUsecase';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
+import { handleFileUploadAndUpdate } from '../../../Application/service/company/fileUploadService';
+import { CustomError } from '../../../shared/error/customError';
 
 export class UploadDocumentController {
   constructor(
     private fileUploadUseCase: FileUploadUseCase,
-    private companyRepository: CompanyRepository,
+    private companyRepository: CompanyRepository
   ) {}
 
   async uploadDocument(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       if (!req.file) {
@@ -28,14 +28,14 @@ export class UploadDocumentController {
       if (!documentNumber) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Missing document number field",
+          'Missing document number field'
         );
       }
 
       const allowedMimeTypes = [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ];
       if (!allowedMimeTypes.includes(req.file.mimetype)) {
         res
@@ -57,9 +57,9 @@ export class UploadDocumentController {
         this.companyRepository,
         req.file.path,
         companyId,
-        "verification_document",
-        "verificationDocument",
-        documentNumber,
+        'verification_document',
+        'verificationDocument',
+        documentNumber
       );
 
       res.status(STATUS_CODES.SUCCESS).json({
@@ -70,7 +70,7 @@ export class UploadDocumentController {
         },
       });
     } catch (error) {
-      console.error("Error in uploadProfilePicture:", error);
+      console.error('Error in uploadProfilePicture:', error);
       next(error);
     }
   }
@@ -78,7 +78,7 @@ export class UploadDocumentController {
   async deleteDocument(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const companyId = req.params.companyId;
@@ -101,15 +101,15 @@ export class UploadDocumentController {
       if (!publicId) {
         res
           .status(STATUS_CODES.BAD_REQUEST)
-          .json({ success: false, message: "No logo to delete" });
+          .json({ success: false, message: 'No logo to delete' });
         return;
       }
 
       await this.fileUploadUseCase.deleteFile(publicId);
 
       company.verificationDocument = {
-        url: "",
-        publicId: "",
+        url: '',
+        publicId: '',
       };
       const updatedCompany = await this.companyRepository.update(company);
 
@@ -119,7 +119,7 @@ export class UploadDocumentController {
         data: { company: updatedCompany },
       });
     } catch (error) {
-      console.error("Error in deleteLogo:", error);
+      console.error('Error in deleteLogo:', error);
       next(error);
     }
   }

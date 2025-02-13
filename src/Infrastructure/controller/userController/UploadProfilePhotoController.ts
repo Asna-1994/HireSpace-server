@@ -1,23 +1,23 @@
-import { JobSeekerProfileRepository } from "../../../Domain/repository/repo/JobSeekerProfileRepo";
-import mongoose from "mongoose";
-import { Request, Response, NextFunction } from "express";
-import { FileUploadUseCase } from "../../../Application/usecases/shared/fileUploadUsecase";
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { CustomError } from "../../../shared/error/customError";
+import { JobSeekerProfileRepository } from '../../../Domain/repository/repo/JobSeekerProfileRepo';
+import mongoose from 'mongoose';
+import { Request, Response, NextFunction } from 'express';
+import { FileUploadUseCase } from '../../../Application/usecases/shared/fileUploadUsecase';
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { CustomError } from '../../../shared/error/customError';
 
 export class UploadProfilePhotoController {
   constructor(
     private fileUploadUseCase: FileUploadUseCase,
     private userRepository: UserRepository,
-    private jobSeekerProfileRepository: JobSeekerProfileRepository,
+    private jobSeekerProfileRepository: JobSeekerProfileRepository
   ) {}
 
   async uploadProfilePicture(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       console.log(req.file);
@@ -28,7 +28,7 @@ export class UploadProfilePhotoController {
         return;
       }
 
-      const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
+      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
       if (!allowedMimeTypes.includes(req.file.mimetype)) {
         res
           .status(STATUS_CODES.BAD_REQUEST)
@@ -52,10 +52,10 @@ export class UploadProfilePhotoController {
         return;
       }
 
-      const folder = "profile_pictures";
+      const folder = 'profile_pictures';
       const result = await this.fileUploadUseCase.execute(
         req.file.path,
-        folder,
+        folder
       );
 
       user.profilePhoto = {
@@ -71,7 +71,7 @@ export class UploadProfilePhotoController {
         data: { user: updatedUser },
       });
     } catch (error) {
-      console.error("Error in uploadProfilePicture:", error);
+      console.error('Error in uploadProfilePicture:', error);
       next(error);
     }
   }
@@ -80,7 +80,7 @@ export class UploadProfilePhotoController {
   async uploadResume(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       if (!req.file) {
@@ -92,9 +92,9 @@ export class UploadProfilePhotoController {
       }
 
       const allowedMimeTypes = [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ];
       if (!allowedMimeTypes.includes(req.file.mimetype)) {
         res.status(STATUS_CODES.BAD_REQUEST).json({
@@ -113,10 +113,10 @@ export class UploadProfilePhotoController {
         return;
       }
 
-      const folder = "resumes";
+      const folder = 'resumes';
       const result = await this.fileUploadUseCase.execute(
         req.file.path,
-        folder,
+        folder
       );
       let jobSeekerProfile = await this.jobSeekerProfileRepository.findOne({
         userId: userId,
@@ -147,7 +147,7 @@ export class UploadProfilePhotoController {
         data: { jobSeekerProfile },
       });
     } catch (error) {
-      console.error("Error in uploadResume:", error);
+      console.error('Error in uploadResume:', error);
       next(error);
     }
   }
@@ -155,13 +155,13 @@ export class UploadProfilePhotoController {
   async getResume(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId } = req.params;
 
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "No used Id");
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, 'No used Id');
       }
 
       const jobSeekerProfile = await this.jobSeekerProfileRepository.findOne({
@@ -170,7 +170,7 @@ export class UploadProfilePhotoController {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
 
@@ -180,7 +180,7 @@ export class UploadProfilePhotoController {
         data: { jobSeekerProfile },
       });
     } catch (error) {
-      console.error("Error in getting Resume:", error);
+      console.error('Error in getting Resume:', error);
       next(error);
     }
   }
@@ -188,13 +188,13 @@ export class UploadProfilePhotoController {
   async deleteResume(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId } = req.params;
 
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "No used Id");
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, 'No used Id');
       }
 
       const jobSeekerProfile = await this.jobSeekerProfileRepository.findOne({
@@ -203,36 +203,36 @@ export class UploadProfilePhotoController {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No profile found for this user",
+          'No profile found for this user'
         );
       }
       if (!jobSeekerProfile.resume) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          "No resume found for this user",
+          'No resume found for this user'
         );
       }
       const { publicId } = jobSeekerProfile.resume;
       if (!publicId) {
         res
           .status(STATUS_CODES.BAD_REQUEST)
-          .json({ success: false, message: "No Resume to delete" });
+          .json({ success: false, message: 'No Resume to delete' });
         return;
       }
 
       await this.fileUploadUseCase.deleteFile(publicId);
-      jobSeekerProfile.resume = { url: "", publicId: "" };
+      jobSeekerProfile.resume = { url: '', publicId: '' };
 
       const updatedProfile =
         await this.jobSeekerProfileRepository.update(jobSeekerProfile);
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
-        message: "Successfully Deleted",
+        message: 'Successfully Deleted',
         data: { updatedProfile },
       });
     } catch (error) {
-      console.error("Error in deleting Resume:", error);
+      console.error('Error in deleting Resume:', error);
       next(error);
     }
   }
@@ -242,13 +242,13 @@ export class UploadProfilePhotoController {
   async deleteProfilePicture(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId } = req.params;
 
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "No user ID provided");
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, 'No user ID provided');
       }
 
       const user = await this.userRepository.findById(userId);
@@ -259,7 +259,7 @@ export class UploadProfilePhotoController {
       if (!user.profilePhoto || !user.profilePhoto.publicId) {
         res.status(STATUS_CODES.BAD_REQUEST).json({
           success: false,
-          message: "No profile picture to delete",
+          message: 'No profile picture to delete',
         });
         return;
       }
@@ -267,17 +267,17 @@ export class UploadProfilePhotoController {
       const { publicId } = user.profilePhoto;
       await this.fileUploadUseCase.deleteFile(publicId);
 
-      user.profilePhoto = { url: "", publicId: "" };
+      user.profilePhoto = { url: '', publicId: '' };
 
       const updatedUser = await this.userRepository.update(user);
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
-        message: "Profile picture deleted successfully",
+        message: 'Profile picture deleted successfully',
         data: { user: updatedUser },
       });
     } catch (error) {
-      console.error("Error in deleting profile picture:", error);
+      console.error('Error in deleting profile picture:', error);
       next(error);
     }
   }
@@ -287,13 +287,13 @@ export class UploadProfilePhotoController {
   async editBasicDetails(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { userId } = req.params;
       const { userName, phone, address, dateOfBirth } = req.body;
       if (!userId) {
-        throw new CustomError(STATUS_CODES.BAD_REQUEST, "No used Id");
+        throw new CustomError(STATUS_CODES.BAD_REQUEST, 'No used Id');
       }
 
       const user = await this.userRepository.findById(userId);
@@ -310,11 +310,11 @@ export class UploadProfilePhotoController {
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
-        message: "Successfully Updated",
+        message: 'Successfully Updated',
         data: { user: updatedUser },
       });
     } catch (error) {
-      console.error("Error in updating user", error);
+      console.error('Error in updating user', error);
       next(error);
     }
   }

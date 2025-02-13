@@ -1,8 +1,8 @@
-import { UserJobApplicationUseCase } from "./../../../Application/usecases/user/userJobApplicationUseCase";
-import { Request, Response, NextFunction } from "express";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { CustomError } from "../../../shared/error/customError";
+import { UserJobApplicationUseCase } from './../../../Application/usecases/user/userJobApplicationUseCase';
+import { Request, Response, NextFunction } from 'express';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { CustomError } from '../../../shared/error/customError';
 
 export class UserJobApplicationController {
   constructor(private userJobApplicationUseCase: UserJobApplicationUseCase) {}
@@ -14,7 +14,7 @@ export class UserJobApplicationController {
       if (!userId || !jobPostId || !companyId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "please provide the necessary parameters",
+          'please provide the necessary parameters'
         );
       }
 
@@ -40,16 +40,16 @@ export class UserJobApplicationController {
   async getAllJobApplicationForUser(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) {
     try {
       const { userId } = req.params;
-      const { page = 1, limit = 10, searchTerm = "" } = req.query;
+      const { page = 1, limit = 10, searchTerm = '' } = req.query;
 
       if (!userId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please provide necessary parameters",
+          'Please provide necessary parameters'
         );
       }
 
@@ -58,7 +58,7 @@ export class UserJobApplicationController {
           userId,
           Number(page),
           Number(limit),
-          searchTerm as string,
+          searchTerm as string
         );
 
       res.status(STATUS_CODES.SUCCESS).json({
@@ -82,7 +82,7 @@ export class UserJobApplicationController {
       if (!userId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please provide necessary parameters",
+          'Please provide necessary parameters'
         );
       }
 

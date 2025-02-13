@@ -1,14 +1,14 @@
-import mongoose from "mongoose";
-import { PaymentRepository } from "../../../Domain/repository/repo/paymentRepo";
-import { SubscriptionRepo } from "../../../Domain/repository/repo/subscriptionRepo";
-import { stripe } from "../../../shared/utils/stripeClient";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
+import mongoose from 'mongoose';
+import { PaymentRepository } from '../../../Domain/repository/repo/paymentRepo';
+import { SubscriptionRepo } from '../../../Domain/repository/repo/subscriptionRepo';
+import { stripe } from '../../../shared/utils/stripeClient';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 
 export class CreatePaymentIntentUseCase {
   constructor(
     private paymentRepo: PaymentRepository,
-    private subscriptionRepo: SubscriptionRepo,
+    private subscriptionRepo: SubscriptionRepo
   ) {}
 
   async execute({
@@ -34,13 +34,13 @@ export class CreatePaymentIntentUseCase {
     if (activeSubscription) {
       throw new CustomError(
         STATUS_CODES.CONFLICT,
-        "User already has an active subscription for this plan",
+        'User already has an active subscription for this plan'
       );
     }
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: planPrice * 100,
-      currency: "inr",
+      currency: 'inr',
       //   amount: planPrice * 100,
       //   currency: "usd",
       metadata: {
@@ -55,9 +55,9 @@ export class CreatePaymentIntentUseCase {
       userId: new mongoose.Types.ObjectId(userId),
       planId: new mongoose.Types.ObjectId(planId),
       amountPaid: planPrice,
-      paymentStatus: "pending",
+      paymentStatus: 'pending',
       paymentDate: new Date(),
-      paymentMethod: "card",
+      paymentMethod: 'card',
       transactionId: paymentIntent.id,
     });
 

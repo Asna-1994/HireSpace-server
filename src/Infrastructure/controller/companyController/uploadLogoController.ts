@@ -1,21 +1,21 @@
-import { Request, Response, NextFunction } from "express";
-import { FileUploadUseCase } from "../../../Application/usecases/shared/fileUploadUsecase";
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { CompanyRepository } from "../../../Domain/repository/repo/companyRepository";
-import { handleFileUploadAndUpdate } from "../../../Application/service/company/fileUploadService";
+import { Request, Response, NextFunction } from 'express';
+import { FileUploadUseCase } from '../../../Application/usecases/shared/fileUploadUsecase';
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
+import { handleFileUploadAndUpdate } from '../../../Application/service/company/fileUploadService';
 
 export class UploadLogoController {
   constructor(
     private fileUploadUseCase: FileUploadUseCase,
-    private companyRepository: CompanyRepository,
+    private companyRepository: CompanyRepository
   ) {}
 
   async uploadLogo(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       console.log(req.file);
@@ -26,7 +26,7 @@ export class UploadLogoController {
           .json({ success: false, message: MESSAGES.NO_UPLOAD });
         return;
       }
-      const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
+      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
       if (!allowedMimeTypes.includes(req.file.mimetype)) {
         res
           .status(STATUS_CODES.BAD_REQUEST)
@@ -47,8 +47,8 @@ export class UploadLogoController {
         this.companyRepository,
         req.file.path,
         companyId,
-        "company_logo",
-        "companyLogo",
+        'company_logo',
+        'companyLogo'
       );
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
@@ -56,7 +56,7 @@ export class UploadLogoController {
         data: { company: updatedCompany },
       });
     } catch (error) {
-      console.error("Error in uploadProfilePicture:", error);
+      console.error('Error in uploadProfilePicture:', error);
       next(error);
     }
   }
@@ -65,7 +65,7 @@ export class UploadLogoController {
   async deleteLogo(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const companyId = req.params.companyId;
@@ -88,15 +88,15 @@ export class UploadLogoController {
       if (!publicId) {
         res
           .status(STATUS_CODES.BAD_REQUEST)
-          .json({ success: false, message: "No logo to delete" });
+          .json({ success: false, message: 'No logo to delete' });
         return;
       }
 
       await this.fileUploadUseCase.deleteFile(publicId);
 
       company.companyLogo = {
-        url: "",
-        publicId: "",
+        url: '',
+        publicId: '',
       };
       const updatedCompany = await this.companyRepository.update(company);
 
@@ -106,7 +106,7 @@ export class UploadLogoController {
         data: { company: updatedCompany },
       });
     } catch (error) {
-      console.error("Error in deleteLogo:", error);
+      console.error('Error in deleteLogo:', error);
       next(error);
     }
   }

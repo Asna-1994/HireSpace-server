@@ -1,17 +1,17 @@
-import { JobSeekerProfileRepository } from "./../../../Domain/repository/repo/JobSeekerProfileRepo";
-import { TempUserRepository } from "../../../Domain/repository/repo/tempUserRepository";
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { CustomError } from "../../../shared/error/customError";
-import { User } from "../../../Domain/entities/User";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import mongoose from "mongoose";
+import { JobSeekerProfileRepository } from './../../../Domain/repository/repo/JobSeekerProfileRepo';
+import { TempUserRepository } from '../../../Domain/repository/repo/tempUserRepository';
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { CustomError } from '../../../shared/error/customError';
+import { User } from '../../../Domain/entities/User';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import mongoose from 'mongoose';
 
 export class VerifyOtpUseCase {
   constructor(
     private tempUserRepository: TempUserRepository,
     private userRepository: UserRepository,
-    private jobSeekerProfileRepository: JobSeekerProfileRepository,
+    private jobSeekerProfileRepository: JobSeekerProfileRepository
   ) {}
 
   async execute(email: string, otp: string): Promise<User> {
@@ -39,22 +39,22 @@ export class VerifyOtpUseCase {
         address: tempUser.address,
         dateOfBirth: tempUser.dateOfBirth,
         userRole: tempUser.userRole as
-          | "jobSeeker"
-          | "companyAdmin"
-          | "companyMember"
-          | "admin",
+          | 'jobSeeker'
+          | 'companyAdmin'
+          | 'companyMember'
+          | 'admin',
         password: tempUser.password,
-        entity: "user",
+        entity: 'user',
       });
 
       const newUser = await this.userRepository.create(newUserData, {
         session,
       });
 
-      if (tempUser.userRole === "jobSeeker") {
+      if (tempUser.userRole === 'jobSeeker') {
         await this.jobSeekerProfileRepository.create(
           { userId: new mongoose.Types.ObjectId(newUser._id) },
-          { session },
+          { session }
         );
       }
 
@@ -66,7 +66,7 @@ export class VerifyOtpUseCase {
       await session.abortTransaction();
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Registration failed",
+        'Registration failed'
       );
     } finally {
       session.endSession();

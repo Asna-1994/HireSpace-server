@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import { User } from "../../entities/User";
+import mongoose from 'mongoose';
+import { User } from '../../entities/User';
 
 export interface UserRepository {
   findByEmail(email: string): Promise<User | null>;
@@ -11,17 +11,17 @@ export interface UserRepository {
   // create(user: Partial<User>): Promise<User>;
   create(
     userData: Partial<User>,
-    options?: { session?: mongoose.ClientSession },
+    options?: { session?: mongoose.ClientSession }
   ): Promise<User>;
   findUsers(
     offset: number,
     limit: number,
-    filter: object,
+    filter: object
   ): Promise<{ users: User[]; total: number }>;
   findUsersWithPagination(
     offset: number,
     limit: number,
-    filter: object,
+    filter: object
   ): Promise<User[]>;
   blockOrUnblock(entityId: string, action: string): Promise<User>;
   findMembers(filter: object, projection: string): Promise<User[] | null>;
@@ -30,14 +30,14 @@ export interface UserRepository {
     userId: string,
     offset: number,
     limit: number,
-    search: string | null,
+    search: string | null
   ): Promise<{ connections: User[]; total: number }>;
   // findConnections(userId  :string,offset: number, limit: number) : Promise<{ connections: User[], total: number }>
   findUsersWithActiveSubscriptions(): Promise<User[]>;
   findPremiumUsers(
     offset: number,
     limit: number,
-    filter: object,
+    filter: object
   ): Promise<{ users: User[]; total: number }>;
   countTotal(dateQuery: any): Promise<number>;
   countPremium(dateQuery: any): Promise<number>;

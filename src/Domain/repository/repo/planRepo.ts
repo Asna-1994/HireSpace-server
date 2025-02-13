@@ -1,4 +1,4 @@
-import { Plans } from "../../entities/AppPlans";
+import { Plans } from '../../entities/AppPlans';
 
 export interface PlanRepository {
   createPlan(planData: Partial<Plans>): Promise<Plans>;

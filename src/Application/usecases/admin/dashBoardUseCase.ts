@@ -1,10 +1,10 @@
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { CompanyRepository } from "../../../Domain/repository/repo/companyRepository";
-import { SpamRepository } from "../../../Domain/repository/repo/spamRepository";
-import { JobPostRepository } from "../../../Domain/repository/repo/jobPostRepository";
-import { JobApplicationRepository } from "../../../Domain/repository/repo/jobApplicationRepository";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
+import { SpamRepository } from '../../../Domain/repository/repo/spamRepository';
+import { JobPostRepository } from '../../../Domain/repository/repo/jobPostRepository';
+import { JobApplicationRepository } from '../../../Domain/repository/repo/jobApplicationRepository';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 
 interface DateRange {
   startDate: Date;
@@ -50,7 +50,7 @@ export class DashboardUseCase {
     private companyRepository: CompanyRepository,
     private spamRepository: SpamRepository,
     private jobPostRepository: JobPostRepository,
-    private jobApplicationRepository: JobApplicationRepository,
+    private jobApplicationRepository: JobApplicationRepository
   ) {}
 
   async execute(dateRange?: {
@@ -91,9 +91,9 @@ export class DashboardUseCase {
 
       const regularUsers = totalUsers - premiumUsers - spamUsers;
       const userTypeDistribution = [
-        { name: "Regular Users", value: regularUsers },
-        { name: "Premium Users", value: premiumUsers },
-        { name: "Spam Users", value: spamUsers },
+        { name: 'Regular Users', value: regularUsers },
+        { name: 'Premium Users', value: premiumUsers },
+        { name: 'Spam Users', value: spamUsers },
       ];
 
       return {
@@ -109,10 +109,10 @@ export class DashboardUseCase {
         applicationStatus,
       };
     } catch (error) {
-      console.error("Dashboard error:", error);
+      console.error('Dashboard error:', error);
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Failed to fetch dashboard statistics",
+        'Failed to fetch dashboard statistics'
       );
     }
   }
@@ -132,27 +132,27 @@ export class DashboardUseCase {
     return {
       users: this.calculateGrowthPercentage(
         currentStats.users,
-        previousStats.users,
+        previousStats.users
       ),
       companies: this.calculateGrowthPercentage(
         currentStats.companies,
-        previousStats.companies,
+        previousStats.companies
       ),
       premium: this.calculateGrowthPercentage(
         currentStats.premium,
-        previousStats.premium,
+        previousStats.premium
       ),
       spam: this.calculateGrowthPercentage(
         currentStats.spam,
-        previousStats.spam,
+        previousStats.spam
       ),
       jobs: this.calculateGrowthPercentage(
         currentStats.jobs,
-        previousStats.jobs,
+        previousStats.jobs
       ),
       applications: this.calculateGrowthPercentage(
         currentStats.applications,
-        previousStats.applications,
+        previousStats.applications
       ),
     };
   }
@@ -177,17 +177,17 @@ export class DashboardUseCase {
       currentStart = new Date(
         currentEnd.getFullYear(),
         currentEnd.getMonth(),
-        1,
+        1
       );
       previousEnd = new Date(
         currentEnd.getFullYear(),
         currentEnd.getMonth(),
-        0,
+        0
       );
       previousStart = new Date(
         previousEnd.getFullYear(),
         previousEnd.getMonth(),
-        1,
+        1
       );
     }
 
@@ -215,7 +215,7 @@ export class DashboardUseCase {
 
       return { users, companies, premium, spam, jobs, applications };
     } catch (error) {
-      console.error("Error getting period stats:", error);
+      console.error('Error getting period stats:', error);
       return {
         users: 0,
         companies: 0,
@@ -250,7 +250,7 @@ export class DashboardUseCase {
       const monthStart = new Date(
         currentDate.getFullYear(),
         currentDate.getMonth(),
-        1,
+        1
       );
       const monthEnd = new Date(
         currentDate.getFullYear(),
@@ -259,7 +259,7 @@ export class DashboardUseCase {
         23,
         59,
         59,
-        999,
+        999
       );
 
       const monthQuery = {
@@ -274,9 +274,9 @@ export class DashboardUseCase {
       ]);
 
       months.push({
-        name: monthStart.toLocaleString("default", {
-          month: "short",
-          year: "numeric",
+        name: monthStart.toLocaleString('default', {
+          month: 'short',
+          year: 'numeric',
         }),
         users,
         companies,

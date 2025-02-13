@@ -1,8 +1,8 @@
-import { JobPostUseCase } from "./../../../Application/usecases/company/jobPostUseCase";
-import { Request, Response, NextFunction } from "express";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { CustomError } from "../../../shared/error/customError";
+import { JobPostUseCase } from './../../../Application/usecases/company/jobPostUseCase';
+import { Request, Response, NextFunction } from 'express';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { CustomError } from '../../../shared/error/customError';
 
 export class JobPostController {
   constructor(private jobPostUseCase: JobPostUseCase) {}
@@ -28,7 +28,7 @@ export class JobPostController {
       } = req.body;
       const { companyId, userId } = req.params;
       const jobPostId =
-        typeof req.query.jobPostId === "string"
+        typeof req.query.jobPostId === 'string'
           ? req.query.jobPostId
           : undefined;
 
@@ -36,14 +36,14 @@ export class JobPostController {
         companyId,
         req.body,
         userId,
-        jobPostId,
+        jobPostId
       );
 
       res.status(STATUS_CODES.CREATED).json({
         success: true,
         message: jobPostId
-          ? "Post Updated Successfully"
-          : "Post Created Successfully",
+          ? 'Post Updated Successfully'
+          : 'Post Created Successfully',
         data: {
           jobPost: newJobPost,
         },
@@ -60,7 +60,7 @@ export class JobPostController {
       if (!companyId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please provide company Id",
+          'Please provide company Id'
         );
       }
 
@@ -85,7 +85,7 @@ export class JobPostController {
       if (!jobPostId) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          "Please provide post Id",
+          'Please provide post Id'
         );
       }
 

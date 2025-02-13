@@ -1,12 +1,12 @@
-import mongoose from "mongoose";
-import { CustomError } from "../../shared/error/customError";
-import { STATUS_CODES } from "../../shared/constants/statusCodes";
+import mongoose from 'mongoose';
+import { CustomError } from '../../shared/error/customError';
+import { STATUS_CODES } from '../../shared/constants/statusCodes';
 
 export class Plans {
   _id?: mongoose.Types.ObjectId;
   planType: string;
   price: number;
-  userType: "user" | "company";
+  userType: 'user' | 'company';
   durationInDays: number;
   features: string[];
   isDeleted: boolean;
@@ -16,7 +16,7 @@ export class Plans {
   constructor(data: Partial<Plans>) {
     this.planType = data.planType!;
     this.price = data.price || 0!;
-    this.userType = data.userType || "user";
+    this.userType = data.userType || 'user';
     this.durationInDays = data.durationInDays!;
     this.createdAt = data.createdAt;
     this.updatedAt = data.updatedAt;
@@ -31,7 +31,7 @@ export const normalizePlans = (data: any): Plans => {
   if (!data || !data._id) {
     throw new CustomError(
       STATUS_CODES.BAD_REQUEST,
-      "Invalid data or missing _id",
+      'Invalid data or missing _id'
     );
   }
 

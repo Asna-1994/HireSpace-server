@@ -1,7 +1,7 @@
-import { PlanRepository } from "../../../Domain/repository/repo/planRepo";
-import { Plans } from "../../../Domain/entities/AppPlans";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
+import { PlanRepository } from '../../../Domain/repository/repo/planRepo';
+import { Plans } from '../../../Domain/entities/AppPlans';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 
 export class ManagePlanUseCase {
   constructor(private planRepository: PlanRepository) {}
@@ -12,7 +12,7 @@ export class ManagePlanUseCase {
     if (!planType || !price || !durationInDays || !features) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "Missing required fields",
+        'Missing required fields'
       );
     }
 
@@ -22,7 +22,7 @@ export class ManagePlanUseCase {
   async updatePlan(planId: string, planData: any): Promise<any> {
     const updatedPlan = await this.planRepository.updatePlan(planId, planData);
     if (!updatedPlan) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, "Plan not found");
+      throw new CustomError(STATUS_CODES.NOT_FOUND, 'Plan not found');
     }
     return updatedPlan;
   }
@@ -31,7 +31,7 @@ export class ManagePlanUseCase {
     userType?: string,
     page?: number,
     limit?: number,
-    searchTerm?: string,
+    searchTerm?: string
   ): Promise<{ plans: Plans[]; total?: number }> {
     const filter: {
       isDeleted: boolean;
@@ -44,7 +44,7 @@ export class ManagePlanUseCase {
     }
 
     if (searchTerm) {
-      filter.planType = { $regex: searchTerm, $options: "i" };
+      filter.planType = { $regex: searchTerm, $options: 'i' };
     }
 
     if (page && limit) {

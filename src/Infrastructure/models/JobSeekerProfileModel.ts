@@ -1,11 +1,11 @@
-import mongoose, { Document, Schema, model } from "mongoose";
+import mongoose, { Document, Schema, model } from 'mongoose';
 import {
   Certificates,
   EducationObject,
   ExperienceObject,
   Skills,
-} from "../../Domain/entities/JobSeekerProfile";
-import { imageObject } from "../../Domain/entities/Company";
+} from '../../Domain/entities/JobSeekerProfile';
+import { imageObject } from '../../Domain/entities/Company';
 
 export interface JobSeekerProfileDocument extends Document {
   userId: mongoose.Types.ObjectId;
@@ -22,7 +22,7 @@ const jobSeekerProfileSchema = new Schema<JobSeekerProfileDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "UserModel",
+      ref: 'UserModel',
       required: true,
       index: true,
     },
@@ -74,10 +74,10 @@ const jobSeekerProfileSchema = new Schema<JobSeekerProfileDocument>(
       updatedAt: { type: Date },
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export const JobSeekerProfileModel = model<JobSeekerProfileDocument>(
-  "JobSeekerProfileModel",
-  jobSeekerProfileSchema,
+  'JobSeekerProfileModel',
+  jobSeekerProfileSchema
 );

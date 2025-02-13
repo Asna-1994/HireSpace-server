@@ -1,19 +1,19 @@
-import { sendOtpEmail } from "../../../Infrastructure/email/emailService";
-import { CustomError } from "../../../shared/error/customError";
-import { generateOtp } from "../../../shared/utils/tokenUtils";
-import { hashPassword } from "../../../shared/utils/passwordUtils";
-import { TempCompanyRepository } from "../../../Domain/repository/repo/tempCompanyRepository";
-import { CompanyRepository } from "../../../Domain/repository/repo/companyRepository";
-import { TempCompany } from "../../../Domain/entities/tempCompany";
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
+import { sendOtpEmail } from '../../../Infrastructure/email/emailService';
+import { CustomError } from '../../../shared/error/customError';
+import { generateOtp } from '../../../shared/utils/tokenUtils';
+import { hashPassword } from '../../../shared/utils/passwordUtils';
+import { TempCompanyRepository } from '../../../Domain/repository/repo/tempCompanyRepository';
+import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
+import { TempCompany } from '../../../Domain/entities/tempCompany';
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 
 export class SignupUseCase {
   constructor(
     private tempCompanyRepository: TempCompanyRepository,
     private CompanyRepository: CompanyRepository,
     private userRepository: UserRepository,
-    private emailService: typeof sendOtpEmail,
+    private emailService: typeof sendOtpEmail
   ) {}
 
   async execute(companyData: {
@@ -32,7 +32,7 @@ export class SignupUseCase {
     if (existingCompany) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "Company already registered",
+        'Company already registered'
       );
     }
     const existingTempCompany =
@@ -45,13 +45,13 @@ export class SignupUseCase {
     if (!companyAdmin) {
       throw new CustomError(
         STATUS_CODES.NOT_FOUND,
-        "No user found with this email",
+        'No user found with this email'
       );
     }
-    if (companyAdmin.userRole !== "companyAdmin") {
+    if (companyAdmin.userRole !== 'companyAdmin') {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        "User not registered as a company admin",
+        'User not registered as a company admin'
       );
     }
 

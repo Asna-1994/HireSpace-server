@@ -1,4 +1,4 @@
-import { Company } from "../../entities/Company";
+import { Company } from '../../entities/Company';
 
 export interface CompanyRepository {
   findByEmail(email: string): Promise<Company | null>;
@@ -8,13 +8,13 @@ export interface CompanyRepository {
   findCompanies(
     offset: number,
     limit: number,
-    filter: object,
+    filter: object
   ): Promise<{ companies: Company[]; total: number }>;
   create(company: Partial<Company>): Promise<Company>;
   findCompaniesWithPagination(
     offset: number,
     limit: number,
-    filter: object,
+    filter: object
   ): Promise<Company[]>;
   blockOrUnblock(companyId: string, action: string): Promise<Company>;
   countTotal(dateQuery: any): Promise<number>;

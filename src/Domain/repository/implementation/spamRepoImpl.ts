@@ -1,6 +1,6 @@
-import { SpamModel } from "../../../Infrastructure/models/SpamModel";
-import { SpamReport, normalizeSpam } from "../../entities/SpamReport";
-import { SpamRepository } from "../repo/spamRepository";
+import { SpamModel } from '../../../Infrastructure/models/SpamModel';
+import { SpamReport, normalizeSpam } from '../../entities/SpamReport';
+import { SpamRepository } from '../repo/spamRepository';
 
 export class SpamRepositoryImpl implements SpamRepository {
   // Create a new spam report
@@ -19,7 +19,7 @@ export class SpamRepositoryImpl implements SpamRepository {
   // Update a spam report by ID
   async updateSpam(
     id: string,
-    spamData: Partial<SpamReport>,
+    spamData: Partial<SpamReport>
   ): Promise<SpamReport | null> {
     const updatedSpam = await SpamModel.findByIdAndUpdate(id, spamData, {
       new: true,
@@ -32,13 +32,13 @@ export class SpamRepositoryImpl implements SpamRepository {
   async getAllSpamReport(
     filter: object,
     skip = 0,
-    limit = 10,
+    limit = 10
   ): Promise<SpamReport[]> {
     const spamReports = await SpamModel.find(filter)
-      .populate("reportedByUser", "userName email phone")
+      .populate('reportedByUser', 'userName email phone')
       .populate(
-        "companyId",
-        "_id companyName industry email phone address isBlocked",
+        'companyId',
+        '_id companyName industry email phone address isBlocked'
       )
       .skip(skip)
       .limit(limit);
@@ -60,7 +60,7 @@ export class SpamRepositoryImpl implements SpamRepository {
     const deletedSpam = await SpamModel.findByIdAndUpdate(
       spamId,
       { isDeleted: true },
-      { new: true },
+      { new: true }
     );
     return deletedSpam ? normalizeSpam(deletedSpam) : null;
   }

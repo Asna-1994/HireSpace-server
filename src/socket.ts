@@ -1,17 +1,17 @@
-import { ConnectionRequestImpl } from "./Domain/repository/implementation/ConnectionRequestRepoImpl";
-import { Server, Socket } from "socket.io";
-import { ChatUseCase } from "./Application/usecases/chat/chatUseCase";
-import { ChatRepositoryImpl } from "./Domain/repository/implementation/chatRepoImpl";
-import { Message } from "./Domain/entities/Message";
-import { CustomError } from "./shared/error/customError";
-import { generateRoomId } from "./shared/utils/generateRoomId";
-import http from "http";
+import { ConnectionRequestImpl } from './Domain/repository/implementation/ConnectionRequestRepoImpl';
+import { Server, Socket } from 'socket.io';
+import { ChatUseCase } from './Application/usecases/chat/chatUseCase';
+import { ChatRepositoryImpl } from './Domain/repository/implementation/chatRepoImpl';
+import { Message } from './Domain/entities/Message';
+import { CustomError } from './shared/error/customError';
+import { generateRoomId } from './shared/utils/generateRoomId';
+import http from 'http';
 
 interface VideoCallSignal {
   roomId: string;
   callerId: string;
   receiverId: string;
-  type: "offer" | "answer" | "ice-candidate";
+  type: 'offer' | 'answer' | 'ice-candidate';
   data: any;
   userId?: string;
 }
@@ -24,7 +24,7 @@ interface VideoCallState {
   roomId: string;
   callerId: string;
   receiverId: string;
-  status: "ringing" | "accepted" | "rejected" | "ended";
+  status: 'ringing' | 'accepted' | 'rejected' | 'ended';
   timestamp: number;
 }
 
@@ -36,7 +36,7 @@ const CALL_TIMEOUT = 30000; // 30 seconds timeout for call acceptance
 
 function debounce<T extends (...args: any[]) => void>(
   func: T,
-  delay: number,
+  delay: number
 ): (...args: Parameters<T>) => void {
   let timerId: NodeJS.Timeout;
   return (...args: Parameters<T>) => {
@@ -53,58 +53,58 @@ export const initializeSocket = (server: http.Server): Server => {
       origin: process.env.FRONT_END_URL,
       credentials: true,
     },
-    transports: ["websocket"],
+    transports: ['websocket'],
   });
 
   const chatRepository = new ChatRepositoryImpl();
   const chatUseCase = new ChatUseCase(chatRepository);
   const connectionRequestRepo = new ConnectionRequestImpl();
 
-  io.on("connection", (socket: Socket) => {
+  io.on('connection', (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
 
-    socket.on("registerUser", (userId) => {
+    socket.on('registerUser', (userId) => {
       userSocketMap[userId] = socket.id;
       console.log(`User ${userId} connected with socket ID ${socket.id}`);
     });
 
     // When a user joins a room
-    socket.on("join_room", ({ roomId, userId }) => {
+    socket.on('join_room', ({ roomId, userId }) => {
       if (!roomId || !userId) {
-        console.error("Missing roomId or userId in join_room event");
+        console.error('Missing roomId or userId in join_room event');
         return;
       }
       socket.join(roomId);
       socket.join(userId); // Also join a personal room for notifications
       console.log(`User ${userId} joined room ${roomId}`);
       // Notify other users in the room (if desired)
-      socket.broadcast.to(roomId).emit("user_joined", { roomId, userId });
+      socket.broadcast.to(roomId).emit('user_joined', { roomId, userId });
     });
 
     // Forward ICE candidates between peers (if using WebRTC directly)
-    socket.on("ice-candidate", ({ receiverId, candidate, senderId }) => {
-      console.log("Received ICE candidate:", {
+    socket.on('ice-candidate', ({ receiverId, candidate, senderId }) => {
+      console.log('Received ICE candidate:', {
         candidate,
         senderId,
         receiverId,
       });
       const receiverSocketId = userSocketMap[receiverId];
       if (receiverSocketId) {
-        io.to(receiverSocketId).emit("ice-candidate", {
+        io.to(receiverSocketId).emit('ice-candidate', {
           senderId,
           candidate,
-          type: "ice-candidate",
+          type: 'ice-candidate',
         });
       }
     });
 
-    socket.on("initiateVideoCall", (data) => {
-      console.log("Call initiation received:", data);
+    socket.on('initiateVideoCall', (data) => {
+      console.log('Call initiation received:', data);
       const { roomId, callerId, callerName, receiverId, receiverName } = data;
       const receiverSocketId = userSocketMap[receiverId];
       if (receiverSocketId) {
         // Notify the receiver about an incoming call
-        io.to(receiverSocketId).emit("incomingCall", {
+        io.to(receiverSocketId).emit('incomingCall', {
           roomId,
           callerId,
           callerName,
@@ -115,8 +115,8 @@ export const initializeSocket = (server: http.Server): Server => {
     });
 
     // Forward video signal data (offer, answer, ICE candidates)
-    socket.on("videoSignal", (data) => {
-      console.log("Forwarding video signal:", {
+    socket.on('videoSignal', (data) => {
+      console.log('Forwarding video signal:', {
         type: data.type,
         callerId: data.callerId,
         receiverId: data.receiverId,
@@ -124,9 +124,9 @@ export const initializeSocket = (server: http.Server): Server => {
       const receiverSocketId = userSocketMap[data.receiverId];
       if (receiverSocketId) {
         switch (data.type) {
-          case "offer":
-          case "answer":
-            io.to(receiverSocketId).emit("videoSignal", {
+          case 'offer':
+          case 'answer':
+            io.to(receiverSocketId).emit('videoSignal', {
               type: data.type,
               data: data.data,
               callerId: data.callerId,
@@ -135,8 +135,8 @@ export const initializeSocket = (server: http.Server): Server => {
               userId: data.userId,
             });
             break;
-          case "ice-candidate":
-            io.to(receiverSocketId).emit("ice-candidate", {
+          case 'ice-candidate':
+            io.to(receiverSocketId).emit('ice-candidate', {
               candidate: data.data,
               senderId: data.callerId,
             });
@@ -150,49 +150,49 @@ export const initializeSocket = (server: http.Server): Server => {
     });
 
     // When the receiver accepts the call
-    socket.on("acceptCall", ({ callerId, receiverId, answer }) => {
-      console.log("Call accepted:", { callerId, receiverId });
+    socket.on('acceptCall', ({ callerId, receiverId, answer }) => {
+      console.log('Call accepted:', { callerId, receiverId });
       const callerSocketId = userSocketMap[callerId];
       if (callerSocketId) {
-        io.to(callerSocketId).emit("callAccepted", { receiverId, answer });
+        io.to(callerSocketId).emit('callAccepted', { receiverId, answer });
       }
     });
 
     // When the receiver rejects the call
-    socket.on("rejectCall", ({ callerId, receiverId }) => {
-      console.log("Call rejected by receiver", receiverId);
+    socket.on('rejectCall', ({ callerId, receiverId }) => {
+      console.log('Call rejected by receiver', receiverId);
       const callerSocketId = userSocketMap[callerId];
       if (callerSocketId) {
-        io.to(callerSocketId).emit("callRejected", { receiverId });
+        io.to(callerSocketId).emit('callRejected', { receiverId });
       }
     });
 
     // Optionally, update call status (e.g., ringing, busy)
-    socket.on("callStatus", (data) => {
-      console.log("Call status update:", data);
-      io.to(data.targetUserId).emit("callStatus", { status: data.status });
+    socket.on('callStatus', (data) => {
+      console.log('Call status update:', data);
+      io.to(data.targetUserId).emit('callStatus', { status: data.status });
     });
 
     // When a call ends
-    socket.on("endCall", ({ roomId, callerId, receiverId }) => {
-      console.log("Call ended:", { roomId, callerId, receiverId });
-      io.to(roomId).emit("callEnded", { roomId, callerId, receiverId });
+    socket.on('endCall', ({ roomId, callerId, receiverId }) => {
+      console.log('Call ended:', { roomId, callerId, receiverId });
+      io.to(roomId).emit('callEnded', { roomId, callerId, receiverId });
     });
 
     //chats
-    socket.on("getRecentChats", async ({ userId }: { userId: string }) => {
+    socket.on('getRecentChats', async ({ userId }: { userId: string }) => {
       try {
-        console.log("Fetching recent chats for user:", userId);
+        console.log('Fetching recent chats for user:', userId);
         const recentChats = await chatUseCase.getRecentChats(userId);
-        console.log("Found recent chats:", recentChats);
-        socket.emit("recentChats", { chats: recentChats });
+        console.log('Found recent chats:', recentChats);
+        socket.emit('recentChats', { chats: recentChats });
       } catch (error) {
         handleSocketError(socket, error);
       }
     });
 
     socket.on(
-      "joinChat",
+      'joinChat',
       async ({
         senderId,
         receiverId,
@@ -201,8 +201,8 @@ export const initializeSocket = (server: http.Server): Server => {
         receiverId: string;
       }) => {
         if (!senderId || !receiverId) {
-          socket.emit("error", {
-            message: "Sender ID and Receiver ID are required",
+          socket.emit('error', {
+            message: 'Sender ID and Receiver ID are required',
           });
           return;
         }
@@ -211,58 +211,58 @@ export const initializeSocket = (server: http.Server): Server => {
         try {
           const chatHistory = await chatUseCase.getChatHistory(roomId);
           socket.join(roomId);
-          socket.emit("chatHistory", { roomId, chatHistory });
+          socket.emit('chatHistory', { roomId, chatHistory });
           console.log(`User ${socket.id} joined room ${roomId}`);
         } catch (error) {
           handleSocketError(socket, error);
         }
-      },
+      }
     );
 
     socket.on(
-      "readMessage",
+      'readMessage',
       async ({ messageId, roomId }: { messageId: string; roomId: string }) => {
         try {
           await chatUseCase.markAsRead(messageId);
-          io.to(roomId).emit("messageRead", { messageId });
+          io.to(roomId).emit('messageRead', { messageId });
         } catch (error) {
           handleSocketError(socket, error);
         }
-      },
+      }
     );
 
     socket.on(
-      "getPendingRequestsCount",
+      'getPendingRequestsCount',
       async ({ userId }: { userId: string }) => {
         try {
           const count =
             await connectionRequestRepo.getPendingRequestsCount(userId);
-          socket.emit("pendingRequestsCount", { count });
+          socket.emit('pendingRequestsCount', { count });
         } catch (error) {
           handleSocketError(socket, error);
         }
-      },
+      }
     );
 
     // Add this when a new connection request is sent
     socket.on(
-      "newConnectionRequest",
+      'newConnectionRequest',
       async ({ toUserId }: { toUserId: string }) => {
         try {
           const pendingRequests =
             await connectionRequestRepo.getPendingRequestsCount(toUserId);
           console.log(pendingRequests);
-          io.emit("pendingRequestsCount", {
+          io.emit('pendingRequestsCount', {
             userId: toUserId,
             count: pendingRequests,
           });
         } catch (error) {
           handleSocketError(socket, error);
         }
-      },
+      }
     );
 
-    socket.on("getUnreadCount", async ({ userId }: { userId: string }) => {
+    socket.on('getUnreadCount', async ({ userId }: { userId: string }) => {
       try {
         const unreadCounts =
           await chatRepository.getUnreadMessagesCount(userId);
@@ -274,20 +274,20 @@ export const initializeSocket = (server: http.Server): Server => {
           return acc;
         }, {});
 
-        socket.emit("unreadCounts", { counts: countsByRoomId });
+        socket.emit('unreadCounts', { counts: countsByRoomId });
         console.log(countsByRoomId);
       } catch (error) {
         handleSocketError(socket, error);
       }
     });
 
-    socket.on("message", async (data: Message) => {
+    socket.on('message', async (data: Message) => {
       try {
         await chatUseCase.sendMessage(data);
-        io.to(data.roomId).emit("message", data);
+        io.to(data.roomId).emit('message', data);
 
         const unreadCounts = await chatRepository.getUnreadMessagesCount(
-          data.receiverId.toString(),
+          data.receiverId.toString()
         );
         const countsByRoomId = unreadCounts.reduce<{
           [roomId: string]: number;
@@ -295,7 +295,7 @@ export const initializeSocket = (server: http.Server): Server => {
           acc[roomId] = count;
           return acc;
         }, {});
-        io.emit("unreadCounts", { counts: countsByRoomId });
+        io.emit('unreadCounts', { counts: countsByRoomId });
       } catch (error) {
         handleSocketError(socket, error);
       }
@@ -309,16 +309,16 @@ export const initializeSocket = (server: http.Server): Server => {
           handleSocketError(socket, error);
         }
       },
-      500,
+      500
     );
 
-    socket.on("typing", (data: { userId: string; roomId: string }) => {
+    socket.on('typing', (data: { userId: string; roomId: string }) => {
       debouncedTypingNotification(data);
     });
 
-    socket.on("disconnect", () => {
+    socket.on('disconnect', () => {
       console.log(`User disconnected: ${socket.id}`);
-      socket.broadcast.emit("disconnected");
+      socket.broadcast.emit('disconnected');
       for (const userId in userSocketMap) {
         if (userSocketMap[userId] === socket.id) {
           delete userSocketMap[userId];
@@ -334,10 +334,10 @@ export const initializeSocket = (server: http.Server): Server => {
 
 const handleSocketError = (socket: Socket, error: unknown): void => {
   if (error instanceof CustomError) {
-    socket.emit("error", { message: error.message });
+    socket.emit('error', { message: error.message });
   } else {
-    console.error("Unexpected error:", error);
-    socket.emit("error", { message: "An unexpected error occurred" });
+    console.error('Unexpected error:', error);
+    socket.emit('error', { message: 'An unexpected error occurred' });
   }
 };
 

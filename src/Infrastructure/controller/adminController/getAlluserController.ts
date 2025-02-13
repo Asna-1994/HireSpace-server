@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from "express";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
-import { GetAllUsersUseCase } from "../../../Application/usecases/admin/getAllUsersUsecase";
+import { NextFunction, Request, Response } from 'express';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
+import { GetAllUsersUseCase } from '../../../Application/usecases/admin/getAllUsersUsecase';
 
 export class GetAllUsersController {
   constructor(private getAllUsersUseCase: GetAllUsersUseCase) {}
@@ -10,8 +10,8 @@ export class GetAllUsersController {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 8;
-      const searchTerm = (req.query.search as string) || "";
-      const userRole = (req.query.role as string) || "";
+      const searchTerm = (req.query.search as string) || '';
+      const userRole = (req.query.role as string) || '';
 
       const { users, total } = await this.getAllUsersUseCase.execute({
         page,
@@ -37,7 +37,7 @@ export class GetAllUsersController {
 
   async getPremiumUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      const { page = 1, limit = 10, search = "", userRole = "" } = req.query;
+      const { page = 1, limit = 10, search = '', userRole = '' } = req.query;
 
       const { users, total } = await this.getAllUsersUseCase.getPremiumUsers({
         page: Number(page),
@@ -63,7 +63,7 @@ export class GetAllUsersController {
 
   async getSpamReports(req: Request, res: Response, next: NextFunction) {
     try {
-      const { page = 1, limit = 10, search = "" } = req.query;
+      const { page = 1, limit = 10, search = '' } = req.query;
 
       const { spams, total, totalPages, currentPage } =
         await this.getAllUsersUseCase.getAllSpamReports({

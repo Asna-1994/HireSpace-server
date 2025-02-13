@@ -1,16 +1,16 @@
-import { ConnectionRequestRepository } from "../repo/ConnectionRequestRepo";
-import { ConnectionRequestModel } from "../../../Infrastructure/models/ConnectionRequestModel";
+import { ConnectionRequestRepository } from '../repo/ConnectionRequestRepo';
+import { ConnectionRequestModel } from '../../../Infrastructure/models/ConnectionRequestModel';
 import {
   ConnectionRequest,
   normalizeRequest,
-} from "../../entities/UserConnections";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
+} from '../../entities/UserConnections';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 
 export class ConnectionRequestImpl implements ConnectionRequestRepository {
   async findOneByUsers(
     fromUserId: string,
-    toUserId: string,
+    toUserId: string
   ): Promise<ConnectionRequest | null> {
     const connectionRequest = await ConnectionRequestModel.findOne({
       fromUser: fromUserId,
@@ -20,7 +20,7 @@ export class ConnectionRequestImpl implements ConnectionRequestRepository {
   }
 
   async create(
-    connectionRequest: Partial<ConnectionRequest>,
+    connectionRequest: Partial<ConnectionRequest>
   ): Promise<ConnectionRequest> {
     const newConnectionRequest = new ConnectionRequestModel(connectionRequest);
     const savedRequest = await newConnectionRequest.save();
@@ -29,18 +29,18 @@ export class ConnectionRequestImpl implements ConnectionRequestRepository {
 
   async updateStatus(
     id: string,
-    status: "pending" | "accepted" | "rejected",
+    status: 'pending' | 'accepted' | 'rejected'
   ): Promise<ConnectionRequest> {
     const updatedRequest = await ConnectionRequestModel.findByIdAndUpdate(
       id,
       { status },
-      { new: true },
+      { new: true }
     ).lean();
 
     if (!updatedRequest) {
       throw new CustomError(
         STATUS_CODES.NOT_FOUND,
-        "Connection request not found",
+        'Connection request not found'
       );
     }
 
@@ -58,18 +58,18 @@ export class ConnectionRequestImpl implements ConnectionRequestRepository {
   }
 
   async update(
-    connectionRequest: ConnectionRequest,
+    connectionRequest: ConnectionRequest
   ): Promise<ConnectionRequest> {
     const updatedConnectionRequest =
       await ConnectionRequestModel.findByIdAndUpdate(
         connectionRequest._id,
         connectionRequest,
-        { new: true },
+        { new: true }
       )
         .lean()
         .exec();
     if (!updatedConnectionRequest) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, "Connection Request found");
+      throw new CustomError(STATUS_CODES.NOT_FOUND, 'Connection Request found');
     }
     return normalizeRequest(updatedConnectionRequest);
   }
@@ -77,18 +77,18 @@ export class ConnectionRequestImpl implements ConnectionRequestRepository {
   async findRequestsWithPagination(
     offset: number,
     limit: number,
-    filter: object,
+    filter: object
   ): Promise<{ pendingRequests: ConnectionRequest[]; totalRequests: number }> {
     try {
       console.log(offset, filter, limit);
       const pendingRequests = await ConnectionRequestModel.find(filter)
         .populate(
-          "fromUser",
-          "_id userName tagLine email phone address profilePhoto",
+          'fromUser',
+          '_id userName tagLine email phone address profilePhoto'
         )
         .populate(
-          "toUser",
-          "_id userName email tagLine phone address profilePhoto",
+          'toUser',
+          '_id userName email tagLine phone address profilePhoto'
         )
         .skip(offset)
         .limit(limit);
@@ -96,7 +96,7 @@ export class ConnectionRequestImpl implements ConnectionRequestRepository {
       const totalRequests = await ConnectionRequestModel.countDocuments(filter);
       console.log(totalRequests);
 
-      console.log("Job applications in repo", pendingRequests);
+      console.log('Job applications in repo', pendingRequests);
 
       return {
         pendingRequests: pendingRequests.map(normalizeRequest),
@@ -105,7 +105,7 @@ export class ConnectionRequestImpl implements ConnectionRequestRepository {
     } catch (err) {
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Failed to return data from repository",
+        'Failed to return data from repository'
       );
     }
   }
@@ -114,13 +114,13 @@ export class ConnectionRequestImpl implements ConnectionRequestRepository {
     try {
       const pendingRequests = await ConnectionRequestModel.countDocuments({
         toUser: userId,
-        status: "pending",
+        status: 'pending',
       });
       return pendingRequests;
     } catch (error) {
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        "Failed to get pending requests count",
+        'Failed to get pending requests count'
       );
     }
   }

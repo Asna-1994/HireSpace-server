@@ -1,6 +1,6 @@
-import mongoose, { Document, Schema, model } from "mongoose";
+import mongoose, { Document, Schema, model } from 'mongoose';
 
-export type messageStatus = "sent" | "delivered" | "read";
+export type messageStatus = 'sent' | 'delivered' | 'read';
 
 export interface MessageDocument extends Document {
   content: string;
@@ -19,15 +19,15 @@ const messageSchema = new Schema<MessageDocument>(
     status: {
       type: String,
       required: true,
-      enum: ["sent", "delivered", "read"],
+      enum: ['sent', 'delivered', 'read'],
     },
-    senderId: { type: Schema.Types.ObjectId, ref: "UserModel" },
-    receiverId: { type: Schema.Types.ObjectId, ref: "UserModel" },
+    senderId: { type: Schema.Types.ObjectId, ref: 'UserModel' },
+    receiverId: { type: Schema.Types.ObjectId, ref: 'UserModel' },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export const MessageModel = model<MessageDocument>(
-  "MessageModel",
-  messageSchema,
+  'MessageModel',
+  messageSchema
 );

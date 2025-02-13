@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
-import { CustomError } from "../../shared/error/customError";
-import { STATUS_CODES } from "../../shared/constants/statusCodes";
+import mongoose from 'mongoose';
+import { CustomError } from '../../shared/error/customError';
+import { STATUS_CODES } from '../../shared/constants/statusCodes';
 
 export class Subscriptions {
   _id: mongoose.Types.ObjectId;
@@ -10,7 +10,7 @@ export class Subscriptions {
   endDate: Date;
   paymentId: mongoose.Types.ObjectId;
   isActive: boolean;
-  paymentStatus: "success" | "pending" | "failed";
+  paymentStatus: 'success' | 'pending' | 'failed';
   transactionId: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -25,7 +25,7 @@ export class Subscriptions {
     this.paymentId = data.paymentId!;
     this.endDate = data.endDate!;
     this.transactionId = data.transactionId!;
-    this.paymentStatus = data.paymentStatus || "pending";
+    this.paymentStatus = data.paymentStatus || 'pending';
     this.isActive = data.isActive || false;
   }
 }
@@ -35,7 +35,7 @@ export const normalizeSubscriptions = (data: any): Subscriptions => {
   if (!data || !data._id) {
     throw new CustomError(
       STATUS_CODES.BAD_REQUEST,
-      "Invalid data or missing _id",
+      'Invalid data or missing _id'
     );
   }
 

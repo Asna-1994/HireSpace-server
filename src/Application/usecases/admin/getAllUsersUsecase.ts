@@ -1,20 +1,20 @@
-import { SpamRepository } from "./../../../Domain/repository/repo/spamRepository";
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { CustomError } from "../../../shared/error/customError";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { SpamModel } from "../../../Infrastructure/models/SpamModel";
+import { SpamRepository } from './../../../Domain/repository/repo/spamRepository';
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { SpamModel } from '../../../Infrastructure/models/SpamModel';
 
 export class GetAllUsersUseCase {
   constructor(
     private userRepository: UserRepository,
-    private spamRepository: SpamRepository,
+    private spamRepository: SpamRepository
   ) {}
 
   async execute({
     page = 1,
     limit = 10,
-    searchTerm = "",
-    userRole = "",
+    searchTerm = '',
+    userRole = '',
   }: {
     page?: number;
     limit?: number;
@@ -25,9 +25,9 @@ export class GetAllUsersUseCase {
     const filter: any = {
       ...(searchTerm && {
         $or: [
-          { userName: { $regex: searchTerm, $options: "i" } },
-          { email: { $regex: searchTerm, $options: "i" } },
-          { phone: { $regex: searchTerm, $options: "i" } },
+          { userName: { $regex: searchTerm, $options: 'i' } },
+          { email: { $regex: searchTerm, $options: 'i' } },
+          { phone: { $regex: searchTerm, $options: 'i' } },
         ],
       }),
       ...(userRole && { userRole }),
@@ -36,7 +36,7 @@ export class GetAllUsersUseCase {
     const { users, total } = await this.userRepository.findUsers(
       offset,
       limit,
-      filter,
+      filter
     );
     return { users, total };
   }
@@ -56,14 +56,14 @@ export class GetAllUsersUseCase {
 
     const filter: any = {
       isPremium: true,
-      "appPlan.planType": { $ne: "basic" },
-      "appPlan.startDate": { $ne: null },
-      "appPlan.endDate": { $ne: null },
+      'appPlan.planType': { $ne: 'basic' },
+      'appPlan.startDate': { $ne: null },
+      'appPlan.endDate': { $ne: null },
       ...(searchTerm && {
         $or: [
-          { userName: { $regex: searchTerm, $options: "i" } },
-          { email: { $regex: searchTerm, $options: "i" } },
-          { phone: { $regex: searchTerm, $options: "i" } },
+          { userName: { $regex: searchTerm, $options: 'i' } },
+          { email: { $regex: searchTerm, $options: 'i' } },
+          { phone: { $regex: searchTerm, $options: 'i' } },
         ],
       }),
       ...(userRole && { userRole }),
@@ -71,7 +71,7 @@ export class GetAllUsersUseCase {
     const { users, total } = await this.userRepository.findPremiumUsers(
       offset,
       limit,
-      filter,
+      filter
     );
 
     return { users, total };
@@ -91,11 +91,11 @@ export class GetAllUsersUseCase {
     const filter: any = {
       ...(searchTerm && {
         $or: [
-          { "reportedByUser.userName": { $regex: searchTerm, $options: "i" } },
-          { "reportedByUser.email": { $regex: searchTerm, $options: "i" } },
-          { "companyId.companyName": { $regex: searchTerm, $options: "i" } },
-          { "companyId.email": { $regex: searchTerm, $options: "i" } },
-          { "companyId.phone": { $regex: searchTerm, $options: "i" } },
+          { 'reportedByUser.userName': { $regex: searchTerm, $options: 'i' } },
+          { 'reportedByUser.email': { $regex: searchTerm, $options: 'i' } },
+          { 'companyId.companyName': { $regex: searchTerm, $options: 'i' } },
+          { 'companyId.email': { $regex: searchTerm, $options: 'i' } },
+          { 'companyId.phone': { $regex: searchTerm, $options: 'i' } },
         ],
       }),
     };

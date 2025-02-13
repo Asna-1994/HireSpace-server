@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
-import { CustomError } from "../../shared/error/customError";
-import { STATUS_CODES } from "../../shared/constants/statusCodes";
+import mongoose from 'mongoose';
+import { CustomError } from '../../shared/error/customError';
+import { STATUS_CODES } from '../../shared/constants/statusCodes';
 
 export class CompanyProfile {
   companyId: mongoose.Types.ObjectId;
@@ -23,7 +23,7 @@ export class CompanyProfile {
 
   constructor(data: Partial<CompanyProfile>) {
     if (!data.companyId) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST, "Company ID is required");
+      throw new CustomError(STATUS_CODES.BAD_REQUEST, 'Company ID is required');
     }
 
     this._id = data._id!;
@@ -52,7 +52,7 @@ export const normalizeCompanyProfile = (data: any): CompanyProfile => {
   if (!data || !data._id || !data.companyId) {
     throw new CustomError(
       STATUS_CODES.BAD_REQUEST,
-      "Invalid data or missing _id/companyId",
+      'Invalid data or missing _id/companyId'
     );
   }
 

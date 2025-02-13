@@ -1,9 +1,9 @@
-import { UserRepository } from "../../../Domain/repository/repo/userRepository";
-import { CustomError } from "../../../shared/error/customError";
-import { generateToken } from "../../../shared/utils/tokenUtils";
-import { comparePassword } from "../../../shared/utils/passwordUtils";
-import { STATUS_CODES } from "../../../shared/constants/statusCodes";
-import { MESSAGES } from "../../../shared/constants/messages";
+import { UserRepository } from '../../../Domain/repository/repo/userRepository';
+import { CustomError } from '../../../shared/error/customError';
+import { generateToken } from '../../../shared/utils/tokenUtils';
+import { comparePassword } from '../../../shared/utils/passwordUtils';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class AdminAuthUseCase {
   constructor(private UserRepository: UserRepository) {}
@@ -22,25 +22,25 @@ export class AdminAuthUseCase {
 
     const isPasswordValid = await comparePassword(
       password,
-      existingUser.password as string,
+      existingUser.password as string
     );
 
     if (!isPasswordValid) {
       throw new CustomError(
         STATUS_CODES.UNAUTHORIZED,
-        MESSAGES.INVALID_PASSWORD,
+        MESSAGES.INVALID_PASSWORD
       );
     }
 
-    if (existingUser.userRole !== "admin") {
-      throw new CustomError(STATUS_CODES.FORBIDDEN, "Only admin can login");
+    if (existingUser.userRole !== 'admin') {
+      throw new CustomError(STATUS_CODES.FORBIDDEN, 'Only admin can login');
     }
 
     const token = generateToken({
       id: existingUser._id,
       email: existingUser.email,
       role: existingUser.userRole,
-      entity: "user",
+      entity: 'user',
     });
 
     return { token, user: existingUser };
