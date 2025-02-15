@@ -83,6 +83,8 @@ export const isCompany = (
   next();
 };
 
+
+//is admin middleware
 export const isAdmin = (
   req: Request,
   res: Response,
