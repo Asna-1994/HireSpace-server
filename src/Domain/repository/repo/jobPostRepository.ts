@@ -22,4 +22,8 @@ export interface JobPostRepository {
     options: object
   ): Promise<JobPost | null>;
   countTotal(dateQuery: any): Promise<number>;
+  updateMany(
+    filter: Record<string, unknown>,
+    updateData: Record<string, unknown>
+  ): Promise<void>
 }

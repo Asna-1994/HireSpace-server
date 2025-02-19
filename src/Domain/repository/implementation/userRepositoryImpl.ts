@@ -132,27 +132,6 @@ export class UserRepositoryImpl implements UserRepository {
     return updatedUser;
   }
 
-  //   async findConnections(userId: string, offset: number, limit: number): Promise<{ connections: User[], total: number }> {
-  //     const userWithConnections = await UserModel.findById(userId)
-  //         .populate({
-  //             path: 'connections',
-  //             select: 'userName email profilePhoto tagLine',
-  //             options: { skip: offset, limit: limit },
-  //         })
-  //         .exec();
-
-  //     if (!userWithConnections) {
-  //         throw new CustomError(STATUS_CODES.NOT_FOUND, "No user found with ID");
-  //     }
-
-  //     const totalConnections = await UserModel.findById(userId).select('connections').exec();
-  //     const total = totalConnections?.connections.length || 0;
-
-  //     return {
-  //         connections: userWithConnections.connections as unknown as User[],
-  //         total,
-  //     };
-  // }
   async findConnections(
     userId: string,
     offset: number,
@@ -222,4 +201,15 @@ export class UserRepositoryImpl implements UserRepository {
 
     return { users: users, total };
   }
+
+
+
+
+  async updateMany(
+    filter: Record<string, unknown>,
+    updateData: Record<string, unknown>
+  ): Promise<void> {
+    await UserModel.updateMany(filter, updateData).exec();
+  }
+  
 }

@@ -4,6 +4,7 @@ import initializeSocket from './socket';
 import http from 'http';
 import { scheduleSubscriptionJobs } from './shared/utils/subscriptionScheduler';
 
+
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
@@ -11,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 
 initializeSocket(server);
+
 scheduleSubscriptionJobs();
 
 server.listen(PORT, () => {

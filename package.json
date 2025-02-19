@@ -7,8 +7,8 @@
     "start": "node dist/server.js",
     "dev": "nodemon --watch src --exec \"npm run build && node dist/server.js\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-      "lint": "eslint 'src/**/*.{ts,tsx}' --fix",
-  "format": "prettier --write 'src/**/*.{ts,tsx,json,css,md}'"
+    "lint": "eslint 'src/**/*.{ts,tsx}' --fix",
+    "format": "prettier --write 'src/**/*.{ts,tsx,json,css,md}'"
   },
   "author": "",
   "license": "ISC",
@@ -28,6 +28,7 @@
     "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.16",
+    "peer": "^1.0.2",
     "socket.io": "^4.8.1",
     "stripe": "^17.6.0",
     "twilio": "^5.4.0"

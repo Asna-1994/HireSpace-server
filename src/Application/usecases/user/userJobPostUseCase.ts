@@ -27,6 +27,7 @@ export class UserJobPostUseCase {
       const offset = (page - 1) * limit;
       const filter: any = {
         isDeleted: false,
+        isBlocked : false,
       };
 
       if (searchTerm) {

@@ -18,6 +18,7 @@ export class JobPost {
   jobType: string;
   workMode: string;
   isDeleted: boolean;
+  isBlocked : boolean;
   experienceLevel: string;
   educationRequired: string;
   postedBy: mongoose.Types.ObjectId;
@@ -41,6 +42,7 @@ export class JobPost {
     this.workMode = data.workMode!;
     this.jobType = data.jobType!;
     this.isDeleted = data.isDeleted!;
+    this.isBlocked = data.isBlocked!  || false;
     this.experienceLevel = data.experienceLevel!;
     this.educationRequired = data.educationRequired!;
     this.postedBy = new mongoose.Types.ObjectId(data.postedBy);

@@ -1,6 +1,5 @@
 import { UserJobApplicationController } from './../controller/userController/jobApplicationControler';
 import { UserJobApplicationUseCase } from './../../Application/usecases/user/userJobApplicationUseCase';
-import { JobApplicationRepository } from '../../Domain/repository/repo/jobApplicationRepository';
 import { JobApplicationRepositoryImpl } from '../../Domain/repository/implementation/jobApplicationRepoImpl';
 import { UserJobPostController } from './../controller/userController/userJobPostController';
 import { UserJobPostUseCase } from './../../Application/usecases/user/userJobPostUseCase';
@@ -75,8 +74,7 @@ const resendOtpUseCase = new ResendOtpUseCase(tempUserRepository, sendOtpEmail);
 const resendOtpController = new ResendOtpController(resendOtpUseCase);
 
 const googleSignInUseCase = new GoogleSignInUseCase(
-  userRepository,
-  jobSeekerProfileRepository
+  userRepository
 );
 const googleSigInController = new GoogleSignInController(googleSignInUseCase);
 

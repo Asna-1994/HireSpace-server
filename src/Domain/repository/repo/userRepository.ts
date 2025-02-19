@@ -41,4 +41,8 @@ export interface UserRepository {
   ): Promise<{ users: User[]; total: number }>;
   countTotal(dateQuery: any): Promise<number>;
   countPremium(dateQuery: any): Promise<number>;
+  updateMany(
+    filter: Record<string, unknown>,
+    updateData: Record<string, unknown>
+  ): Promise<void> 
 }

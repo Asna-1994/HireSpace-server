@@ -1,18 +1,18 @@
-import { JobSeekerProfileRepository } from './../../../Domain/repository/repo/JobSeekerProfileRepo';
+
 import { UserRepository } from '../../../Domain/repository/repo/userRepository';
 import { CustomError } from '../../../shared/error/customError';
 import { generateToken } from '../../../shared/utils/tokenUtils';
 import { OAuth2Client } from 'google-auth-library';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import { User } from '../../../Domain/entities/User';
-import mongoose from 'mongoose';
+
 
 export class GoogleSignInUseCase {
   private oauthClient: OAuth2Client;
 
   constructor(
     private userRepository: UserRepository,
-    private jobSeekerProfileRepository: JobSeekerProfileRepository
+
   ) {
     this.oauthClient = new OAuth2Client(process.env.oauth_client_id);
   }
@@ -55,6 +55,7 @@ export class GoogleSignInUseCase {
           email,
           // profilePhoto: profilePicture,
           entity: 'user',
+          userRole : 'jobSeeker',
           isBlocked: false,
           isPremium: false,
           isVerified: false,

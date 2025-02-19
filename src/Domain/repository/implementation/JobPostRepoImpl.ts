@@ -101,28 +101,10 @@ export class JobPostRepositoryImpl implements JobPostRepository {
     return await JobPostModel.countDocuments(dateQuery);
   }
 
-  // async getTopCategories(query: any, limit: number = 5): Promise<Array<{ name: string; count: number }>> {
-  //     return await JobPostModel.aggregate([
-  //         { $match: query },
-  //         {
-  //             $group: {
-  //                 _id: '$category',
-  //                 count: { $sum: 1 }
-  //             }
-  //         },
-  //         {
-  //             $project: {
-  //                 name: '$_id',
-  //                 count: 1,
-  //                 _id: 0
-  //             }
-  //         },
-  //         {
-  //             $sort: { count: -1 }
-  //         },
-  //         {
-  //             $limit: limit
-  //         }
-  //     ]);
-  // }
+  async updateMany(
+    filter: Record<string, unknown>,
+    updateData: Record<string, unknown>
+  ): Promise<void> {
+    await JobPostModel.updateMany(filter, updateData).exec();
+  }
 }

@@ -33,6 +33,7 @@ export interface JobPostDocument extends Document {
   benefits: string[];
   createdAt: Date;
   isDeleted: boolean;
+  isBlocked : boolean;
   updatedAt: Date;
   status: string;
 }
@@ -54,6 +55,7 @@ const JobPostSchema: Schema = new Schema(
       currency: { type: String, required: true },
     },
     isDeleted: { type: Boolean, required: true, default: false },
+    isBlocked: { type: Boolean, required: true, default: false },
     location: {
       city: { type: String, required: true },
       state: { type: String, required: true },

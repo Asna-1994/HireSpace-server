@@ -2,7 +2,6 @@ import { DashboardUseCase } from '../../Application/usecases/admin/dashBoardUseC
 import { AdminAuthController } from './../controller/adminController/AdminAuthController';
 import { BlockOrUnblockCompanyController } from './../controller/adminController/blockOrUnblockCompanyController';
 import { GetAllUsersController } from './../controller/adminController/getAlluserController';
-import { NextFunction, Request, Response } from 'express';
 import { Router } from 'express';
 import { GetAllUsersUseCase } from '../../Application/usecases/admin/getAllUsersUsecase';
 import { UserRepositoryImpl } from '../../Domain/repository/implementation/userRepositoryImpl';
@@ -49,9 +48,7 @@ const blockOrUnblockUserController = new BlockOrUnblockUserController(
   blockOrUnblockUserUseCase
 );
 
-const blockOrUnblockCompanyUseCase = new BlockOrUnblockCompanyUseCase(
-  companyRepository
-);
+const blockOrUnblockCompanyUseCase = new BlockOrUnblockCompanyUseCase( companyRepository, userRepository, jobPostRepository);
 const blockOrUnblockCompanyController = new BlockOrUnblockCompanyController(
   blockOrUnblockCompanyUseCase
 );

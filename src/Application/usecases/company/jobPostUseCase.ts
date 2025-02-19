@@ -98,6 +98,7 @@ export class JobPostUseCase {
       const allJobPosts = await this.jobPostRepository.find({
         companyId: companyId,
         isDeleted: false,
+        isBlocked : false,
       });
       return allJobPosts;
     } catch (err) {
