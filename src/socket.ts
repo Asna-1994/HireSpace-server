@@ -69,6 +69,7 @@ export const initializeSocket = (server: http.Server): Server => {
     });
 
 
+
     socket.on('join_room', ({ roomId, userId }) => {
       if (!roomId || !userId) {
         console.error('Missing roomId or userId in join_room event');
@@ -81,7 +82,6 @@ export const initializeSocket = (server: http.Server): Server => {
       socket.broadcast.to(roomId).emit('user_joined', { roomId, userId });
     });
 
-    // Forward ICE candidates between peers (if using WebRTC directly)
     socket.on('ice-candidate', ({ receiverId, candidate, senderId }) => {
       console.log('Received ICE candidate:', {
         candidate,
@@ -95,8 +95,29 @@ export const initializeSocket = (server: http.Server): Server => {
           candidate,
           type: 'ice-candidate',
         });
+        // Send acknowledgment back to sender
+        socket.emit('ice-candidate-received', {
+          candidateId: candidate.sdpMid,
+          receiverId
+        });
       }
     });
+
+    socket.on('offer', ({ offer, roomId, receiverId }) => {
+
+      const receiverSocketId = userSocketMap[receiverId];
+      socket.to(receiverSocketId).emit('offer', offer);
+    });
+  
+    socket.on('answer', ({ answer, roomId, callerId }) => {
+      const callerSocketId = userSocketMap[callerId];
+      socket.to(callerSocketId).emit('answer', answer);
+    });
+  
+    // socket.on('ice-candidate', ({ candidate, roomId }) => {
+    //   socket.to(roomId).emit('ice-candidate', candidate);
+    // });
+
 
     socket.on('initiateVideoCall', (data) => {
       console.log('Call initiation received:', data);
@@ -115,41 +136,64 @@ export const initializeSocket = (server: http.Server): Server => {
     });
 
     // Forward video signal data (offer, answer, ICE candidates)
-    socket.on('videoSignal', (data) => {
-      console.log('Forwarding video signal:', {
-        type: data.type,
-        callerId: data.callerId,
-        receiverId: data.receiverId,
-      });
-      const receiverSocketId = userSocketMap[data.receiverId];
-      if (receiverSocketId) {
-        switch (data.type) {
-          case 'offer':
-          case 'answer':
-            io.to(receiverSocketId).emit('videoSignal', {
-              type: data.type,
-              data: data.data,
-              callerId: data.callerId,
-              receiverId: data.receiverId,
-              roomId: data.roomId,
-              userId: data.userId,
-            });
-            break;
-          case 'ice-candidate':
-            io.to(receiverSocketId).emit('ice-candidate', {
-              candidate: data.data,
-              senderId: data.callerId,
-            });
-            break;
-          default:
-            console.log(`Unknown video signal type: ${data.type}`);
-        }
-      } else {
-        console.log(`Receiver ${data.receiverId} socket not found`);
-      }
-    });
+    // socket.on('videoSignal', (data) => {
+    //   console.log('Forwarding video signal:', {
+    //     type: data.type,
+    //     callerId: data.callerId,
+    //     receiverId: data.receiverId,
+    //   });
+    //   const receiverSocketId = userSocketMap[data.receiverId];
+    //   if (receiverSocketId) {
+    //     switch (data.type) {
+    //       case 'offer':
+    //       case 'answer':
+    //         io.to(receiverSocketId).emit('videoSignal', {
+    //           type: data.type,
+    //           data: data.data,
+    //           callerId: data.callerId,
+    //           receiverId: data.receiverId,
+    //           roomId: data.roomId,
+    //           userId: data.userId,
+    //         });
+    //         break;
+    //       case 'ice-candidate':
+    //         io.to(receiverSocketId).emit('ice-candidate', {
+    //           candidate: data.data,
+    //           senderId: data.callerId,
+    //         });
+    //         break;
+    //       default:
+    //         console.log(`Unknown video signal type: ${data.type}`);
+    //     }
+    //   } else {
+    //     console.log(`Receiver ${data.receiverId} socket not found`);
+    //   }
+    // });
 
-    // When the receiver accepts the call
+// In your server code
+// socket.on('videoSignal', (data) => {
+//   console.log('Server received video signal:', {
+//     type: data.type,
+//     callerId: data.callerId,
+//     receiverId: data.receiverId,
+//     roomId: data.roomId
+//   });
+
+//   const receiverSocketId = userSocketMap[data.receiverId];
+//   if (receiverSocketId) {
+//     console.log('Forwarding video signal to socket:', receiverSocketId);
+//     io.to(receiverSocketId).emit('videoSignal', {
+//       type: data.type,
+//       data: data.data,
+//       callerId: data.callerId,
+//       receiverId: data.receiverId,
+//       roomId: data.roomId
+//     });
+//   } else {
+//     console.log('Receiver socket not found for ID:', data.receiverId);
+//   }
+// });
+
     socket.on('acceptCall', ({ callerId, receiverId, answer }) => {
       console.log('Call accepted:', { callerId, receiverId });
       const callerSocketId = userSocketMap[callerId];
