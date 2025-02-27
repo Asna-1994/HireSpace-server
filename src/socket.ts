@@ -69,8 +69,6 @@ export const initializeSocket = (server: http.Server): Server => {
       console.log(`User ${userId} connected with socket ID ${socket.id}`);
     });
 
-
-
     socket.on('join_room', ({ roomId, userId }) => {
       if (!roomId || !userId) {
         console.error('Missing roomId or userId in join_room event');
@@ -83,189 +81,63 @@ export const initializeSocket = (server: http.Server): Server => {
       socket.broadcast.to(roomId).emit('user_joined', { roomId, userId });
     });
 
-    // socket.on('ice-candidate', ({ receiverId, candidate, senderId }) => {
-    //   console.log('ICE candidate:', { senderId, receiverId });
-    //   const receiverSocketId = userSocketMap[receiverId];
-    //   if (receiverSocketId) {
-    //     io.to(receiverSocketId).emit('ice-candidate', {
-    //       senderId,
-    //       candidate,
-    //     });
-    //     console.log(`ICE candidate sent to receiver ${receiverId}`);
-    //   } else {
-    //     console.error(`Receiver socket not found for ${receiverId}`);
-    //   }
-    // });
-    
-    
-
-
-    // socket.on('offer', ({ offer, roomId, receiverId, callerId }) => {
-    //   console.log('Offer received:', { roomId, receiverId, callerId });
-    //   const receiverSocketId = userSocketMap[receiverId];
-    //   if (receiverSocketId) {
-    //     io.to(receiverSocketId).emit('offer', {
-    //       offer,
-    //       roomId,
-    //       callerId,
-    //       // receiverId is not needed in the emit as the receiver already knows their ID
-    //     });
-    //     console.log(`Offer sent to receiver ${receiverId}`);
-    //   } else {
-    //     console.error(`Receiver socket not found for ${receiverId}`);
-    //   }
-    // });
-
-    // socket.on('answer', ({ answer, roomId, receiverId, callerId }) => {
-    //   console.log('Answer from receiver:', { roomId, callerId, receiverId });
-    //   const callerSocketId = userSocketMap[callerId];
-    //   if (callerSocketId) {
-    //     io.to(callerSocketId).emit('answer', {
-    //       answer,
-    //       roomId,
-    //       // Only these two fields are used in the frontend
-    //     });
-    //     console.log(`Answer sent back to caller ${callerId}`);
-    //   } else {
-    //     console.error(`Caller socket not found for ${callerId}`);
-    //   }
-    // });
-
-  
-    // socket.on('signal', (data) => {
-    //   const { roomId, receiverId, callerId, data: signalData } = data;
-    //   const receiverSocketId = userSocketMap[receiverId];
-    
-    //   if (receiverSocketId) {
-    //     io.to(receiverSocketId).emit('signal', {
-    //       roomId,
-    //       callerId,
-    //       data: signalData,
-    //     });
-    //   }
-    // });
-  
-
-    // socket.on('initiateVideoCall', (data) => {
-    //   console.log('Call initiation received:', data);
-    //   const { roomId, callerId, callerName, receiverId, receiverName } = data;
-    //   const receiverSocketId = userSocketMap[receiverId];
-    //   if (receiverSocketId) {
-    //     io.to(receiverSocketId).emit('incomingCall', {
-    //       roomId,
-    //       callerId,
-    //       callerName,
-    //     });
-    //   } else {
-    //     // console.log(`Receiver ${receiverId} is not online`);
-    //     socket.emit('call-failed', { reason: 'User unavailable' });
-    //     console.log(`Receiver ${receiverId} not found`);
-    //   }
-    // });
-
-
-
-
-    // socket.on('acceptCall', ({ callerId, receiverId, answer }) => {
-    //   console.log('Call accepted:', { callerId, receiverId });
-    //   const callerSocketId = userSocketMap[callerId];
-    //   if (callerSocketId) {
-    //     io.to(callerSocketId).emit('callAccepted', { receiverId, answer });
-    //   }
-    //   console.log(`Call acceptance sent to ${callerId}`);
-    // });
-
-    // // When the receiver rejects the call
-    // socket.on('rejectCall', ({ callerId, receiverId }) => {
-    //   console.log('Call rejected by receiver', receiverId);
-    //   const callerSocketId = userSocketMap[callerId];
-    //   if (callerSocketId) {
-    //     io.to(callerSocketId).emit('callRejected', { receiverId });
-    //   }
-    //   console.log(`Call rejection sent to ${callerId}`);
-    // });
-
-    // // Optionally, update call status (e.g., ringing, busy)
-    // socket.on('callStatus', (data) => {
-    //   console.log('Call status update:', data);
-    //   io.to(data.targetUserId).emit('callStatus', { status: data.status });
-    // });
-
-
-    // socket.on('endCall', ({ roomId, callerId, receiverId }) => {
-    //   console.log('End call:', { roomId, callerId, receiverId });
-    //   // Need to notify both participants
-    //   const callerSocketId = userSocketMap[callerId];
-    //   const receiverSocketId = userSocketMap[receiverId];
-      
-    //   if (callerSocketId) {
-    //     io.to(callerSocketId).emit('callEnded');
-    //   }
-      
-    //   if (receiverSocketId) {
-    //     io.to(receiverSocketId).emit('callEnded');
-    //   }
-    // });
-
-
-
     socket.on('signal', (data) => {
       const { roomId, signalData, senderId, receiverId } = data;
-      console.log('signal recieved' , signalData)
+      console.log('signal recieved', signalData);
       const receiverSocketId = userSocketMap[receiverId];
       if (receiverSocketId) {
-        io.to(receiverSocketId).emit('signal', { roomId, signalData, senderId });
+        io.to(receiverSocketId).emit('signal', {
+          roomId,
+          signalData,
+          senderId,
+        });
       }
-      console.log('emittted signal to reciever ')
-      // socket.to(receiverId).emit('signal', { roomId, signalData, senderId });
+      console.log('emittted signal to reciever ');
     });
-  
+
     // Handle call initiation
     socket.on('initiateVideoCall', (data) => {
-
       const { roomId, callerId, callerName, receiverId } = data;
-      console.log('call initiation recived from', callerName)
+      console.log('call initiation recived from', callerName);
       const receiverSocketId = userSocketMap[receiverId];
       if (receiverSocketId) {
-        io.to(receiverSocketId).emit('incomingCall', { roomId, callerId, callerName });
+        io.to(receiverSocketId).emit('incomingCall', {
+          roomId,
+          callerId,
+          callerName,
+        });
       }
-      // socket.to(receiverId).emit('incomingCall', { roomId, callerId, callerName });
     });
-  
+
     // Handle call acceptance
     socket.on('acceptCall', (data) => {
       const { roomId, callerId, receiverId } = data;
-        const callerSocketId = userSocketMap[callerId];
+      const callerSocketId = userSocketMap[callerId];
       if (callerSocketId) {
         io.to(callerSocketId).emit('callAccepted', { receiverId });
       }
-      // socket.to(callerId).emit('callAccepted', { roomId, receiverId });
     });
-  
+
     // Handle call rejection
     socket.on('rejectCall', (data) => {
-      const { roomId, callerId, receiverId } = data;
+      const { roomId, callerId, receiverId , receiverName} = data;
       const callerSocketId = userSocketMap[callerId];
       if (callerSocketId) {
-        io.to(callerSocketId).emit('callRejected', { roomId, receiverId });
+        io.to(callerSocketId).emit('callRejected', { roomId, receiverId, receiverName });
       }
-      // socket.to(callerId).emit('callRejected', { roomId, receiverId });
     });
-  
+
     // Handle call ending
     socket.on('endCall', (data) => {
       const { roomId, callerId, receiverId } = data;
-      // socket.to(receiverId).emit('callEnded', { roomId, callerId });
       const callerSocketId = userSocketMap[callerId];
       if (callerSocketId) {
         io.to(callerSocketId).emit('callEnded', { roomId, callerId });
-
       }
       const receiverSocketId = userSocketMap[receiverId];
       if (receiverSocketId) {
         io.to(receiverSocketId).emit('callEnded', { roomId, callerId });
       }
-
     });
     //chats
     socket.on('getRecentChats', async ({ userId }: { userId: string }) => {
@@ -307,8 +179,7 @@ export const initializeSocket = (server: http.Server): Server => {
       }
     );
 
-    socket.on(
-      'readMessage',
+    socket.on( 'readMessage',
       async ({ messageId, roomId }: { messageId: string; roomId: string }) => {
         try {
           await chatUseCase.markAsRead(messageId);
@@ -332,7 +203,6 @@ export const initializeSocket = (server: http.Server): Server => {
       }
     );
 
-    // Add this when a new connection request is sent
     socket.on(
       'newConnectionRequest',
       async ({ toUserId }: { toUserId: string }) => {
