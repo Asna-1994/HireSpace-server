@@ -179,16 +179,37 @@ export const initializeSocket = (server: http.Server): Server => {
       }
     );
 
-    socket.on( 'readMessage',
-      async ({ messageId, roomId }: { messageId: string; roomId: string }) => {
-        try {
-          await chatUseCase.markAsRead(messageId);
-          io.to(roomId).emit('messageRead', { messageId });
-        } catch (error) {
-          handleSocketError(socket, error);
-        }
-      }
+
+socket.on('readMessage', async ({ messageId, roomId }) => {
+  try {
+    await chatUseCase.markAsRead(messageId);
+    io.to(roomId).emit('messageRead', { messageId });
+    
+ 
+    const userId = Object.keys(userSocketMap).find(
+      key => userSocketMap[key] === socket.id
     );
+    
+    if (userId) {
+      const unreadCounts = await chatRepository.getUnreadMessagesCount(userId);
+    
+ 
+      const countsByRoomId: Record<string, number> = unreadCounts.reduce(
+        (acc: Record<string, number>, { roomId, count }) => {
+          acc[roomId] = count;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
+    
+ 
+      socket.emit('unreadCounts', { counts: countsByRoomId });
+    }
+    
+  } catch (error) {
+    handleSocketError(socket, error);
+  }
+});
 
     socket.on(
       'getPendingRequestsCount',
