@@ -1,6 +1,7 @@
 import { TempCompany } from '../../../Domain/entities/tempCompany';
 import { TempCompanyRepository } from '../../../Domain/repository/repo/tempCompanyRepository';
 import { sendOtpEmail } from '../../../Infrastructure/email/emailService';
+import { MESSAGES } from '../../../shared/constants/messages';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import { CustomError } from '../../../shared/error/customError';
 
@@ -18,7 +19,7 @@ export class ResendOtpUseCase {
     if (!existingTempCompany) {
       throw new CustomError(
         STATUS_CODES.NOT_FOUND,
-        'No Company fround  to send otp'
+      MESSAGES.COMPANY_NOT_FOUND
       );
     }
 

@@ -6,6 +6,8 @@ import { CustomError } from '../../../shared/error/customError';
 import { TempUser } from '../../../Domain/entities/tempUser';
 import { generateOtp } from '../../../shared/utils/tokenUtils';
 import { hashPassword } from '../../../shared/utils/passwordUtils';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class SignupUseCase {
   constructor(
@@ -28,7 +30,7 @@ export class SignupUseCase {
 
     const existingUser = await this.UserRepository.findByEmail(email);
     if (existingUser) {
-      throw new CustomError(400, 'User already registered');
+      throw new CustomError(STATUS_CODES.BAD_REQUEST, MESSAGES.USER_EXISTS);
     }
     const existingTempUser = await this.tempUserRepository.findByEmail(email);
     if (existingTempUser) {

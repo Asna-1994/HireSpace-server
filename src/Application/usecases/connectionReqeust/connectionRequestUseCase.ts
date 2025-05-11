@@ -31,7 +31,7 @@ export class ConnectionRequestUseCase {
     if (existingRequest) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        'Connection request already exists'
+       MESSAGES.REQUEST_EXISTS
       );
     }
     const fromUserObj = new mongoose.Types.ObjectId(fromUser);

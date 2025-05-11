@@ -1,10 +1,10 @@
-
 import { UserRepository } from '../../../Domain/repository/repo/userRepository';
 import { CustomError } from '../../../shared/error/customError';
-import { generateToken } from '../../../shared/utils/tokenUtils';
+import { generateAccessToken, generateRefreshToken } from '../../../shared/utils/tokenUtils';
 import { OAuth2Client } from 'google-auth-library';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import { User } from '../../../Domain/entities/User';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 
 export class GoogleSignInUseCase {
@@ -25,7 +25,7 @@ export class GoogleSignInUseCase {
 
     const payload = ticket.getPayload();
     if (!payload) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST, 'Invalid Google Token');
+      throw new CustomError(STATUS_CODES.BAD_REQUEST, MESSAGES.INVALID_GOOGLE_TOKEN);
     }
 
     const { sub: googleId, name, email, picture: profilePicture } = payload;
@@ -68,16 +68,25 @@ export class GoogleSignInUseCase {
       }
     }
 
-    const token = generateToken({
+    const token = generateAccessToken({
       id: existingUser._id,
       email: existingUser.email,
       role: existingUser.userRole,
       entity: 'user',
     });
+    const refreshToken = generateRefreshToken({
+      id: existingUser._id,
+      email: existingUser.email,
+      role: existingUser.userRole,
+      entity: 'user',
+    });
+    
+    await this.userRepository.saveRefreshToken(existingUser._id, refreshToken);
 
     return {
       user: existingUser,
       token,
+      refreshToken
     };
   }
 }

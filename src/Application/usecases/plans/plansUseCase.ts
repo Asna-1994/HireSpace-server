@@ -2,6 +2,7 @@ import { PlanRepository } from '../../../Domain/repository/repo/planRepo';
 import { Plans } from '../../../Domain/entities/AppPlans';
 import { CustomError } from '../../../shared/error/customError';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class ManagePlanUseCase {
   constructor(private planRepository: PlanRepository) {}
@@ -12,7 +13,7 @@ export class ManagePlanUseCase {
     if (!planType || !price || !durationInDays || !features) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        'Missing required fields'
+       MESSAGES.MISSING_FIELDS
       );
     }
 
@@ -22,7 +23,7 @@ export class ManagePlanUseCase {
   async updatePlan(planId: string, planData: any): Promise<any> {
     const updatedPlan = await this.planRepository.updatePlan(planId, planData);
     if (!updatedPlan) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, 'Plan not found');
+      throw new CustomError(STATUS_CODES.NOT_FOUND,MESSAGES.PLAN_NOT_FOUND);
     }
     return updatedPlan;
   }

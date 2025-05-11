@@ -2,6 +2,7 @@ import { hashPassword } from './../../../shared/utils/passwordUtils';
 import { CustomError } from '../../../shared/error/customError';
 import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class ForgotPasswordUseCase {
   constructor(private companyRepository: CompanyRepository) {}
@@ -13,14 +14,14 @@ export class ForgotPasswordUseCase {
     if (!existingCompany) {
       throw new CustomError(
         STATUS_CODES.NOT_FOUND,
-        'No company registered with this email, Please signup first'
+        MESSAGES.COMPANY_NOT_FOUND
       );
     }
 
     if (existingCompany.isBlocked) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        'This company has been blocked. Please contact Admin'
+        MESSAGES.COMPANY_BLOCKED
       );
     }
 

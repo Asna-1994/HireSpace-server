@@ -11,6 +11,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import { errorMiddleware } from './Infrastructure/middleware/errorMiddleware';
 import cookieParser from 'cookie-parser';
+import authRoutes from './Infrastructure/routes/authRoutes'
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use(cookieParser());
 
 //routes
 app.use('/api/user', userRoutes);
+app.use('/api/auth' ,  authRoutes)
 app.use('/api/company', companyRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/connection-request', connectionRoutes);

@@ -22,28 +22,28 @@ export class AddMembersUseCase {
     const objectIdCompanyId = new Types.ObjectId(companyId);
     const existingCompany = await this.companyRepository.findById(companyId);
     if (!existingCompany) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, 'No company found with Id');
+      throw new CustomError(STATUS_CODES.NOT_FOUND, MESSAGES.COMPANY_NOT_FOUND);
     }
 
     const existingUser = await this.userRepository.findByEmail(email);
     if (!existingUser) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        'No User registered with this email, Please signup first'
+       MESSAGES.PLEASE_SIGNUP
       );
     }
     const objectIdUserId = new Types.ObjectId(existingUser._id);
     if (existingCompany.isBlocked) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        'This Company has been blocked. Please contact Admin'
+        MESSAGES.COMPANY_BLOCKED
       );
     }
 
     if (existingUser.isBlocked) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        'This User has been blocked. Please contact Admin'
+       MESSAGES.USER_BLOCKED
       );
     }
 
@@ -157,7 +157,7 @@ export class AddMembersUseCase {
     if (existingCompany.isBlocked) {
       throw new CustomError(
         STATUS_CODES.BAD_REQUEST,
-        'This Company has been blocked. Please contact Admin'
+       MESSAGES.COMPANY_BLOCKED
       );
     }
 

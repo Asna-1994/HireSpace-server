@@ -9,16 +9,25 @@ export class GoogleSignInController {
   async googleSignIn(req: Request, res: Response, next: NextFunction) {
     try {
       const { credential } = req.body;
-      const { user, token } =
+      const { user, token, refreshToken } =
         await this.googleSignInUseCase.execute(credential);
+
       res.cookie('authToken', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000,
+        maxAge: 3 * 60 * 1000,
         sameSite: 'strict',
+        path: '/',  
+      });
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, 
+        sameSite: 'strict',
+         path: '/api/auth/refresh', 
+      
       });
 
-      console.log('user token generated', token);
       res.status(STATUS_CODES.CREATED).json({
         success: true,
         message: MESSAGES.SIGNUP_SUCCESS,

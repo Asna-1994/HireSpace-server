@@ -19,6 +19,7 @@ export class Company {
   address: string;
   website?: string;
   establishedDate: Date;
+  refreshTokens: String [];
   industry: string;
   verificationDocument?: imageObject;
   documentNumber?: string;
@@ -40,9 +41,9 @@ export class Company {
   constructor(data: Partial<Company>) {
     this._id = data._id || new mongoose.Types.ObjectId().toString();
     this.companyName = data.companyName!;
-    // this.admins = data.admins  || [];
     this.email = data.email!;
     this.phone = data.phone!;
+    this.refreshTokens = data.refreshTokens||[]
     this.website = data.website || '';
     this.industry = data.industry!;
     this.documentNumber = data.documentNumber || '';

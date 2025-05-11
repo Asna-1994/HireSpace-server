@@ -3,6 +3,7 @@ import { JobApplicationRepository } from '../../../Domain/repository/repo/jobApp
 import { CustomError } from '../../../shared/error/customError';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import { JobApplication } from '../../../Domain/entities/JobApplication';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class CompanyJobApplicationUseCase {
   constructor(private jobApplicationRepository: JobApplicationRepository) {}
@@ -82,14 +83,14 @@ export class CompanyJobApplicationUseCase {
       if (!application) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          'No application found with this ID'
+         MESSAGES.APPLICATION_NOT_FOUND
         );
       }
 
       if (!application._id || !application.userId || !application.jobPostId) {
         throw new CustomError(
           STATUS_CODES.INTERNAL_SERVER_ERROR,
-          'Application data is incomplete.'
+          MESSAGES.INCOMPLETE_DATA
         );
       }
 

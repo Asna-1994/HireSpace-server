@@ -1,6 +1,8 @@
 import { hashPassword } from './../../../shared/utils/passwordUtils';
 import { UserRepository } from '../../../Domain/repository/repo/userRepository';
 import { CustomError } from '../../../shared/error/customError';
+import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class ForgotPasswordUseCase {
   constructor(private UserRepository: UserRepository) {}
@@ -11,15 +13,15 @@ export class ForgotPasswordUseCase {
     const existingUser = await this.UserRepository.findByEmail(email);
     if (!existingUser) {
       throw new CustomError(
-        400,
-        'No User registered with this email, Please signup first'
+        STATUS_CODES.BAD_REQUEST,
+      MESSAGES.PLEASE_SIGNUP
       );
     }
 
     if (existingUser.isBlocked) {
       throw new CustomError(
-        400,
-        'This user has been blocked. Please contact Admin'
+        STATUS_CODES.BAD_REQUEST,
+       MESSAGES.USER_BLOCKED
       );
     }
 

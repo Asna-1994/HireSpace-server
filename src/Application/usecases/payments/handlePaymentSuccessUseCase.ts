@@ -27,7 +27,7 @@ export class HandlePaymentSuccessUseCase {
       if (paymentIntent.status !== 'succeeded') {
         throw new CustomError(
           STATUS_CODES.INTERNAL_SERVER_ERROR,
-          'Payment not successful'
+          MESSAGES.PAYMENT_FAILED
         );
       }
 
@@ -62,7 +62,7 @@ export class HandlePaymentSuccessUseCase {
 
       const plan = await this.planRepo.getPlanById(planId);
       if (!plan) {
-        throw new CustomError(STATUS_CODES.NOT_FOUND, 'Plan not found');
+        throw new CustomError(STATUS_CODES.NOT_FOUND, MESSAGES.PLAN_NOT_FOUND);
       }
 
       const user = await this.userRepo.findById(userId);

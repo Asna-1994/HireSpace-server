@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import { SubscriptionRepo } from '../../../Domain/repository/repo/subscriptionRepo';
 import { UserRepository } from '../../../Domain/repository/repo/userRepository';
 import { CustomError } from '../../../shared/error/customError';

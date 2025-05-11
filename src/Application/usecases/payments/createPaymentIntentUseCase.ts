@@ -4,6 +4,7 @@ import { SubscriptionRepo } from '../../../Domain/repository/repo/subscriptionRe
 import { stripe } from '../../../shared/utils/stripeClient';
 import { CustomError } from '../../../shared/error/customError';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class CreatePaymentIntentUseCase {
   constructor(
@@ -34,7 +35,7 @@ export class CreatePaymentIntentUseCase {
     if (activeSubscription) {
       throw new CustomError(
         STATUS_CODES.CONFLICT,
-        'User already has an active subscription for this plan'
+        MESSAGES.ALREADY_SUBSCRIBED
       );
     }
 

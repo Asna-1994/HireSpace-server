@@ -3,6 +3,7 @@ import { Message } from '../../../Domain/entities/Message';
 import { ChatRepository } from '../../../Domain/repository/repo/chatRepository';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import { CustomError } from '../../../shared/error/customError';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class ChatUseCase {
   constructor(private chatRepository: ChatRepository) {}
@@ -33,7 +34,7 @@ export class ChatUseCase {
 
   async markAsRead(messageId: string): Promise<void> {
     if (!messageId) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST, 'Message ID is required');
+      throw new CustomError(STATUS_CODES.BAD_REQUEST,MESSAGES.MSG_ID_REQUIRED );
     }
 
     try {
@@ -51,7 +52,7 @@ export class ChatUseCase {
 
   async fetchMessages(roomId: string): Promise<Message[]> {
     if (!roomId) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST, 'Room ID is required');
+      throw new CustomError(STATUS_CODES.BAD_REQUEST, MESSAGES.ROOM_ID_REQUIRED);
     }
 
     try {
@@ -94,7 +95,7 @@ export class ChatUseCase {
 
   async getRecentChats(userId: string) {
     if (!userId) {
-      throw new CustomError(STATUS_CODES.BAD_REQUEST, 'User ID is required');
+      throw new CustomError(STATUS_CODES.BAD_REQUEST, MESSAGES.USER_ID_REQUIRED);
     }
     return await this.chatRepository.getRecentChats(userId);
   }

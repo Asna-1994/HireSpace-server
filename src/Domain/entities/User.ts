@@ -17,6 +17,7 @@ export class User {
   _id: string;
   profilePhoto?: imageObject;
   googleId?: string;
+  refreshTokens  : string[];
   appPlan: {
     planType: string;
     startDate: Date | null;
@@ -43,6 +44,7 @@ export class User {
     this.phone = data.phone;
     this.tagLine = data.tagLine;
     this.address = data.address;
+    this.refreshTokens = data.refreshTokens!;
     this.dateOfBirth = data.dateOfBirth;
     this.userRole = data.userRole || 'jobSeeker';
     this.password = data.password;
@@ -79,10 +81,7 @@ export class User {
     this.isVerified = true;
   }
 
-  // upgradeToPremium(): void {
-  //   this.isPremium = true;
-  //   this.appPlan = 'premium';
-  // }
+
 
   blockUser(): void {
     this.isBlocked = true;

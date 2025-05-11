@@ -7,6 +7,7 @@ import { CompanyRepository } from '../../../Domain/repository/repo/companyReposi
 import { TempCompany } from '../../../Domain/entities/tempCompany';
 import { UserRepository } from '../../../Domain/repository/repo/userRepository';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class SignupUseCase {
   constructor(
@@ -45,7 +46,7 @@ export class SignupUseCase {
     if (!companyAdmin) {
       throw new CustomError(
         STATUS_CODES.NOT_FOUND,
-        'No user found with this email'
+       MESSAGES.USER_NOT_FOUND
       );
     }
     if (companyAdmin.userRole !== 'companyAdmin') {

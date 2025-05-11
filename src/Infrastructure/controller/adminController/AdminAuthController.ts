@@ -9,7 +9,7 @@ export class AdminAuthController {
   async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
-      const { token, user } = await this.adminAuthUseCase.login({
+      const { token, user, refreshToken } = await this.adminAuthUseCase.login({
         email,
         password,
       });
@@ -17,8 +17,17 @@ export class AdminAuthController {
       res.cookie('authToken', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000,
+        maxAge: 3 * 60 * 1000,
         sameSite: 'strict',
+        path: '/',  
+      });
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, 
+        sameSite: 'strict',
+         path: '/api/auth/refresh', 
+      
       });
 
       res.status(STATUS_CODES.SUCCESS).json({
@@ -34,3 +43,5 @@ export class AdminAuthController {
     }
   }
 }
+
+

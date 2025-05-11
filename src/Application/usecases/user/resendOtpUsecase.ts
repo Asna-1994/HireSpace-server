@@ -4,6 +4,7 @@ import { CustomError } from '../../../shared/error/customError';
 import { TempUser } from '../../../Domain/entities/tempUser';
 import { generateOtp } from '../../../shared/utils/tokenUtils';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class ResendOtpUseCase {
   constructor(
@@ -16,7 +17,7 @@ export class ResendOtpUseCase {
     if (!existingTempUser) {
       throw new CustomError(
         STATUS_CODES.NOT_FOUND,
-        'No user fround  to send otp'
+   MESSAGES.USER_NOT_FOUND
       );
     }
 

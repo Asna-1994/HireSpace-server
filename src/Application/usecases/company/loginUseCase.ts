@@ -1,10 +1,9 @@
 import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
 import { CustomError } from '../../../shared/error/customError';
-import { generateToken } from '../../../shared/utils/tokenUtils';
+import { generateAccessToken, generateRefreshToken } from '../../../shared/utils/tokenUtils';
 import { comparePassword } from '../../../shared/utils/passwordUtils';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import { UserRepository } from '../../../Domain/repository/repo/userRepository';
-import { User } from '../../../Domain/entities/User';
 import { MESSAGES } from '../../../shared/constants/messages';
 
 export class LoginUseCase {
@@ -58,18 +57,26 @@ export class LoginUseCase {
         throw new CustomError(STATUS_CODES.FORBIDDEN, MESSAGES.BLOCKED);
       }
 
-      const userToken = generateToken({
-        id: existingUser._id,
-        email: existingUser.email,
-        role: existingUser.userRole,
-        companyId: existingUser.companyId,
-        entity: 'user',
-      });
+    const userToken = generateAccessToken({
+      id: existingUser._id,
+      email: existingUser.email,
+      role: existingUser.userRole,
+      entity: 'user',
+    });
+    const refreshToken = generateRefreshToken({
+      id: existingUser._id,
+      email: existingUser.email,
+      role: existingUser.userRole,
+      entity: 'user',
+    });
+    
+    await this.userRepository.saveRefreshToken(existingUser._id, refreshToken);
 
       return {
         token: userToken,
         user: existingUser,
         company: companyAccount,
+        refreshToken
       };
     }
 
@@ -97,15 +104,25 @@ export class LoginUseCase {
       );
     }
 
-    const companyToken = generateToken({
-      id: existingCompany._id,
+
+    const companyToken = generateAccessToken({
+      id: existingCompany._id.toString(),
       email: existingCompany.email,
       role: 'companyAdmin',
-      entity: 'company',
+        entity: 'company',
     });
+    const refreshToken = generateRefreshToken({
+      id: existingCompany._id.toString() ,
+      email: existingCompany.email,
+      role: 'companyAdmin',
+        entity: 'company',
+    });
+
+    await this.companyRepository.saveRefreshToken(existingCompany._id.toString(), refreshToken);
 
     return {
       token: companyToken,
+      refreshToken,
       company: existingCompany,
     };
   }

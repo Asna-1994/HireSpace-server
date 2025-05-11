@@ -17,6 +17,7 @@ export interface CompanyDocument extends Document {
   appPlan: 'basic' | 'premium';
   isBlocked: boolean;
   isPremium: boolean;
+  refreshTokens: String [];
   isDeleted: boolean;
   isVerified: boolean;
   isSpam: boolean;
@@ -38,6 +39,10 @@ const companySchema = new Schema<CompanyDocument>(
     entity: { type: String, enum: ['company', 'user'], default: 'company' },
     password: { type: String },
     address: { type: String },
+    refreshTokens: {
+      type: [String], 
+      default: []
+    }, 
     companyLogo: {
       type: {
         url: { type: String },
@@ -61,7 +66,6 @@ const companySchema = new Schema<CompanyDocument>(
       default: 'basic',
     },
     isVerified: { type: Boolean, default: false },
-    // admins : [{ type: Schema.Types.ObjectId, ref: 'UserModel' }],
     isBlocked: { type: Boolean, default: false },
     isPremium: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },

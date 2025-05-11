@@ -3,13 +3,15 @@ import { LoginUseCase } from '../../../Application/usecases/user/loginUsecase';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import { MESSAGES } from '../../../shared/constants/messages';
 
+
 export class LoginController {
+
   constructor(private loginUseCase: LoginUseCase) {}
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
-      const { token, user } = await this.loginUseCase.execute({
+      const { token, refreshToken, user } = await this.loginUseCase.execute({
         email,
         password,
       });
@@ -17,9 +19,19 @@ export class LoginController {
       res.cookie('authToken', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000,
+        maxAge: 3 * 60 * 1000,
         sameSite: 'strict',
+        path: '/',  
       });
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, 
+        sameSite: 'strict',
+         path: '/api/auth/refresh', 
+      
+      });
+
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
@@ -34,4 +46,6 @@ export class LoginController {
       console.log(error);
     }
   }
+
+
 }

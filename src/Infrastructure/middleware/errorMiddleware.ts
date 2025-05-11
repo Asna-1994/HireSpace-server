@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { CustomError } from '../../shared/error/customError';
+import { MESSAGES } from '../../shared/constants/messages';
+import { STATUS_CODES } from '../../shared/constants/statusCodes';
 
 export const errorMiddleware = (
   err: Error,
@@ -17,9 +19,9 @@ export const errorMiddleware = (
     });
   }
 
-  return res.status(500).json({
+  return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
     success: false,
-    message: 'Internal Server Error',
-    statusCode: 500,
+    message: MESSAGES.INTERNAL_SERVER_ERROR,
+    statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
   });
 };

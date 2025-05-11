@@ -81,6 +81,7 @@ export class CompanyRepositoryImpl implements CompanyRepository {
         { isBlocked: true },
         { new: true }
       );
+      await this.removeAllRefreshTokens(companyId)
     } else {
       blockedCompany = await CompanyModel.findByIdAndUpdate(
         companyId,
@@ -91,4 +92,33 @@ export class CompanyRepositoryImpl implements CompanyRepository {
 
     return normalizeCompany(blockedCompany);
   }
+
+
+      async saveRefreshToken(companyId: string, token: string): Promise<void> {
+      await CompanyModel.findByIdAndUpdate(
+        companyId,
+        { $addToSet: { refreshTokens: token } }, 
+        { new: true }
+      );
+    }
+  
+    async verifyRefreshToken(companyId: string, token: string): Promise<boolean> {
+      const company = await CompanyModel.findById(companyId);
+      if (!company) return false;
+      return company.refreshTokens.includes(token);
+    }
+  
+    async removeRefreshToken(companyId: string, token: string): Promise<void> {
+      await CompanyModel.findByIdAndUpdate(
+        companyId,
+        { $pull: { refreshTokens: token } }
+      );
+    }
+  
+    async removeAllRefreshTokens(companyId: string): Promise<void> {
+      await CompanyModel.findByIdAndUpdate(
+        companyId,
+        { $set: { refreshTokens: [] } }
+      );
+    }
 }

@@ -14,6 +14,13 @@ declare global {
   namespace Express {
     interface Request {
       user?: DecodedToken;
+      originalRequest?: {
+        url: string;
+        method: string;
+        body: any;
+      };
     }
   }
 }
+
+

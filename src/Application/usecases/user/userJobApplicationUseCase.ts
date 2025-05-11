@@ -68,7 +68,7 @@ export class UserJobApplicationUseCase {
         if (recentApplicationsCount >= 10) {
           throw new CustomError(
             STATUS_CODES.FORBIDDEN,
-            'You can only apply for 10 jobs per month as a regular user. Upgrade to premium for unlimited applications.'
+            MESSAGES.MAXIMUM_LIMIT
           );
         }
       }
@@ -87,7 +87,7 @@ export class UserJobApplicationUseCase {
       if (!jobSeekerProfile?.resume?.url) {
         throw new CustomError(
           STATUS_CODES.BAD_REQUEST,
-          'Please upload resume in you profile'
+          MESSAGES.PLEASE_UPLOAD_RESUME
         );
       }
       newJobApplicationData.resumeUrl = jobSeekerProfile.resume.url;
@@ -159,7 +159,7 @@ export class UserJobApplicationUseCase {
       if (!user) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          'No profile found for this user'
+    MESSAGES.NO_PROFILE_FOUND
         );
       }
 

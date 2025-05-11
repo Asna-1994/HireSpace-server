@@ -1,18 +1,15 @@
-import { JobSeekerProfileRepository } from './../../../Domain/repository/repo/JobSeekerProfileRepo';
 import { UserRepository } from '../../../Domain/repository/repo/userRepository';
 import { CustomError } from '../../../shared/error/customError';
-import { generateToken } from '../../../shared/utils/tokenUtils';
+import { generateAccessToken, generateRefreshToken } from '../../../shared/utils/tokenUtils';
 import {
   comparePassword,
-  hashPassword,
 } from '../../../shared/utils/passwordUtils';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import { MESSAGES } from '../../../shared/constants/messages';
 
 export class LoginUseCase {
   constructor(
-    private UserRepository: UserRepository,
-    private jobSeekerProfileRepository: JobSeekerProfileRepository
+    private UserRepository: UserRepository
   ) {}
 
   async execute(userData: { email: string; password: string }) {
@@ -46,13 +43,23 @@ export class LoginUseCase {
       );
     }
 
-    const token = generateToken({
+    const token = generateAccessToken({
       id: existingUser._id,
       email: existingUser.email,
       role: existingUser.userRole,
       entity: 'user',
     });
+    const refreshToken = generateRefreshToken({
+      id: existingUser._id,
+      email: existingUser.email,
+      role: existingUser.userRole,
+      entity: 'user',
+    });
+    
+    await this.UserRepository.saveRefreshToken(existingUser._id, refreshToken);
 
-    return { token, user: existingUser };
+    return { token, refreshToken, user: existingUser };
   }
+
+
 }

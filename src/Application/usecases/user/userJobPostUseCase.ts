@@ -4,6 +4,7 @@ import { CustomError } from '../../../shared/error/customError';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import { UserRepository } from '../../../Domain/repository/repo/userRepository';
 import { SpamReport } from '../../../Domain/entities/SpamReport';
+import { MESSAGES } from '../../../shared/constants/messages';
 
 export class UserJobPostUseCase {
   constructor(
@@ -72,7 +73,7 @@ export class UserJobPostUseCase {
       if (!user) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          'No profile found for this user'
+      MESSAGES.NO_PROFILE_FOUND
         );
       }
 

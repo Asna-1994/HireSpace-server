@@ -18,4 +18,8 @@ export interface CompanyRepository {
   ): Promise<Company[]>;
   blockOrUnblock(companyId: string, action: string): Promise<Company>;
   countTotal(dateQuery: any): Promise<number>;
+  saveRefreshToken(companyId: string, token: string): Promise<void>;
+  verifyRefreshToken(companyId: string, token: string): Promise<boolean>;
+  removeRefreshToken(companyId: string, token: string): Promise<void>;
+  removeAllRefreshTokens(companyId: string): Promise<void>; 
 }

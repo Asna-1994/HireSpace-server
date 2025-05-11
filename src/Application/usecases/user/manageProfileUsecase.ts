@@ -1,11 +1,9 @@
-import { JobApplicationRepository } from './../../../Domain/repository/repo/jobApplicationRepository';
 import { UserRepository } from '../../../Domain/repository/repo/userRepository';
 import { JobSeekerProfileRepository } from '../../../Domain/repository/repo/JobSeekerProfileRepo';
 import { CustomError } from '../../../shared/error/customError';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import mongoose from 'mongoose';
 import { MESSAGES } from '../../../shared/constants/messages';
-import { JobApplicationRepositoryImpl } from '../../../Domain/repository/implementation/jobApplicationRepoImpl';
 
 export class ManageProfileUseCase {
   constructor(
@@ -77,7 +75,7 @@ export class ManageProfileUseCase {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          'No profile found for this user'
+          MESSAGES.NO_PROFILE_FOUND
         );
       }
       console.log(jobSeekerProfile.education);
@@ -101,7 +99,7 @@ export class ManageProfileUseCase {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          'No profile found for this user'
+          MESSAGES.NO_PROFILE_FOUND
         );
       }
 
@@ -204,7 +202,7 @@ export class ManageProfileUseCase {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          'No profile found for this user'
+       MESSAGES.NO_PROFILE_FOUND
         );
       }
 
@@ -230,7 +228,7 @@ export class ManageProfileUseCase {
       if (!jobSeekerProfile) {
         throw new CustomError(
           STATUS_CODES.NOT_FOUND,
-          'No profile found for this user'
+        MESSAGES.NO_PROFILE_FOUND
         );
       }
 
@@ -243,7 +241,7 @@ export class ManageProfileUseCase {
         if (experienceIndex === -1) {
           throw new CustomError(
             STATUS_CODES.NOT_FOUND,
-            'Education with ID not found'
+           MESSAGES.EDUCATION_ID_NOT_FOUND
           );
         }
 

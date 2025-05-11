@@ -2,6 +2,7 @@ import {
   cloudinary,
   uploadToCloudinary,
 } from '../../../Infrastructure/config/cloudinaryConfig';
+import { MESSAGES } from '../../../shared/constants/messages';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import { CustomError } from '../../../shared/error/customError';
 
@@ -43,7 +44,7 @@ export class FileUploadUseCase {
         console.error('Error deleting file from Cloudinary:', result);
         throw new CustomError(
           STATUS_CODES.INTERNAL_SERVER_ERROR,
-          'Failed to delete file'
+          MESSAGES.FAILED_DELETE_FILE
         );
       }
     } catch (error) {

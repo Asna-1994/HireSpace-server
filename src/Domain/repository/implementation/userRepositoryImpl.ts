@@ -4,6 +4,7 @@ import { User } from '../../entities/User';
 import { CustomError } from '../../../shared/error/customError';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
 
 export class UserRepositoryImpl implements UserRepository {
   async create(
@@ -107,6 +108,7 @@ export class UserRepositoryImpl implements UserRepository {
         { isBlocked: true },
         { new: true }
       );
+     await this.removeAllRefreshTokens(entityId)
     } else {
       blockedUser = await UserModel.findByIdAndUpdate(
         entityId,
@@ -211,5 +213,55 @@ export class UserRepositoryImpl implements UserRepository {
   ): Promise<void> {
     await UserModel.updateMany(filter, updateData).exec();
   }
+
+
+    async saveRefreshToken(userId: string, token: string): Promise<void> {
+    await UserModel.findByIdAndUpdate(
+      userId,
+      { $addToSet: { refreshTokens: token } }, // prevent duplicates
+      { new: true }
+    );
+  }
+
+  async verifyRefreshToken(userId: string, token: string): Promise<boolean> {
+    const user = await UserModel.findById(userId);
+    if (!user) return false;
+    return user.refreshTokens.includes(token);
+  }
+
+  async removeRefreshToken(userId: string, token: string): Promise<void> {
+    await UserModel.findByIdAndUpdate(
+      userId,
+      { $pull: { refreshTokens: token } }
+    );
+  }
+
+  async removeAllRefreshTokens(userId: string): Promise<void> {
+    await UserModel.findByIdAndUpdate(
+      userId,
+      { $set: { refreshTokens: [] } }
+    );
+  }
+
+  
+async clearExpiredRefreshTokens(secret: string): Promise<void> {
+  const users = await UserModel.find({ refreshTokens: { $exists: true, $ne: [] } });
+  await Promise.all(users.map(async user => {
+    const validTokens = user.refreshTokens.filter(token => {
+      try {
+        jwt.verify(token, secret);
+        return true;
+      } catch {
+        return false;
+      }
+    });
+  
+    if (validTokens.length !== user.refreshTokens.length) {
+      user.refreshTokens = validTokens;
+      await user.save();
+    }
+  }));
+  
+}
   
 }

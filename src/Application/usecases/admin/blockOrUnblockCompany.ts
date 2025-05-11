@@ -18,20 +18,31 @@ export class BlockOrUnblockCompanyUseCase {
     );
 
 
+
     if (!updatedCompany) {
-      throw new CustomError(STATUS_CODES.NOT_FOUND, 'Company not found');
+      throw new CustomError(STATUS_CODES.NOT_FOUND, MESSAGES.COMPANY_NOT_FOUND);
     }
 
     const isBlocked = action === 'block';
 
-    // Block or Unblock all users of the company
+  
     await this.userRepository.updateMany(
       { companyId }, 
       { $set: { isBlocked } } 
     );
 
+
     await this.jobPostRepository.updateMany( { companyId }, 
       { $set: { isBlocked } } );
+
+      if (isBlocked) {
+        const users = await this.userRepository.find({ companyId });
+    
+        for (const user of users) {
+          await this.userRepository.removeAllRefreshTokens(user._id);
+        }
+      }
+
 
       
     return updatedCompany;
@@ -63,7 +74,7 @@ export class BlockOrUnblockCompanyUseCase {
       }
       throw new CustomError(
         STATUS_CODES.INTERNAL_SERVER_ERROR,
-        'Failed to verify company'
+      MESSAGES.VERIFICATION_FAILED
       );
     }
   }

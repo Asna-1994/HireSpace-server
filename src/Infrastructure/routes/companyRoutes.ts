@@ -40,7 +40,7 @@ import {
   checkIfAUthenticated,
   isCompany,
 } from '../middleware/authenticationMiddleware';
-import { check } from 'express-validator';
+
 
 const tempCompanyRepository = new TempCompanyRepositoryImpl();
 const companyRepository = new CompanyRepositoryImpl();

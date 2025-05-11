@@ -1,4 +1,5 @@
 import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
+import { MESSAGES } from '../../../shared/constants/messages';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import { CustomError } from '../../../shared/error/customError';
 import { FileUploadUseCase } from '../../usecases/shared/fileUploadUsecase';
@@ -16,7 +17,7 @@ export async function handleFileUploadAndUpdate(
   const company = await repository.findById(companyId);
 
   if (!company) {
-    throw new CustomError(STATUS_CODES.NOT_FOUND, 'company not found');
+    throw new CustomError(STATUS_CODES.NOT_FOUND, MESSAGES.COMPANY_NOT_FOUND);
   }
 
   if (fieldToUpdate === 'companyLogo') {

@@ -1,5 +1,4 @@
 import { JobPostRepository } from '../../../Domain/repository/repo/jobPostRepository';
-import { UserRepository } from '../../../Domain/repository/repo/userRepository';
 import { CompanyRepository } from '../../../Domain/repository/repo/companyRepository';
 import { CustomError } from '../../../shared/error/customError';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
@@ -52,7 +51,7 @@ export class JobPostUseCase {
     if (!isMember) {
       throw new CustomError(
         STATUS_CODES.FORBIDDEN,
-        'User is not authorized to create a job post for this company.'
+        MESSAGES.NOT_AUTHORIZED
       );
     }
 

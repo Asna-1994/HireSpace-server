@@ -17,6 +17,7 @@ export interface UserDocument extends Document {
   profilePhoto?: imageObject;
   dateOfBirth?: Date;
   googleId?: string;
+  refreshTokens : string[];
   userRole?: 'jobSeeker' | 'companyAdmin' | 'companyMember' | 'admin';
   appPlan: {
     planType: string;
@@ -76,6 +77,9 @@ const userSchema = new Schema<UserDocument>(
         default: null,
       },
     },
+    refreshTokens: [{
+      type: String,
+    }],
     isVerified: { type: Boolean, default: false },
     isBlocked: { type: Boolean, default: false },
     isPremium: { type: Boolean, default: false },
