@@ -10,7 +10,7 @@ export class LoginController {
     try {
       const { email, password } = req.body;
 
-      const { token, company, user } = await this.loginUseCase.execute({
+      const { token, company, user , refreshToken} = await this.loginUseCase.execute({
         email,
         password,
       });
@@ -20,8 +20,17 @@ export class LoginController {
       res.cookie('authToken', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000,
+        maxAge: 3 * 60 * 1000,
         sameSite: 'strict',
+        path: '/',  
+      });
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, 
+        sameSite: 'strict',
+         path: '/api/auth', 
+      
       });
 
       res.status(STATUS_CODES.SUCCESS).json({

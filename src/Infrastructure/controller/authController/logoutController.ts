@@ -5,7 +5,7 @@ import { LogoutUseCase } from '../../../Application/usecases/auth/LogoutUsecase'
 
 
 export class LogoutController {
-  
+
   constructor(private logoutUseCase: LogoutUseCase) {}
 
   async logout(req: Request, res: Response, next: NextFunction) {
@@ -15,7 +15,7 @@ export class LogoutController {
       await this.logoutUseCase.execute(refreshToken);
 
       res.clearCookie('token', { path: '/' });
-      res.clearCookie('refreshToken', { path: '/api/auth/refresh' });
+      res.clearCookie('refreshToken', { path: '/api/auth' });
 
       res.status(STATUS_CODES.SUCCESS).json({
         success: true,
