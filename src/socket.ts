@@ -1,12 +1,14 @@
-import { ConnectionRequestImpl } from './Domain/repository/implementation/ConnectionRequestRepoImpl';
+
 import { Server, Socket } from 'socket.io';
-import { ChatUseCase } from './Application/usecases/chat/chatUseCase';
-import { ChatRepositoryImpl } from './Domain/repository/implementation/chatRepoImpl';
-import { Message } from './Domain/entities/Message';
+import { ChatUseCase } from './Application2/usecases/chat/ChatUseCase';
 import { CustomError } from './shared/error/customError';
 import { generateRoomId } from './shared/utils/generateRoomId';
 import http from 'http';
-import { ConnectionRequestModel } from './Infrastructure/models/ConnectionRequestModel';
+import { ChatRepository } from './Infrastructure2/persistance/repositories/ChatRepository';
+import { ConnectionRequestRepository } from './Infrastructure2/persistance/repositories/ConnectionRequestRepository';
+import { IMessage } from './Domain2/entities/Message';
+
+
 
 interface VideoCallSignal {
   roomId: string;
@@ -57,9 +59,9 @@ export const initializeSocket = (server: http.Server): Server => {
     transports: ['websocket'],
   });
 
-  const chatRepository = new ChatRepositoryImpl();
+  const chatRepository = new ChatRepository();
   const chatUseCase = new ChatUseCase(chatRepository);
-  const connectionRequestRepo = new ConnectionRequestImpl();
+  const connectionRequestRepo = new ConnectionRequestRepository();
 
   io.on('connection', (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
@@ -260,7 +262,7 @@ socket.on('readMessage', async ({ messageId, roomId }) => {
       }
     });
 
-    socket.on('message', async (data: Message) => {
+    socket.on('message', async (data: IMessage) => {
       try {
         await chatUseCase.sendMessage(data);
         io.to(data.roomId).emit('message', data);

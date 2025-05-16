@@ -60,6 +60,7 @@ export const MESSAGES = {
    NOT_AUTHORIZED : 'User is not authorized to create a job post for this company.',
    INTERNAL_SERVER_ERROR : "Internal server error",
    PLEASE_LOGIN :  'You are not authorized, Please login',
+   NOT_ADDED  : "You are not added as a company, You can only login to company account after added by company admin",
 
 
 

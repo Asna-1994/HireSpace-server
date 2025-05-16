@@ -1,17 +1,17 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
-import connectDB from './Infrastructure/config/database';
-import userRoutes from './Infrastructure/routes/userRoutes';
-import companyRoutes from './Infrastructure/routes/companyRoutes';
-import adminRoutes from './Infrastructure/routes/adminRoutes';
-import connectionRoutes from './Infrastructure/routes/connectionRequestRoutes';
-import plantRoutes from './Infrastructure/routes/planRoutes';
-import paymentRoutes from './Infrastructure/routes/paymentRoutes';
+import connectDB from './Infrastructure2/config/database';
+import userRoutes from './Interface2/routes/userRoutes'
+import companyRoutes from './Interface2/routes/companyRoutes'
+import adminRoutes from './Interface2/routes/adminRoutes'
+import connectionRoutes from './Interface2/routes/connectionRequestRoutes'
+import plantRoutes from './Interface2/routes/planRoutes'
+import paymentRoutes from './Interface2/routes/paymentRoutes'
 import cors from 'cors';
 import morgan from 'morgan';
-import { errorMiddleware } from './Infrastructure/middleware/errorMiddleware';
+import { errorMiddleware } from './Interface2/middleware/errorMiddleware'
 import cookieParser from 'cookie-parser';
-import authRoutes from './Infrastructure/routes/authRoutes'
+import authRoutes from './Interface2/routes/authRoutes'
 
 dotenv.config();
 
