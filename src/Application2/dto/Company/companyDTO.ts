@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { imageObject } from "../../../Domain2/entities/User";
 
 

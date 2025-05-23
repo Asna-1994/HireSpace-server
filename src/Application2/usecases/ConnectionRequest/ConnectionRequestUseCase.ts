@@ -38,9 +38,7 @@ export class ConnectionRequestUseCase {
     return newRequest;
   }
 
-  async getConnectionRequestById(
-    id: string
-  ): Promise<IConnectionRequestDTO | null> {
+  async getConnectionRequestById(id: string): Promise<IConnectionRequestDTO | null> {
     return this.connectionRequestRepo.findOne(id);
   }
 
@@ -209,20 +207,21 @@ export class ConnectionRequestUseCase {
     }
   }
 
-  async acceptConnectionRequest(id: string): Promise<IConnectionRequestDTO> {
-    const updatedRequest = await this.connectionRequestRepo.updateStatus(
-      id,
-      'accepted'
-    );
+  async acceptConnectionRequest(id: string): Promise<void> {
 
-    const fromUserString = updatedRequest.fromUser.toString();
-    const toUserString = updatedRequest.toUser.toString();
+
+    console.log('request id' , id)
+    const updatedRequest = await this.connectionRequestRepo.updateStatus(id,'accepted');
+console.log('from user',updatedRequest.fromUser._id)
+console.log("to user",updatedRequest.toUser)
+    const fromUserString = updatedRequest.fromUser._id.toString();
+    const toUserString = updatedRequest.toUser._id.toString();
     await Promise.all([
       this.userRepository.addConnection(fromUserString, toUserString),
       this.userRepository.addConnection(toUserString, fromUserString),
     ]);
 
-    return updatedRequest;
+    // return updatedRequest;
   }
 
   async rejectConnectionRequest(id: string): Promise<IConnectionRequestDTO> {

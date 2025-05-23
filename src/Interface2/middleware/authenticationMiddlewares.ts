@@ -56,13 +56,11 @@ checkIfAuthenticated = async (
   try {
     const token = req.cookies.authToken;
     console.log('authToken:', token);
-    console.log('refreshToken:', req.cookies.refreshToken);
+    // console.log('refreshToken:', req.cookies.refreshToken);
     
     if (!token) {
       throw new CustomError(
-        STATUS_CODES.UNAUTHORIZED,
-       MESSAGES.PLEASE_LOGIN
-      );
+        STATUS_CODES.UNAUTHORIZED,MESSAGES.AUTH_TOKEN_MISSING);
     }
 
     try {
@@ -83,7 +81,7 @@ checkIfAuthenticated = async (
       } else {
         throw new CustomError(
           STATUS_CODES.UNAUTHORIZED, 
-          MESSAGES.INVALID_TOKEN 
+          MESSAGES.INVALID_TOKEN
         );
       }
     }
@@ -92,7 +90,12 @@ checkIfAuthenticated = async (
   }
 };
 
+
+
+
 }
+
+
 
 
 

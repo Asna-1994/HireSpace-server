@@ -1,4 +1,4 @@
-import { IJobApplicationDTO } from './../../dto/JobApplication/JobApplicationDTO';
+
 import { CustomError } from '../../../shared/error/customError';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import { MESSAGES } from '../../../shared/constants/messages';
@@ -23,7 +23,7 @@ export class UserJobApplicationUseCase {
     try {
       const { userId, jobPostId, coverLetter, companyId } = jobApplicationData;
 
-      console.log('Received job application data:', jobApplicationData);
+ 
 
       if (!userId || !jobPostId) {
         throw new CustomError(
@@ -34,9 +34,7 @@ export class UserJobApplicationUseCase {
 
       if (!coverLetter) {
         throw new CustomError(
-          STATUS_CODES.BAD_REQUEST,
-          'Please add cover letter'
-        );
+          STATUS_CODES.BAD_REQUEST,'Please add cover letter');
       }
 
       const existingApplication = await this.jobApplicationRepository.findOne({

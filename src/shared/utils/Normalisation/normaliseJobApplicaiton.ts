@@ -1,5 +1,5 @@
 
-import { IJobApplicationDTO } from './../../../Application2/dto/JobApplication/JobApplicationDTO';
+import { IJobApplicationDTO, IJobApplicationDTONotPopulatedFields } from './../../../Application2/dto/JobApplication/JobApplicationDTO';
 import mongoose from 'mongoose';
 import { IJobApplication } from '../../../Domain2/entities/JobApplication'; // Adjust path as needed
 import { CustomError } from '../../error/customError';
@@ -112,6 +112,35 @@ export function denormalizeJobApplication(data: IJobApplicationDTO): IJobApplica
     throw new CustomError(
       STATUS_CODES.INTERNAL_SERVER_ERROR,
       'Failed to denormalize job application'
+    );
+  }
+}
+
+
+export function normalizeApplicationNotPopulated(data: IJobApplication): IJobApplicationDTONotPopulatedFields {
+  try {
+    return {
+      _id: data._id.toString(),
+      userId: data.userId.toString(),
+      jobPostId: data.jobPostId._id.toString(),
+      companyId: data.companyId.toString(),
+      coverLetter: {
+        salutation: data.coverLetter.salutation,
+        body: data.coverLetter.body,
+        closing: data.coverLetter.closing,
+      },
+      resumeUrl: data.resumeUrl,
+      status: data.status,
+      appliedDate: data.appliedDate,
+      updatedDate: data.updatedDate,
+      isDeleted: data.isDeleted,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
+  } catch (err) {
+    throw new CustomError(
+      STATUS_CODES.INTERNAL_SERVER_ERROR,
+      'Failed to normalize job application'
     );
   }
 }

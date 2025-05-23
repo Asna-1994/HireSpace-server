@@ -20,6 +20,8 @@ export class GetAllCompaniesUseCase {
             { companyName: { $regex: searchTerm, $options: 'i' } },
             { email: { $regex: searchTerm, $options: 'i' } },
             { phone: { $regex: searchTerm, $options: 'i' } },
+                { industry: { $regex: searchTerm, $options: 'i' } },
+
           ],
         }
       : {};

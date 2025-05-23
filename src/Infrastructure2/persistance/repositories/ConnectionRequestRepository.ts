@@ -5,6 +5,7 @@ import { ConnectionRequestModel } from '../models/ConnectionRequestModel';
 import { IConnectionRequestRepository } from '../../../Domain2/respositories/IConnectionRequestRepo';
 import { IConnectionRequest } from '../../../Domain2/entities/UserConnections';
 import { normalizeConnectionRequest } from '../../../shared/utils/Normalisation/nomaliseConnectionRequest';
+import mongoose from 'mongoose';
 
 
 export class ConnectionRequestRepository implements IConnectionRequestRepository {
@@ -32,7 +33,7 @@ export class ConnectionRequestRepository implements IConnectionRequestRepository
     status: 'pending' | 'accepted' | 'rejected'
   ): Promise<IConnectionRequestDTO> {
     const updatedRequest = await ConnectionRequestModel.findByIdAndUpdate(
-      id,
+      new mongoose.Types.ObjectId(id) ,
       { status },
       { new: true }
     ).lean();

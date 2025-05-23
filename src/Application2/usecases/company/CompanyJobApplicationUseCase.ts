@@ -80,27 +80,15 @@ export class CompanyJobApplicationUseCase {
     status: 'pending' | 'reviewed' | 'accepted' | 'rejected'
   ) {
     try {
-      const application =
-        await this.jobApplicationRepository.findById(applicationId);
-      if (!application) {
-        throw new CustomError(
-          STATUS_CODES.NOT_FOUND,
-         MESSAGES.APPLICATION_NOT_FOUND
-        );
+     const updatedApplication = await this.jobApplicationRepository.findByIdAndUpdate(
+      applicationId,
+      { status },
+      { new: true }
+    );
+      if (!updatedApplication) {
+        throw new CustomError(STATUS_CODES.NOT_FOUND,MESSAGES.APPLICATION_NOT_FOUND);
       }
 
-      if (!application._id || !application.userId || !application.jobPostId) {
-        throw new CustomError(
-          STATUS_CODES.INTERNAL_SERVER_ERROR,
-          MESSAGES.INCOMPLETE_DATA
-        );
-      }
-
-      application.status = status;
-
-          const denormalized  = denormalizeJobApplication(application)
-      const updatedApplication =
-        await this.jobApplicationRepository.update(denormalized);
       return updatedApplication;
     } catch (err) {
       if (err instanceof CustomError) {

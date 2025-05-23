@@ -104,6 +104,15 @@ router.get(
    jobPostController.getAllJobPost
 );
 
+router.delete(
+  '/job-post/:jobPostId',
+  authenticationMiddleware.checkIfAuthenticated,
+  authenticationMiddleware.isCompany,
+   jobPostController.deleteJobPost
+);
+
+   
+
 //job applications
 router.patch(
   '/job-application-status/:applicationId',

@@ -23,6 +23,7 @@ export interface IJobPostRepository {
     update: object,
     options: object
   ): Promise<IJobPostDTO | null>;
+    findByIdAndDelete(jobPostId: string): Promise<void>;
   countTotal(dateQuery: any): Promise<number>;
   updateMany(
     filter: Record<string, unknown>,

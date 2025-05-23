@@ -25,7 +25,7 @@ export class JobPostRepository implements IJobPostRepository {
       .populate(
         'companyId',
         'companyName email phone address industry companyLogo'
-      );
+      ).sort({ createdAt: -1 })
     console.log('saved posts', jobPosts);
     return jobPosts.map(normalizeJobPost);
   }
@@ -38,6 +38,7 @@ export class JobPostRepository implements IJobPostRepository {
     try {
       const jobPosts = await JobPostModel.find(filter)
         .populate('companyId', 'companyName email phone address companyLogo')
+        .sort({ createdAt: -1 })
         .skip(offset)
         .limit(limit);
 
@@ -88,6 +89,10 @@ console.log(err)
       options
     ).lean();
     return jobPost ? normalizeJobPost(jobPost) : null;
+  }
+
+  async findByIdAndDelete(jobPostId: string, ): Promise<void> {
+ await JobPostModel.findByIdAndDelete(jobPostId)
   }
 
   async findByIdAndUpdate(

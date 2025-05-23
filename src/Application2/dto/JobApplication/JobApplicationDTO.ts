@@ -33,3 +33,22 @@ export interface IJobApplicationDTO {
   updatedAt: Date;
 }
 
+export interface IJobApplicationDTONotPopulatedFields {
+  _id: string;
+  userId: string;
+  jobPostId: string;
+  companyId : string;
+  coverLetter: {
+    salutation: string;
+    body: string;
+    closing: string;
+  };
+  resumeUrl: string;
+  status: "pending" | "reviewed" | "accepted" | "rejected"
+  appliedDate: Date;
+  updatedDate: Date;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+

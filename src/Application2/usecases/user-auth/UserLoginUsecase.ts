@@ -45,18 +45,7 @@ console.log(existingUser)
       );
     }
 
-    // const token = generateAccessToken({
-    //   id: existingUser._id,
-    //   email: existingUser.email,
-    //   role: existingUser.userRole,
-    //   entity: 'user',
-    // });
-    // const refreshToken = generateRefreshToken({
-    //   id: existingUser._id,
-    //   email: existingUser.email,
-    //   role: existingUser.userRole,
-    //   entity: 'user',
-    // });
+    
         const token = this.authService.generateAccessToken({
       id: existingUser._id.toString(),
       email: existingUser.email,

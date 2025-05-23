@@ -29,9 +29,10 @@ export class GetAllUsersUseCase {
           { userName: { $regex: searchTerm, $options: 'i' } },
           { email: { $regex: searchTerm, $options: 'i' } },
           { phone: { $regex: searchTerm, $options: 'i' } },
+               { userRole: { $regex: searchTerm, $options: 'i' } },
         ],
       }),
-      ...(userRole && { userRole }),
+  
     };
 
     const { users, total } = await this.userRepository.findUsers(
@@ -65,6 +66,7 @@ export class GetAllUsersUseCase {
           { userName: { $regex: searchTerm, $options: 'i' } },
           { email: { $regex: searchTerm, $options: 'i' } },
           { phone: { $regex: searchTerm, $options: 'i' } },
+             { 'appPlan.planType': { $regex: searchTerm, $options: 'i' } }, 
         ],
       }),
       ...(userRole && { userRole }),
@@ -97,6 +99,9 @@ export class GetAllUsersUseCase {
           { 'companyId.companyName': { $regex: searchTerm, $options: 'i' } },
           { 'companyId.email': { $regex: searchTerm, $options: 'i' } },
           { 'companyId.phone': { $regex: searchTerm, $options: 'i' } },
+            { reason: { $regex: searchTerm, $options: 'i' } },
+              { description: { $regex: searchTerm, $options: 'i' } },
+
         ],
       }),
     };

@@ -1,10 +1,10 @@
 
-import { IJobApplicationDTO } from '../../../Application2/dto/JobApplication/JobApplicationDTO';
+import { IJobApplicationDTO, IJobApplicationDTONotPopulatedFields } from '../../../Application2/dto/JobApplication/JobApplicationDTO';
 import { IJobApplication } from '../../../Domain2/entities/JobApplication';
 import { IJobApplicationRepository } from '../../../Domain2/respositories/IJobApplicationRepo';
 import { STATUS_CODES } from '../../../shared/constants/statusCodes';
 import { CustomError } from '../../../shared/error/customError';
-import { normalizeJobApplication } from '../../../shared/utils/Normalisation/normaliseJobApplicaiton';
+import { normalizeApplicationNotPopulated, normalizeJobApplication } from '../../../shared/utils/Normalisation/normaliseJobApplicaiton';
 import { JobApplicationModel } from '../models/JobApplicationModel';
 
 
@@ -12,9 +12,10 @@ import { JobApplicationModel } from '../models/JobApplicationModel';
 
 export class JobApplicationRepository implements IJobApplicationRepository {
 
-  async findOne(filter: object): Promise<IJobApplicationDTO | null> {
+  async findOne(filter: object): Promise<IJobApplicationDTONotPopulatedFields | null> {
     const jobApplication = await JobApplicationModel.findOne(filter).lean();
-    return jobApplication ? normalizeJobApplication(jobApplication) : null;
+    console.log("Job applicatioon from repo",jobApplication)
+    return jobApplication ? normalizeApplicationNotPopulated(jobApplication) : null;
   }
 
   async find(filter: object): Promise<IJobApplicationDTO[] | []> {
@@ -26,7 +27,7 @@ export class JobApplicationRepository implements IJobApplicationRepository {
           path: 'companyId',
           select: 'companyName email phone address industry companyLogo',
         },
-      });
+      }).sort({ createdAt: -1 })
     return jobApplications as IJobApplicationDTO[] | [];
   }
 
@@ -45,6 +46,7 @@ export class JobApplicationRepository implements IJobApplicationRepository {
             select: 'companyName email phone address industry companyLogo',
           },
         })
+        .sort({ createdAt: -1 })
         .skip(offset)
         .limit(limit);
 
@@ -66,13 +68,13 @@ export class JobApplicationRepository implements IJobApplicationRepository {
     }
   }
 
-  async findById(jobApplicationId: string): Promise<IJobApplicationDTO | null> {
+  async findById(jobApplicationId: string): Promise<IJobApplicationDTONotPopulatedFields | null> {
     const jobApplication =
       await JobApplicationModel.findById(jobApplicationId).lean();
-    return jobApplication ? normalizeJobApplication(jobApplication) : null;
+    return jobApplication ? normalizeApplicationNotPopulated(jobApplication) : null;
   }
 
-  async update(jobApplication: IJobApplication): Promise<IJobApplicationDTO> {
+  async update(jobApplication: IJobApplication): Promise<IJobApplicationDTONotPopulatedFields> {
     const updatedApplication = await JobApplicationModel.findByIdAndUpdate(
       jobApplication._id,
       jobApplication,
@@ -83,33 +85,33 @@ export class JobApplicationRepository implements IJobApplicationRepository {
     if (!updatedApplication) {
       throw new CustomError(STATUS_CODES.NOT_FOUND, 'Failed to update');
     }
-    return normalizeJobApplication(updatedApplication);
+    return normalizeApplicationNotPopulated(updatedApplication);
   }
 
   async findOneAndUpdate(
     filter: object,
     update: object,
     options: object
-  ): Promise<IJobApplicationDTO | null> {
+  ): Promise<IJobApplicationDTONotPopulatedFields | null> {
     const jobApplication = await JobApplicationModel.findOneAndUpdate(
       filter,
       update,
       options
     ).lean();
-    return jobApplication ?  normalizeJobApplication(jobApplication) : null ;
+    return jobApplication ?  normalizeApplicationNotPopulated(jobApplication) : null ;
   }
 
   async findByIdAndUpdate(
     jobApplicationId: string,
     update: object,
     options: object
-  ): Promise<IJobApplicationDTO | null> {
+  ): Promise<IJobApplicationDTONotPopulatedFields | null> {
     const jobApplication = await JobApplicationModel.findByIdAndUpdate(
       jobApplicationId,
       update,
       options
     ).lean();
-    return jobApplication ?  normalizeJobApplication(jobApplication) : null ;
+    return jobApplication ?  normalizeApplicationNotPopulated(jobApplication) : null ;
   }
 
   async create(

@@ -14,7 +14,6 @@ import { SkillsUseCase } from "../Application2/usecases/user/SkillsUsecase";
 import { UploadUseCase } from "../Application2/usecases/user/UploadUseCase";
 import { UserJobApplicationUseCase } from "../Application2/usecases/user/UserJobApplicationUseCase";
 import { UserJobPostUseCase } from "../Application2/usecases/user/UserJobPostUseCase";
-import { CompanyRepository } from "../Infrastructure2/persistance/repositories/CompanyRepository";
 import { JobApplicationRepository } from "../Infrastructure2/persistance/repositories/JobApplicationRepository";
 import { JobPostRepository } from "../Infrastructure2/persistance/repositories/JobPostRepository";
 import { JobSeekerProfileRepository } from "../Infrastructure2/persistance/repositories/JobSeekerProfileRepository";
@@ -41,7 +40,6 @@ const jobSeekerProfileRepository = new JobSeekerProfileRepository()
 const jobPostRepository = new JobPostRepository()
 const jobApplicationRepository = new JobApplicationRepository();
 const spamRepository = new SpamRepository();
-const companyRepository = new CompanyRepository();
 const authService = new AuthService()
 const emailService = new EmailService()
 const fileService = new FileUploadService()

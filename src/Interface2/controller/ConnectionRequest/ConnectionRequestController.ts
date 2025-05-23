@@ -202,14 +202,14 @@ getRecommendationsForUser = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const acceptedRequest =
+ 
       await this.connectionRequestUseCase.acceptConnectionRequest(id);
     res.status(STATUS_CODES.SUCCESS).json({
       success: true,
       message: 'Connection request accepted',
-      data: {
-        acceptedRequest,
-      },
+      // data: {
+      //   acceptedRequest,
+      // },
     });
   } catch (error) {
     next(error);

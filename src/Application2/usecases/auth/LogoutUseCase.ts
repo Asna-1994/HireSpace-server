@@ -34,7 +34,7 @@ export class LogoutUseCase {
         await this.userRepository.removeAllRefreshTokens(decoded.id);
       }
 
-      throw new CustomError(STATUS_CODES.UNAUTHORIZED, MESSAGES.INVALID_REFRESH_TOKEN);
+      throw new CustomError(STATUS_CODES.UNAUTHORIZED, MESSAGES.INVALID_TOKEN);
     }
   }
 }

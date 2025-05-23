@@ -31,17 +31,19 @@ export class UserAuthController {
 
       res.cookie('authToken', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 3 * 60 * 1000,
-        sameSite: 'strict',
+        // secure: process.env.NODE_ENV === 'production',
+            secure : true,
+        maxAge: 10 * 60 * 1000,
+            sameSite: 'none',
         path: '/',  
       });
       
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        // secure: process.env.NODE_ENV === 'production',
+        secure : true,
         maxAge: 7 * 24 * 60 * 60 * 1000, 
-        sameSite: 'strict',
+            sameSite: 'none',
          path: '/api/auth', 
       
       });
@@ -152,7 +154,7 @@ export class UserAuthController {
   }
 
 
-    async resendOtp(req: Request, res: Response, next: NextFunction) {
+   resendOtp  = async(req: Request, res: Response, next: NextFunction) =>  {
     try {
       const { email } = req.body;
 
