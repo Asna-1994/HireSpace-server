@@ -37,19 +37,26 @@ export class ManagePlanUseCase {
     limit?: number,
     searchTerm?: string
   ): Promise<{ plans: IPlansDTO[]; total?: number }> {
-    const filter: {
-      isDeleted: boolean;
-      userType?: string;
-      planType?: { $regex: string; $options: string };
-    } = { isDeleted: false };
+     const filter: {
+    isDeleted: boolean;
+    userType?: string;
+    $or?: any[];
+  } = { isDeleted: false };
 
-    if (userType) {
-      filter.userType = userType;
-    }
+  if (userType) {
+    filter.userType = userType;
+  }
 
-    if (searchTerm) {
-      filter.planType = { $regex: searchTerm, $options: 'i' };
-    }
+  if (searchTerm) {
+    const searchRegex = new RegExp(searchTerm, 'i');
+
+    filter.$or = [
+      { planType: { $regex: searchRegex } },
+      { features: { $elemMatch: { $regex: searchRegex } } },
+      { price: isNaN(+searchTerm) ? undefined : +searchTerm }, 
+      { durationInDays: isNaN(+searchTerm) ? undefined : +searchTerm },
+    ].filter(Boolean); 
+  }
 
     if (page && limit) {
       const skip = (page - 1) * limit;

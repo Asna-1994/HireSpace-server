@@ -81,6 +81,7 @@ export class UserRepository implements IUserRepository {
   ): Promise<{ users: User[]; total: number }> {
     const [users, total] = await Promise.all([
       UserModel.find(filter)
+        .sort({createdAt : -1})
         .skip(offset)
         .limit(limit)
         .populate({
@@ -102,7 +103,7 @@ export class UserRepository implements IUserRepository {
     limit: number,
     filter: object
   ): Promise<User[]> {
-    return await UserModel.find(filter).skip(offset).limit(limit).lean().exec();
+    return await UserModel.find(filter).sort({createdAt : -1}).skip(offset).limit(limit).lean().exec();
   }
 
   async blockOrUnblock(entityId: string, action: string): Promise<User> {
@@ -202,7 +203,7 @@ export class UserRepository implements IUserRepository {
     filter: object
   ): Promise<{ users: User[]; total: number }> {
     const [users, total] = await Promise.all([
-      UserModel.find(filter).skip(offset).limit(limit).lean().exec(),
+      UserModel.find(filter).sort({createdAt : -1}).skip(offset).limit(limit).lean().exec(),
       UserModel.countDocuments(filter),
     ]);
 

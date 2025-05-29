@@ -42,9 +42,9 @@ export class PlanRepository implements IPlanRepository {
   ): Promise<IPlansDTO[]> {
     let plans;
     if (skip !== undefined && limit !== undefined) {
-      plans = await PlanModel.find(filter).skip(skip).limit(limit).lean();
+      plans = await PlanModel.find(filter).sort({createdAt : -1}).skip(skip).limit(limit).lean();
     } else {
-      plans = await PlanModel.find(filter).lean();
+      plans = await PlanModel.find(filter).sort({createdAt : -1}).lean();
     }
     return plans.map(normalizePlans);
   }

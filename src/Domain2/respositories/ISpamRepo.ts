@@ -13,7 +13,7 @@ export interface ISpamRepository {
     filter: object,
     skip?: number,
     limit?: number
-  ): Promise<ISpamReportDTO[]>;
+  ): Promise<{ spamReports: ISpamReportDTO[]; total: number }>;
   countSpamReport(filter: object): Promise<number>;
   deleteSpam(spamId: string): Promise<ISpamReportDTO | null>;
   getSpamByCompanyId(companyId: string): Promise<ISpamReportDTO | null>;

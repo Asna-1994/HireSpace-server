@@ -52,6 +52,7 @@ export class CompanyRepository implements ICompanyRepository {
     filter: object
   ): Promise<ICompanyDTO[]> {
     const companies = await CompanyModel.find(filter)
+      .sort({createdAt : -1})
       .skip(offset)
       .limit(limit)
       .lean()
@@ -65,7 +66,7 @@ export class CompanyRepository implements ICompanyRepository {
     filter: object
   ): Promise<{ companies: ICompanyDTO[]; total: number }> {
     const [companies, total] = await Promise.all([
-      CompanyModel.find(filter).skip(offset).limit(limit).lean().exec(),
+      CompanyModel.find(filter).sort({createdAt : -1}).skip(offset).limit(limit).lean().exec(),
       CompanyModel.countDocuments(filter),
     ]);
 

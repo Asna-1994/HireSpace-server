@@ -37,13 +37,18 @@ getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
 
   async getPremiumUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      const { page = 1, limit = 10, search = '', userRole = '' } = req.query;
+      const { page = 1, limit = 10, query = '', userRole = '', startDate = '', endDate = '' } = req.query;
+
+      console.log('start date',startDate)
 
       const { users, total } = await this.getAllUsersUseCase.getPremiumUsers({
         page: Number(page),
         limit: Number(limit),
-        searchTerm: String(search),
+        searchTerm: String(query),
         userRole: String(userRole),
+        startDate : String(startDate),
+        endDate : String(endDate),
+    
       });
 
       res.status(STATUS_CODES.SUCCESS).json({
@@ -63,13 +68,14 @@ getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
 
   async getSpamReports(req: Request, res: Response, next: NextFunction) {
     try {
-      const { page = 1, limit = 10, search = '' } = req.query;
+      const { page = 1, limit = 10, search = '', date} = req.query;
 
       const { spams, total, totalPages, currentPage } =
         await this.getAllUsersUseCase.getAllSpamReports({
           page: Number(page),
           limit: Number(limit),
           searchTerm: String(search),
+          date : String(date)
         });
 
       res.status(STATUS_CODES.SUCCESS).json({

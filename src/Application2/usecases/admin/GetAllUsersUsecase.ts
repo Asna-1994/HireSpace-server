@@ -1,9 +1,6 @@
-
-
-
 import { IUserRepository } from '../../../Domain2/respositories/IUserRepository';
 import { ISpamRepository } from '../../../Domain2/respositories/ISpamRepo';
-import { SpamModel } from '../../../Infrastructure2/persistance/models/SpamModel';
+import { parse, isValid, startOfDay, endOfDay } from 'date-fns';
 
 export class GetAllUsersUseCase {
   constructor(
@@ -43,80 +40,128 @@ export class GetAllUsersUseCase {
     return { users, total };
   }
 
+  // async getPremiumUsers({
+  //   page,
+  //   limit,
+  //   searchTerm,
+  //   userRole,
+  //   startDate,
+  //   endDate,
+  // }: {
+  //   page: number;
+  //   limit: number;
+  //   searchTerm: string;
+  //   userRole: string;
+  //   startDate?:string;
+  //   endDate?: string;
+  // }) {
+  //   const offset = (page - 1) * limit;
+
+  //   const filter: any = {
+  //     isPremium: true,
+  //     'appPlan.planType': { $ne: 'basic' },
+  //     'appPlan.startDate': { $ne: null },
+  //     'appPlan.endDate': { $ne: null },
+  //     ...(searchTerm && {
+  //       $or: [
+  //         { userName: { $regex: searchTerm, $options: 'i' } },
+  //         { email: { $regex: searchTerm, $options: 'i' } },
+  //         { phone: { $regex: searchTerm, $options: 'i' } },
+  //            { 'appPlan.planType': { $regex: searchTerm, $options: 'i' } }, 
+  //       ],
+  //     }),
+  //     ...(userRole && { userRole }),
+  //   };
+  //   const { users, total } = await this.userRepository.findPremiumUsers(
+  //     offset,
+  //     limit,
+  //     filter
+  //   );
+
+  //   return { users, total };
+  // }
+
+
   async getPremiumUsers({
-    page,
-    limit,
-    searchTerm,
-    userRole,
-  }: {
-    page: number;
-    limit: number;
-    searchTerm: string;
-    userRole: string;
-  }) {
-    const offset = (page - 1) * limit;
+  page,
+  limit,
+  searchTerm,
+  userRole,
+  startDate,
+  endDate,
+}: {
+  page: number;
+  limit: number;
+  searchTerm: string;
+  userRole: string;
+  startDate?: string;
+  endDate?: string;
+}) {
+  const offset = (page - 1) * limit;
 
-    const filter: any = {
-      isPremium: true,
-      'appPlan.planType': { $ne: 'basic' },
-      'appPlan.startDate': { $ne: null },
-      'appPlan.endDate': { $ne: null },
-      ...(searchTerm && {
-        $or: [
-          { userName: { $regex: searchTerm, $options: 'i' } },
-          { email: { $regex: searchTerm, $options: 'i' } },
-          { phone: { $regex: searchTerm, $options: 'i' } },
-             { 'appPlan.planType': { $regex: searchTerm, $options: 'i' } }, 
-        ],
-      }),
-      ...(userRole && { userRole }),
-    };
-    const { users, total } = await this.userRepository.findPremiumUsers(
-      offset,
-      limit,
-      filter
-    );
+  const filter: any = {
+    isPremium: true,
+    'appPlan.planType': { $ne: 'basic' },
+    'appPlan.startDate': { $ne: null },
+    'appPlan.endDate': { $ne: null },
+    ...(searchTerm && {
+      $or: [
+        { userName: { $regex: searchTerm, $options: 'i' } },
+        { email: { $regex: searchTerm, $options: 'i' } },
+        { phone: { $regex: searchTerm, $options: 'i' } },
+        { 'appPlan.planType': { $regex: searchTerm, $options: 'i' } }, 
+      ],
+    }),
+    ...(userRole && { userRole }),
+  };
 
-    return { users, total };
+  
+  if (startDate || endDate) {
+    filter['appPlan.startDate'] = {};
+    if (startDate) {
+      filter['appPlan.startDate'].$gte = new Date(startDate);
+    }
+    if (endDate) {
+      filter['appPlan.startDate'].$lte = new Date(endDate);
+    }
   }
+
+
+
+
+  const { users, total } = await this.userRepository.findPremiumUsers(
+    offset,
+    limit,
+    filter
+  );
+
+  return { users, total };
+}
+
+
+
 
   async getAllSpamReports({
     page,
     limit,
     searchTerm,
+    date
   }: {
     page: number;
     limit: number;
     searchTerm?: string;
+    date? : string;
   }) {
     const offset = (page - 1) * limit;
 
-    const filter: any = {
-      ...(searchTerm && {
-        $or: [
-          { 'reportedByUser.userName': { $regex: searchTerm, $options: 'i' } },
-          { 'reportedByUser.email': { $regex: searchTerm, $options: 'i' } },
-          { 'companyId.companyName': { $regex: searchTerm, $options: 'i' } },
-          { 'companyId.email': { $regex: searchTerm, $options: 'i' } },
-          { 'companyId.phone': { $regex: searchTerm, $options: 'i' } },
-            { reason: { $regex: searchTerm, $options: 'i' } },
-              { description: { $regex: searchTerm, $options: 'i' } },
+    const filter ={searchTerm, date}
 
-        ],
-      }),
-    };
+    const  {total, spamReports} = await this.spamRepository.getAllSpamReport(filter,offset,limit)
 
-    const [spams, total] = await Promise.all([
-      this.spamRepository.getAllSpamReport(filter, offset, limit),
-      SpamModel.countDocuments(filter), // Get the total matching records count
-    ]);
-
-    // Calculate pagination details
     const totalPages = Math.ceil(total / limit);
     const currentPage = page;
-
     return {
-      spams,
+      spams : spamReports,
       total,
       totalPages,
       currentPage,
