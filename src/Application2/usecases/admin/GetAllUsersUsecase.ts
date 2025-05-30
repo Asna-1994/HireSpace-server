@@ -156,6 +156,7 @@ export class GetAllUsersUseCase {
 
     const filter ={searchTerm, date}
 
+
     const  {total, spamReports} = await this.spamRepository.getAllSpamReport(filter,offset,limit)
 
     const totalPages = Math.ceil(total / limit);

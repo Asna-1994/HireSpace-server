@@ -70,6 +70,7 @@ getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { page = 1, limit = 10, search = '', date} = req.query;
 
+      console.log('date', date)
       const { spams, total, totalPages, currentPage } =
         await this.getAllUsersUseCase.getAllSpamReports({
           page: Number(page),
